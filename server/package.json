@@ -20,8 +20,15 @@
   },
   "devDependencies": {
     "eslint": "^6.6.0",
+    "husky": "^3.0.9",
     "mocha": "^6.2.2",
     "prettier": "^1.19.1",
     "supertest": "^4.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format && npm run lint",
+      "pre-push": "npm test"
+    }
   }
 }
