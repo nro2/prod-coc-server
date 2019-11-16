@@ -4,7 +4,8 @@
   "description": "Committee on Committees Server",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "format": "prettier --write *.js router/*.js"
   },
   "repository": {
     "type": "git",
@@ -14,5 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "prettier": "^1.19.1"
   }
 }
