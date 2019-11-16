@@ -1,0 +1,18 @@
+{
+  "name": "poc-coc-server",
+  "version": "0.0.0",
+  "description": "Committee on Committees Server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/CapstoneFall19/poc-coc.git"
+  },
+  "author": "Michael Heyman",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
