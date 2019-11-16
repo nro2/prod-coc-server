@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "format": "prettier --write *.js router/*.js"
+    "format": "prettier --write *.js router/*.js",
+    "lint": "eslint --quiet . --ext .js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
     "express": "^4.17.1"
   },
   "devDependencies": {
+    "eslint": "^6.6.0",
     "prettier": "^1.19.1"
   }
 }

@@ -10,6 +10,6 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', routes);
 
-module.exports = app.listen(PORT, err => {
+module.exports = app.listen(PORT, () => {
   console.log(`Express running at http://localhost:${PORT}`);
 });
