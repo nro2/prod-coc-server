@@ -1,9 +1,11 @@
+const decache = require('decache');
 const request = require('supertest');
 
 describe('Requests to /', () => {
   let app;
 
   beforeEach(() => {
+    decache('../');
     app = require('../');
   });
 
@@ -15,5 +17,11 @@ describe('Requests to /', () => {
     request(app)
       .get('/')
       .expect(200, "OK", done);
+  });
+
+  it('POST returns 200 and request body', done => {
+    request(app)
+      .post('/')
+      .expect(200, "Request received", done);
   });
 });
