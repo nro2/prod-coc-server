@@ -1,0 +1,35 @@
+{
+  "name": "poc-coc-server",
+  "version": "0.0.0",
+  "description": "Committee on Committees Server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "format": "prettier --write *.js router/*.js",
+    "lint": "eslint --quiet . --ext .js",
+    "test": "mocha --exit --recursive tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/CapstoneFall19/poc-coc.git"
+  },
+  "author": "Michael Heyman",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "decache": "^4.5.1",
+    "eslint": "^6.6.0",
+    "husky": "^3.0.9",
+    "mocha": "^6.2.2",
+    "prettier": "^1.19.1",
+    "supertest": "^4.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format && npm run lint",
+      "pre-push": "npm test"
+    }
+  }
+}
