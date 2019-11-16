@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "format": "prettier --write *.js router/*.js",
-    "lint": "eslint --quiet . --ext .js"
+    "lint": "eslint --quiet . --ext .js",
+    "test": "mocha --exit --recursive tests"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,8 @@
   },
   "devDependencies": {
     "eslint": "^6.6.0",
-    "prettier": "^1.19.1"
+    "mocha": "^6.2.2",
+    "prettier": "^1.19.1",
+    "supertest": "^4.0.2"
   }
 }
