@@ -25,4 +25,5 @@ This application is a POC (Proof of Concept) for a service that serves up an API
 ## How to run docker
 1. Navigate to ~/poc-coc/server
 2. Start up the docker image `docker-compose up -d`
+3. To access database directly `psql -h localhost -p 54320 -U coc -d coc`
 3. When down spin down the container `docker-compose down`
