@@ -6,6 +6,6 @@ services:
     environment:
       - POSTGRES_USER=coc
       - POSTGRES_PASSWORD=pwd123
-      - POSTGRES_DB =coc
+      - POSTGRES_DB=coc
     ports:
       - "54320:5432"
