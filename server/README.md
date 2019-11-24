@@ -18,6 +18,38 @@ This application is a POC (Proof of Concept) for a service that serves up an API
 3. Fill out the exports.up and exports.down functions with your schema changes.
 4. Run `db-migrate up -e [ENV]` where [ENV] is the name of the environment you are targeting in the database.json file.
 
+database.json is not included in the repo becaause it contains sensitive user and password information. 
+It must be created manually and placed in the server folder. Visit the documentation for more info on how to configure.
+
+example command to create a new migration and run it against an evnironment named "pg" targeting a postgres database:
+db-migrate create CreatUserTable
+db-migrate up -e pg
+
+Example database.json
+``` json
+{
+  "dev": {
+    "driver": "sqlite3",
+    "filename": "database/database.db"
+  },
+
+  "test": {
+    "driver": "sqlite3",
+    "filename": ":memory:"
+  },
+
+  "pg": {
+    "driver": "pg",
+    "user": "user",
+    "password": "password",
+    "host": "localhost",
+    "port": 55320
+    "database": "coc",
+    "schema": "public"
+  }
+}
+```
+
 Documentation https://db-migrate.readthedocs.io/en/latest/
 
 ## How to install Docker on Linux
