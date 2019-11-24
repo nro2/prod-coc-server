@@ -21,7 +21,7 @@ This application is a POC (Proof of Concept) for a service that serves up an API
 database.json is not included in the repo becaause it contains sensitive user and password information. 
 It must be created manually and placed in the server folder. Visit the documentation for more info on how to configure.
 
-example command to create a new migration and run it against an evnironment named "pg" targeting a postgres database:
+example command to create a new migration and run it against an environment named "pg" targeting a postgres database:
 db-migrate create CreatUserTable
 db-migrate up -e pg
 
@@ -43,7 +43,7 @@ Example database.json
     "user": "user",
     "password": "password",
     "host": "localhost",
-    "port": 55320
+    "port": 54320,
     "database": "coc",
     "schema": "public"
   }
