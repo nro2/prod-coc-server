@@ -103,6 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
+#database migrations settings file
+#database.json
+
 # IDE ignore
 .idea/
 .vscode/

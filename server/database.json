@@ -1,0 +1,21 @@
+{
+  "dev": {
+    "driver": "sqlite3",
+    "filename": "database/database.db"
+  },
+
+  "test": {
+    "driver": "sqlite3",
+    "filename": ":memory:"
+  },
+
+  "pg": {
+    "driver": "pg",
+    "user": "coc",
+    "password": "pwd123",
+    "host": "localhost",
+    "port": 54320,
+    "database": "coc",
+    "schema": "public"
+  }
+}
