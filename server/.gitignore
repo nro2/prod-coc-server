@@ -104,7 +104,7 @@ dist
 .tern-port
 
 #database migrations settings file
-database.json
+#database.json
 
 # IDE ignore
 .idea/
