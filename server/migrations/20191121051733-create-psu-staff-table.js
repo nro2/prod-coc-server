@@ -1,18 +1,18 @@
 'use strict';
 
-var dbm;
-var type;
-var seed;
+//var dbm;
+//var type;
+//var seed;
 
 /**
   * We receive the dbmigrate dependency from dbmigrate initially.
   * This enables us to not have to rely on NODE_PATH.
   */
-exports.setup = function(options, seedLink) {
-  dbm = options.dbmigrate;
-  type = dbm.dataType;
-  seed = seedLink;
-};
+//exports.setup = function(options, seedLink) {
+//  dbm = options.dbmigrate;
+  //type = dbm.dataType;
+  //seed = seedLink;
+//};
 
 exports.up = function (db) {
     return db.createTable('psu_staff', {
@@ -22,7 +22,7 @@ exports.up = function (db) {
         committee_name: 'string'
     })
         .then(
-            function (result) {
+            function () {
                 db.createTable('Faculty', {
                     id: { type: 'int', primaryKey: true },
                     name: 'string',
@@ -32,7 +32,7 @@ exports.up = function (db) {
                 });
             },
             function (err) {
-                return;
+                return err;
             }
         );
 };
@@ -40,11 +40,11 @@ exports.up = function (db) {
 exports.down = function(db) {
     return db.dropTable('psu_staff')
         .then(
-            function (result) {
+            function () {
                 db.dropTable('Faculty');
             },
             function (err) {
-                return;
+                return err;
             }
         );
 };
