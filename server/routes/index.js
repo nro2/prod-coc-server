@@ -15,7 +15,12 @@ router.get('/', (req, res) => {
 
   db.one('SELECT * FROM users WHERE first_name= $1', ['Josh'])
       .then((data)=> {
-        return res.status(200).send(data.last_name)
+          let user = {
+              firstName: data.first_name,
+              lastName: data.last_name,
+              phoneNum: data.phone_number
+          }
+        return res.status(200).send(user)
       })
       .catch((err)=>{
         console.log(err);
@@ -25,7 +30,8 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
 
-  db.none('INSERT INTO users(first_name, last_name) values($1, $2, $3)', [req.firstName, req.lastName, req.phoneNum])
+
+  db.none('INSERT INTO users(first_name, last_name, phone_number) values($1, $2, $3)', [req.body.firstName, req.body.lastName, req.body.phoneNum])
       .then(()=>{
         return res.status(200).send('Data insert was a success was a success')
       })
