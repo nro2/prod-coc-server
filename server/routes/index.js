@@ -38,7 +38,7 @@ router.get('/committees', (req, res) =>{
             console.log(err.message);
             return res.status(404).send(err.message)
         })
-})
+});
 
 router.post('/', (req, res) => {
 
