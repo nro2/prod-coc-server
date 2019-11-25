@@ -28,6 +28,18 @@ router.get('/', (req, res) => {
       })
 });
 
+router.get('/committees', (req, res) =>{
+
+    db.any('SELECT * FROM all_committees')
+        .then((data)=>{
+            return res.status(200).send(data)
+        })
+        .catch((err)=>{
+            console.log(err.message);
+            return res.status(404).send(err.message)
+        })
+})
+
 router.post('/', (req, res) => {
 
 
