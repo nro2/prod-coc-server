@@ -2,6 +2,8 @@ version: "3"
 services:
   db:
     image: postgres
+    volumes:
+      -./init.sql:/docker-entrypoint-initdb.d/init.sql
     container_name: coc_postgres
     environment:
       - POSTGRES_USER=coc
