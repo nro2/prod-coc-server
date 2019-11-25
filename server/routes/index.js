@@ -13,7 +13,7 @@ const db = pgp(config);
 
 router.get('/', (req, res) => {
 
-  db.one('SELECT * FROM users WHERE first_name= $1', ['Josh'])
+  db.one('SELECT * FROM users WHERE first_name= $1', [req.query.firstName])
       .then((data)=> {
           let user = {
               firstName: data.first_name,
