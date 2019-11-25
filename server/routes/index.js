@@ -42,7 +42,6 @@ router.get('/committees', (req, res) =>{
 
 router.post('/', (req, res) => {
 
-
   db.none('INSERT INTO users(first_name, last_name, phone_number) values($1, $2, $3)', [req.body.firstName, req.body.lastName, req.body.phoneNum])
       .then(()=>{
         return res.status(200).send('Data insert was a success')
