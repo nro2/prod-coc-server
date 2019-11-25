@@ -1,0 +1,1 @@
+create table users(first_name text, last_name text, phone_number text);
