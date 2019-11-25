@@ -23,8 +23,8 @@ router.get('/', (req, res) => {
         return res.status(200).send(user)
       })
       .catch((err)=>{
-        console.log(err);
-        return res.status(404).send("BAD REQUEST")
+        console.log(err.message);
+        return res.status(404).send(err.message)
       })
 });
 
