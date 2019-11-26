@@ -62,6 +62,7 @@ Documentation https://db-migrate.readthedocs.io/en/latest/
 
 ## How to run docker
 1. Navigate to ~/poc-coc/server
-2. Start up the docker image `docker-compose up -d`
+2. Start up the docker image `docker-compose up -d` 2b. If you are having issues running this on windows run 
+without `-d` option
 3. To access database directly `psql -h localhost -p 54320 -U coc -d coc`
 4. When done spin down the container `docker-compose down`
