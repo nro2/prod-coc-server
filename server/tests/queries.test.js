@@ -1,4 +1,4 @@
-const {getFaculty, getCommittees, addFaculty, db} = require('../routes/queries');
+const {getFaculty, getCommittees, addFaculty,loadDatabaseConnection} = require('../routes/queries');
 let sinon = require('sinon');
 
 
@@ -9,6 +9,8 @@ describe('test queries', ()=>{
     });
 
     it('Should get faculty', async ()=>{
+
+        let db = loadDatabaseConnection();
 
         const mReq = { query: { firstName: "Lin" } };
         const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
@@ -24,6 +26,8 @@ describe('test queries', ()=>{
     });
 
     it("should call error handler middleware when getting faculty", async () => {
+
+        let db = loadDatabaseConnection();
         const mReq = { query: { firstName: "Lin" } };
         const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
         const mNext = sinon.stub();
@@ -38,6 +42,7 @@ describe('test queries', ()=>{
 
     it('Should get committees', async ()=>{
 
+        let db = loadDatabaseConnection();
         const mReq = sinon.stub();
         const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
         const mNext = sinon.stub();
@@ -51,6 +56,8 @@ describe('test queries', ()=>{
     });
 
     it("should call error handler middleware when getting committees", async () => {
+
+        let db = loadDatabaseConnection();
         const mReq = sinon.stub();
         const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
         const mNext = sinon.stub();
@@ -65,6 +72,7 @@ describe('test queries', ()=>{
 
     it('Should add faculty', async ()=>{
 
+        let db = loadDatabaseConnection();
         const mReq = { body: { firstName: "Lin", lastName: "Du", phoneNum: 123  }};
         const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
         const mNext = sinon.stub();
@@ -77,6 +85,8 @@ describe('test queries', ()=>{
     });
 
     it("should call error handler middleware when adding faculty", async () => {
+
+        let db = loadDatabaseConnection();
         const mReq = { body: { firstName: "Lin", lastName: "Du", phoneNum: 123  }};
         const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
         const mNext = sinon.stub();
