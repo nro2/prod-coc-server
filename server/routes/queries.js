@@ -1,4 +1,4 @@
-const pgp = require('pg-promise')();
+const pgp = require('pg-promise')({noLocking: true});
 
 const config = {
     host: "localhost",
@@ -12,7 +12,7 @@ const db = pgp(config);
 
 function getFaculty(req, res, next) {
     
-    db.one('SELECT * FROM users WHERE first_name= $1', [req.query.firstName])
+    return db.one('SELECT * FROM users WHERE first_name= $1', [req.query.firstName])
         .then((data)=> {
             let user = {
                 firstName: data.first_name,
@@ -29,7 +29,7 @@ function getFaculty(req, res, next) {
 
 function getCommittees(req, res, next){
 
-    db.any('SELECT * FROM all_committees')
+    return db.any('SELECT * FROM all_committees')
         .then((data)=>{
             return res.status(200).send(data)
         })
@@ -41,7 +41,7 @@ function getCommittees(req, res, next){
 
 function addFaculty(req, res, next){
 
-    db.none('INSERT INTO users(first_name, last_name, phone_number) values($1, $2, $3)', [req.body.firstName, req.body.lastName, req.body.phoneNum])
+    return db.none('INSERT INTO users(first_name, last_name, phone_number) values($1, $2, $3)', [req.body.firstName, req.body.lastName, req.body.phoneNum])
         .then(()=>{
             return res.status(200).send('Data insert was a success')
         })
@@ -51,9 +51,7 @@ function addFaculty(req, res, next){
         })
 }
 
-
-module.exports = {
-    getFaculty: getFaculty,
-    getCommittees: getCommittees,
-    addFaculty: addFaculty
-}
+exports.getCommittees = getCommittees;
+exports.addFaculty = addFaculty;
+exports.getFaculty = getFaculty;
+exports.db = db;
