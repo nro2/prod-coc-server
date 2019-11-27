@@ -8,9 +8,17 @@ const config = {
     password: 'pwd123'
 };
 
-const db = pgp(config);
+let db;
+
+function loadDatabaseConnection() {
+    if(!db){
+        db = pgp(config)
+    }
+}
 
 function getFaculty(req, res, next) {
+
+    loadDatabaseConnection();
     
     return db.one('SELECT * FROM users WHERE first_name= $1', [req.query.firstName])
         .then((data)=> {
@@ -18,7 +26,7 @@ function getFaculty(req, res, next) {
                 firstName: data.first_name,
                 lastName: data.last_name,
                 phoneNum: data.phone_number
-            }
+            };
             return res.status(200).send(user)
         })
         .catch((err)=>{
@@ -28,6 +36,8 @@ function getFaculty(req, res, next) {
 }
 
 function getCommittees(req, res, next){
+
+    loadDatabaseConnection();
 
     return db.any('SELECT * FROM all_committees')
         .then((data)=>{
@@ -50,4 +60,4 @@ function addFaculty(req, res, next){
             return next(err)
         })
 }
-module.exports = {getFaculty, addFaculty, getCommittees, db};
+module.exports = {getFaculty, addFaculty, getCommittees, loadDatabaseConnection, db};
