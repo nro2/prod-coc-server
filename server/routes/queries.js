@@ -50,8 +50,4 @@ function addFaculty(req, res, next){
             return next(err)
         })
 }
-
-exports.getCommittees = getCommittees;
-exports.addFaculty = addFaculty;
-exports.getFaculty = getFaculty;
-exports.db = db;
+module.exports = {getFaculty, addFaculty, getCommittees, db};
