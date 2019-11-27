@@ -46,7 +46,7 @@ function addFaculty(req, res, next){
             return res.status(200).send('Data insert was a success')
         })
         .catch((err)=>{
-            console.log(err);
+            console.log(err.message);
             return next(err)
         })
 }
