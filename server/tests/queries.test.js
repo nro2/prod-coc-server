@@ -1,5 +1,5 @@
-const {getFaculty, db} = require('../routes/queries');
-let sinon = require('sinon')
+const {getFaculty, getCommittees, addFaculty, db} = require('../routes/queries');
+let sinon = require('sinon');
 
 
 describe('test queries', ()=>{
@@ -22,7 +22,7 @@ describe('test queries', ()=>{
         sinon.assert.calledWith(oneStub, "SELECT * FROM users WHERE first_name= $1", ["Lin"]);
     });
 
-    it("should call error handler middleware", async () => {
+    it("should call error handler middleware when getting faculty", async () => {
         const mReq = { query: { firstName: "Lin" } };
         const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
         const mNext = sinon.stub();
@@ -33,6 +33,58 @@ describe('test queries', ()=>{
         sinon.assert.calledWith(mNext, mError);
         sinon.assert.calledWith(oneStub, "SELECT * FROM users WHERE first_name= $1", ["Lin"]);
 
-    })
-});
+    });
 
+    it('Should get committees', async ()=>{
+
+        const mReq = sinon.stub();
+        const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
+        const mNext = sinon.stub();
+        const mData = { committees: ['Biology Committee', 'Physics Commitee'] };
+        const anyStub = sinon.stub(db, "any").resolves(mData);
+
+        await getCommittees(mReq, mRes, mNext);
+        sinon.assert.calledWith(mRes.status, 200);
+        sinon.assert.calledWith(mRes.send, { committees: ['Biology Committee', 'Physics Commitee'] });
+        sinon.assert.calledWith(anyStub, 'SELECT * FROM all_committees');
+    });
+
+    it("should call error handler middleware when getting committees", async () => {
+        const mReq = sinon.stub();
+        const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
+        const mNext = sinon.stub();
+        const mError = new Error("connect error");
+        const anyStub = sinon.stub(db, "any").rejects(mError);
+
+        await getCommittees(mReq, mRes, mNext);
+        sinon.assert.calledWith(mNext, mError);
+        sinon.assert.calledWith(anyStub, 'SELECT * FROM all_committees');
+
+    });
+
+    it('Should add faculty', async ()=>{
+
+        const mReq = { body: { firstName: "Lin", lastName: "Du", phoneNum: 123  }};
+        const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
+        const mNext = sinon.stub();
+        const noneStub = sinon.stub(db, "none").resolves('Data insert was a success');
+
+        await addFaculty(mReq, mRes, mNext);
+        sinon.assert.calledWith(mRes.status, 200);
+        sinon.assert.calledWith(mRes.send, 'Data insert was a success');
+        sinon.assert.calledWith(noneStub, 'INSERT INTO users(first_name, last_name, phone_number) values($1, $2, $3)', ["Lin", "Du", 123]);
+    });
+
+    it("should call error handler middleware when adding faculty", async () => {
+        const mReq = { body: { firstName: "Lin", lastName: "Du", phoneNum: 123  }};
+        const mRes = { status: sinon.stub().returnsThis(), send: sinon.stub() };
+        const mNext = sinon.stub();
+        const mError = new Error("connect error");
+        const noneStub = sinon.stub(db, "none").rejects(mError);
+
+        await addFaculty(mReq, mRes, mNext);
+        sinon.assert.calledWith(mNext, mError);
+        sinon.assert.calledWith(noneStub, 'INSERT INTO users(first_name, last_name, phone_number) values($1, $2, $3)', ["Lin", "Du", 123]);
+
+    });
+});
