@@ -16,6 +16,7 @@ describe('test queries', ()=>{
         const mData = { first_name: "Lin", last_name: "Du", phone_number: 123 };
         const oneStub = sinon.stub(db, "one").resolves(mData);
 
+
         await getFaculty(mReq, mRes, mNext);
         sinon.assert.calledWith(mRes.status, 200);
         sinon.assert.calledWith(mRes.send, { firstName: "Lin", lastName: "Du", phoneNum: 123 });
