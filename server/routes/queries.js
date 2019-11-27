@@ -14,11 +14,13 @@ function loadDatabaseConnection() {
     if(!db){
         db = pgp(config)
     }
+
+    return db;
 }
 
 function getFaculty(req, res, next) {
 
-    loadDatabaseConnection();
+    db = loadDatabaseConnection();
     
     return db.one('SELECT * FROM users WHERE first_name= $1', [req.query.firstName])
         .then((data)=> {
