@@ -1,6 +1,5 @@
 const decache = require('decache');
 
-
 describe('Requests to /', () => {
   let app;
 
@@ -12,5 +11,4 @@ describe('Requests to /', () => {
   afterEach(done => {
     app.close(done);
   });
-
 });
