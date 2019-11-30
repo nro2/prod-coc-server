@@ -5,7 +5,7 @@ const config = {
   port: 54320,
   database: 'coc',
   user: 'coc',
-  password: 'pwd123'
+  password: 'pwd123',
 };
 
 let db;

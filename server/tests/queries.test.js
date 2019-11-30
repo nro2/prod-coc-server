@@ -43,14 +43,14 @@ describe('test queries', () => {
     const middlewareReq = { query: { firstName: 'Lin' } };
     const middlewareRes = {
       status: sinon.stub().returnsThis(),
-      send: sinon.stub()
+      send: sinon.stub(),
     };
-    const middlewareNext = sinon.stub()
+    const middlewareNext = sinon.stub();
     const middlewareError = new Error('connect error');
     const oneStub = sinon.stub(db, 'one').rejects(middlewareError);
 
     await getFaculty(middlewareReq, middlewareRes, middlewareNext);
-    sinon.assert.calledWith(middlewareNext,'connect error');
+    sinon.assert.calledWith(middlewareNext, 'connect error');
     sinon.assert.calledWith(oneStub, 'SELECT * FROM users WHERE first_name= $1', [
       'Lin',
     ]);
