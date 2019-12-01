@@ -5,6 +5,8 @@ This repository holds the web application for the Committee on Committees.
 #Running the application
 1) run ```docker-compose up -d``` from the server directory
 2) run ```node index.js``` from the server directory
+2b. If you are having issues running this on windows run 
+without `-d` option
 3) run ```npm start``` from the client directory
 
 To use the application enter a users information in the top 3 input boxes and press the 'Post' button.
