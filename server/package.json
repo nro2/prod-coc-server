@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "format": "prettier --write *.js router/*.js migrations/*.js **/*.json",
+    "format": "prettier --write \"./**/*.js\"",
     "lint": "eslint --quiet . --ext .js",
     "test": "mocha --exit --recursive tests"
   },
@@ -27,8 +27,11 @@
     "eslint": "^6.6.0",
     "husky": "^3.0.9",
     "mocha": "^6.2.2",
+    "node-mocks-http": "^1.8.0",
     "prettier": "^1.19.1",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "sinon": "^7.5.0",
+    "chai": "^4.2.0"
   },
   "husky": {
     "hooks": {
