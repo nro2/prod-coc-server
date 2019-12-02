@@ -18,52 +18,54 @@ function loadDatabaseConnection() {
   return db;
 }
 
-function getFaculty(req, res, next) {
+function getFaculty(firstName) {
   db = loadDatabaseConnection();
 
   return db
-    .one('SELECT * FROM users WHERE first_name= $1', [req.query.firstName])
+    .one('SELECT * FROM users WHERE first_name=$1', [firstName])
     .then(data => {
-      const user = {
+      return {
         firstName: data.first_name,
         lastName: data.last_name,
         phoneNum: data.phone_number,
       };
-      return res.status(200).send(user);
     })
     .catch(err => {
       console.log(err.message);
-      return next(err.message);
     });
 }
 
-function getCommittees(req, res, next) {
+function getCommittees() {
   db = loadDatabaseConnection();
 
   return db
     .any('SELECT * FROM all_committees')
     .then(data => {
-      return res.status(200).send(data);
+      return data;
     })
     .catch(err => {
       console.log(err.message);
-      return next(err.message);
     });
 }
 
-function addFaculty(req, res, next) {
+function addFaculty(firstName, lastName, phoneNumber) {
   db = loadDatabaseConnection();
+
   return db
     .none(
       'INSERT INTO users(first_name, last_name, phone_number) values($1, $2, $3)',
-      [req.body.firstName, req.body.lastName, req.body.phoneNum]
+      [firstName, lastName, phoneNumber]
     )
     .then(() => {
-      return res.status(200).send('Data insert was a success');
+      return true;
     })
     .catch(err => {
       console.log(err.message);
-      return next(err.message);
+      return false;
     });
 }
-module.exports = { getFaculty, addFaculty, getCommittees, loadDatabaseConnection };
+module.exports = {
+  addFaculty,
+  getCommittees,
+  getFaculty,
+};
