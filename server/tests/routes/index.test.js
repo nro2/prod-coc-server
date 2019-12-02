@@ -99,7 +99,7 @@ describe('Request routing', () => {
       });
     });
 
-    it('POST returns 200 when faculty is added to database', () => {
+    it('POST returns 201 when faculty is added to database', () => {
       req.body = {
         firstName: 'test-first-name',
         lastName: 'test-last-name',
@@ -108,7 +108,7 @@ describe('Request routing', () => {
       stubs['../database/queries'].addFaculty.resolves(true);
 
       return routerActions.postRoot(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 200);
+        assert.equal(res.status.firstCall.args[0], 201);
       });
     });
 

@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
       .send({ error: 'Unable to complete database transaction' });
   }
 
-  return res.status(200).send();
+  return res.status(201).send();
 });
 
 router.get('/committees', async (req, res) => {
