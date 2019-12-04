@@ -1,4 +1,4 @@
-# poc-coc-server
+# prod-coc-server
 
 ## Overview
 
@@ -61,7 +61,7 @@ Documentation https://db-migrate.readthedocs.io/en/latest/
 9. Change docker compose ownership `sudo chown $USER:$USER /usr/local/bin/docker-compose`
 
 ## How to run docker
-1. Navigate to ~/poc-coc/server
+1. Navigate to project root
 2. Start up the docker image `docker-compose up -d` 2b. If you are having issues running this on windows run 
 without `-d` option
 3. To access database directly `psql -h localhost -p 54320 -U coc -d coc`
