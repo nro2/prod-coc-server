@@ -51,3 +51,16 @@ create table committee_assignment(
   foreign key (faculty_id) references faculty (faculty_id),
   foreign key (committee_id) references committee (committee_id)
 );
+
+insert into department(name, description) values
+    ('Computer Science Department', 'In charge of all the CS'),
+    ('Social Science Department', 'In charge of social sciences'),
+    ('Math Department', 'In charge of adding numbers')
+;
+
+insert into faculty(full_name, email, job_title, department_id) values
+    ('Josh Wolsborn', 'wolsborn@pdx.edu', 'Professor', 1),
+    ('Steve Stevens', 'stevens@pdx.edu', 'Adjunct', 2),
+    ('Grace Hopper', 'ghopper@gmail.com', 'Badass', 1),
+    ('Issac Newton', 'newtons@gmail.com', 'Professor', 3)
+;
