@@ -31,7 +31,7 @@ create table committee(
 );
 
 create table survey_choice(
-  choice_id not null,
+  choice_id int not null,
   survey_date date not null,
   email varchar(256) not null,
   committee_id int not null,
