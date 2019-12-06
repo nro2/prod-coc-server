@@ -31,11 +31,10 @@ create table committee(
 );
 
 create table survey_choice(
-  choice_id serial not null,
+  choice_id not null,
   survey_date date not null,
   email varchar(256) not null,
   committee_id int not null,
-  choice_priority int,
   primary key (choice_id, email, survey_date, committee_id),
   foreign key (email) references faculty (email),
   foreign key (committee_id) references committee (committee_id)
