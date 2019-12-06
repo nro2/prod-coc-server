@@ -5,108 +5,108 @@ const sinon = require('sinon');
 const underTestFilename = '../../database/queries.js';
 
 const stubs = {
-    'pg-promise': () => pgp,
-    any: sinon.stub(),
-    none: sinon.stub(),
-    one: sinon.stub(),
+  'pg-promise': () => pgp,
+  any: sinon.stub(),
+  none: sinon.stub(),
+  one: sinon.stub(),
 };
 
 const pgp = () => ({
-    any: stubs.any,
-    none: stubs.none,
-    one: stubs.one,
+  any: stubs.any,
+  none: stubs.none,
+  one: stubs.one,
 });
 
 describe('Database queries', () => {
-    let underTest;
+  let underTest;
 
-    beforeEach(() => {
-        underTest = proxyquire(underTestFilename, stubs);
-        sinon.stub(console, 'log');
+  beforeEach(() => {
+    underTest = proxyquire(underTestFilename, stubs);
+    sinon.stub(console, 'log');
+  });
+
+  afterEach(() => {
+    stubs.one.resetHistory();
+    sinon.restore();
+  });
+
+  describe('getFaculty', () => {
+    it('returns data when query is successful', async () => {
+      const firstName = 'test-first-name';
+      const expected = {
+        firstName: 'stub-first-name',
+        lastName: 'stub-last-name',
+        phoneNum: 'stub-phone-number',
+      };
+      stubs.one.resolves({
+        first_name: 'stub-first-name',
+        last_name: 'stub-last-name',
+        phone_number: 'stub-phone-number',
+      });
+
+      const result = await underTest.getFaculty(firstName);
+
+      assert.deepEqual(result, expected);
     });
 
-    afterEach(() => {
-        stubs.one.resetHistory();
-        sinon.restore();
+    it('returns undefined when query is unsuccessful', async () => {
+      const firstName = 'test-first-name';
+      stubs.one.rejects(new Error('test-error'));
+
+      const result = await underTest.getFaculty(firstName);
+
+      assert.equal(result, undefined);
+    });
+  });
+
+  describe('getCommittees', () => {
+    it('returns data when query is successful', async () => {
+      const expected = {
+        name: 'stub-name',
+        committee_id: 'stub-committee_id',
+      };
+      stubs.any.resolves({
+        name: 'stub-name',
+        committee_id: 'stub-committee_id',
+      });
+
+      const result = await underTest.getCommittees();
+
+      assert.deepEqual(result, expected);
     });
 
-    describe('getFaculty', () => {
-        it('returns data when query is successful', async() => {
-            const firstName = 'test-first-name';
-            const expected = {
-                firstName: 'stub-first-name',
-                lastName: 'stub-last-name',
-                phoneNum: 'stub-phone-number',
-            };
-            stubs.one.resolves({
-                first_name: 'stub-first-name',
-                last_name: 'stub-last-name',
-                phone_number: 'stub-phone-number',
-            });
+    it('returns undefined when query is unsuccessful', async () => {
+      stubs.any.rejects(new Error('test-error'));
 
-            const result = await underTest.getFaculty(firstName);
+      const result = await underTest.getCommittees();
 
-            assert.deepEqual(result, expected);
-        });
+      assert.equal(result, undefined);
+    });
+  });
 
-        it('returns undefined when query is unsuccessful', async() => {
-            const firstName = 'test-first-name';
-            stubs.one.rejects(new Error('test-error'));
+  describe('addFaculty', () => {
+    it('returns true when query is successful', async () => {
+      stubs.none.resolves(true);
 
-            const result = await underTest.getFaculty(firstName);
+      const result = await underTest.addFaculty(
+        'test-first-name',
+        'test-last-name',
+        'test-phone-number'
+      );
 
-            assert.equal(result, undefined);
-        });
+      assert.equal(result, true);
     });
 
-    describe('getCommittees', () => {
-        it('returns data when query is successful', async() => {
-            const expected = {
-                name: 'stub-name',
-                committee_id: 'stub-committee_id'
-            };
-            stubs.any.resolves({
-                name: 'stub-name',
-                committee_id: 'stub-committee_id'
-            });
+    it('returns false when query is unsuccessful', async () => {
+      stubs.none.rejects(new Error('test-error'));
 
-            const result = await underTest.getCommittees();
+      const result = await underTest.addFaculty(
+        'test-first-name',
+        'test-last-name',
+        'test-phone-number'
+      );
 
-            assert.deepEqual(result, expected);
-        });
-
-        it('returns undefined when query is unsuccessful', async() => {
-            stubs.any.rejects(new Error('test-error'));
-
-            const result = await underTest.getCommittees();
-
-            assert.equal(result, undefined);
-        });
+      assert.equal(result, false);
     });
-
-    describe('addFaculty', () => {
-        it('returns true when query is successful', async() => {
-            stubs.none.resolves(true);
-
-            const result = await underTest.addFaculty(
-                'test-first-name',
-                'test-last-name',
-                'test-phone-number'
-            );
-
-            assert.equal(result, true);
-        });
-
-        it('returns false when query is unsuccessful', async() => {
-            stubs.none.rejects(new Error('test-error'));
-
-            const result = await underTest.addFaculty(
-                'test-first-name',
-                'test-last-name',
-                'test-phone-number'
-            );
-
-            assert.equal(result, false);
-        });
-    });
+  });
 });
