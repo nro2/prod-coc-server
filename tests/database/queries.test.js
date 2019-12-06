@@ -72,7 +72,7 @@ describe('Database queries', () => {
 
             const result = await underTest.getCommittees();
 
-            assert.deepequal(result, expected);
+            assert.deepEqual(result, expected);
         });
 
         it('returns undefined when query is unsuccessful', async() => {
