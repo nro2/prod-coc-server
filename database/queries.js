@@ -48,24 +48,27 @@ function getCommittees() {
     });
 }
 
-function addFaculty(firstName, lastName, phoneNumber) {
+/**
+ * Adds a faculty member to the database.
+ *
+ * @param fullName            Name of the faculty member
+ * @param email               Email of the faculty member
+ * @param jobTitle            Job title of the faculty member
+ * @param senateDivision      Senate division the faculty member belongs to
+ * @returns {Promise}         Query response on success, error on failure
+ */
+function addFaculty(fullName, email, jobTitle, senateDivision) {
   db = loadDatabaseConnection();
 
-  return db
-    .none(
-      'INSERT INTO users(first_name, last_name, phone_number) values($1, $2, $3)',
-      [firstName, lastName, phoneNumber]
-    )
-    .then(() => {
-      return true;
-    })
-    .catch(err => {
-      console.log(err.message);
-      return false;
-    });
+  return db.none(
+    'INSERT INTO faculty(full_name, email, job_title, senate_division) values($1, $2, $3, $4)',
+    [fullName, email, jobTitle, senateDivision]
+  );
 }
+
 module.exports = {
   addFaculty,
   getCommittees,
   getFaculty,
+  UNIQUENESS_VIOLATION: '23505',
 };
