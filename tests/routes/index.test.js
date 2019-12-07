@@ -172,7 +172,16 @@ describe('Request routing', () => {
   });
   describe('Routing for /committees', () => {
     it('GET returns 200 when committees are retrieved from database', () => {
-      const committees = ['test-first-committee', 'test-second-committee'];
+      const committees = [
+        {
+          name: 'test-name1',
+          committee_id: 'test-committee_id1',
+        },
+        {
+          name: 'test-name2',
+          committee_id: 'test-committee_id2',
+        },
+      ];
       stubs['../database/queries'].getCommittees.resolves(committees);
 
       return routerActions.getCommittees(req, res).then(() => {
