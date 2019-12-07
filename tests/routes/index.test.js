@@ -19,6 +19,7 @@ const stubs = {
     addFaculty: sinon.stub(),
     getCommittees: sinon.stub(),
     getFaculty: sinon.stub(),
+    UNIQUENESS_VIOLATION: '23505',
     getDepartments: sinon.stub(),
   },
 };
