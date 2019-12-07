@@ -5,7 +5,6 @@ const sinon = require('sinon');
 const underTestFilename = '../../database/queries.js';
 
 const stubs = {
-  'pg-promise': () => pgp,
   any: sinon.stub(),
   none: sinon.stub(),
   one: sinon.stub(),
@@ -21,7 +20,7 @@ describe('Database queries', () => {
   let underTest;
 
   beforeEach(() => {
-    underTest = proxyquire(underTestFilename, stubs);
+    underTest = proxyquire(underTestFilename, { 'pg-promise': () => pgp });
     sinon.stub(console, 'log');
   });
 
@@ -51,7 +50,7 @@ describe('Database queries', () => {
 
     it('returns undefined when query is unsuccessful', async () => {
       const firstName = 'test-first-name';
-      stubs.one.rejects(new Error('test-error'));
+      await stubs.one.rejects(new Error('test-error'));
 
       const result = await underTest.getFaculty(firstName);
 
@@ -88,7 +87,7 @@ describe('Database queries', () => {
     });
 
     it('returns undefined when query is unsuccessful', async () => {
-      stubs.any.rejects(new Error('test-error'));
+      await stubs.any.rejects(new Error('test-error'));
 
       const result = await underTest.getCommittees();
 
@@ -97,28 +96,18 @@ describe('Database queries', () => {
   });
 
   describe('addFaculty', () => {
-    it('returns true when query is successful', async () => {
-      stubs.none.resolves(true);
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
 
       const result = await underTest.addFaculty(
-        'test-first-name',
-        'test-last-name',
-        'test-phone-number'
+        'test-full-name',
+        'test-email',
+        'test-job-title',
+        'test-senate-division',
+        1
       );
 
-      assert.equal(result, true);
-    });
-
-    it('returns false when query is unsuccessful', async () => {
-      stubs.none.rejects(new Error('test-error'));
-
-      const result = await underTest.addFaculty(
-        'test-first-name',
-        'test-last-name',
-        'test-phone-number'
-      );
-
-      assert.equal(result, false);
+      assert.equal(result, undefined);
     });
   });
 });
