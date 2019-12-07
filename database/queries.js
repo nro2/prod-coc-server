@@ -39,7 +39,7 @@ function getCommittees() {
   db = loadDatabaseConnection();
 
   return db
-    .any('SELECT * FROM all_committees')
+    .any('SELECT name, committee_id FROM committee')
     .then(data => {
       return data;
     })

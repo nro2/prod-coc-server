@@ -61,11 +61,30 @@ describe('Database queries', () => {
 
   describe('getCommittees', () => {
     it('returns data when query is successful', async () => {
-      stubs.any.resolves('committee-name');
+      const expected = [
+        {
+          name: 'stub-name1',
+          committee_id: 'stub-committee_id1',
+        },
+        {
+          name: 'stub-name2',
+          committee_id: 'stub-committee_id2',
+        },
+      ];
+      stubs.any.resolves([
+        {
+          name: 'stub-name1',
+          committee_id: 'stub-committee_id1',
+        },
+        {
+          name: 'stub-name2',
+          committee_id: 'stub-committee_id2',
+        },
+      ]);
 
       const result = await underTest.getCommittees();
 
-      assert.equal(result, 'committee-name');
+      assert.deepEqual(result, expected);
     });
 
     it('returns undefined when query is unsuccessful', async () => {
