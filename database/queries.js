@@ -35,6 +35,19 @@ function getFaculty(firstName) {
     });
 }
 
+function getDepartments() {
+  db = loadDatabaseConnection();
+
+  return db
+    .any('SELECT * FROM all_departments')
+    .then(data => {
+      return data;
+    })
+    .catch(err => {
+      console.log(err.message);
+    });
+}
+
 function getCommittees() {
   db = loadDatabaseConnection();
 

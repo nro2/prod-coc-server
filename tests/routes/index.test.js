@@ -19,6 +19,7 @@ const stubs = {
     addFaculty: sinon.stub(),
     getCommittees: sinon.stub(),
     getFaculty: sinon.stub(),
+    getDepartments: sinon.stub(),
   },
 };
 
@@ -43,6 +44,7 @@ describe('Request routing', () => {
     underTest = proxyquire(underTestFilename, stubs);
 
     routerActions.getCommittees = routerGet.secondCall.args[1];
+    routerActions.getDepartments = routerGet.secondCall.args[1];
     routerActions.getRoot = routerGet.firstCall.args[1];
     routerActions.postRoot = routerPost.firstCall.args[1];
   });
@@ -59,6 +61,7 @@ describe('Request routing', () => {
     stubs['../database/queries'].addFaculty.resetHistory();
     stubs['../database/queries'].getCommittees.resetHistory();
     stubs['../database/queries'].getFaculty.resetHistory();
+    stubs['../database/queries'].getDepartments.resetHistory();
   });
 
   describe('Routing for /', () => {
@@ -189,6 +192,28 @@ describe('Request routing', () => {
         assert.deepEqual(res.send.firstCall.args[0], {
           error: 'Unable to retrieve committees',
         });
+      });
+    });
+  });
+});
+describe('Routing for /departments', () => {
+  it('GET returns 200 when departments are retrieved from database', () => {
+    const departments = ['test-first-department', 'test-second-department'];
+    stubs['../database/queries'].getDepartments.resolves(departments);
+
+    return routerActions.getDepartments(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 200);
+      assert.equal(res.send.firstCall.args[0], departments);
+    });
+  });
+
+  it('GET returns 404 when unable to get departments from database', () => {
+    stubs['../database/queries'].getDepartments.resolves(undefined);
+
+    return routerActions.getDepartments(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 404);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        error: 'Unable to retrieve departments',
       });
     });
   });

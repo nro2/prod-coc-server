@@ -49,4 +49,12 @@ router.get('/committees', async (req, res) => {
   return res.status(200).send(committees);
 });
 
+router.get('/departments', async (req, res) => {
+  const departments = await db.getDepartments();
+  if (!departments) {
+    return res.status(404).send({ error: 'Unable to retrieve departments' });
+  }
+  return res.status(200).send(departments);
+});
+
 module.exports = router;
