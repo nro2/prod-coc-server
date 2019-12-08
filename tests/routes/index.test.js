@@ -20,10 +20,7 @@ const stubs = {
     getCommittees: sinon.stub(),
     getFaculty: sinon.stub(),
     UNIQUENESS_VIOLATION: '23505',
-<<<<<<< HEAD
     getDepartments: sinon.stub(),
-=======
->>>>>>> 7995a1f3978083519d3fb18beaf42ee2fdb710ab
   },
 };
 
@@ -253,7 +250,16 @@ describe('Request routing', () => {
 });
 describe('Routing for /departments', () => {
   it('GET returns 200 when departments are retrieved from database', () => {
-    const departments = ['test-first-department', 'test-second-department'];
+    const departments = [
+      {
+        name: 'test-department1',
+        department_id: 'test-department_id1',
+      },
+      {
+        name: 'test-department2',
+        department_id: 'test-department_id2',
+      },
+    ];
     stubs['../database/queries'].getDepartments.resolves(departments);
 
     return routerActions.getDepartments(req, res).then(() => {
