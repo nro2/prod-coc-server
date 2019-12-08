@@ -271,7 +271,7 @@ describe('Request routing', () => {
   });
 
   describe('Routing for departments', () => {
-    it('GET Returns 200 when committees are retrieved from database', () => {
+    it('GET Returns 200 when departments are retrieved from database', () => {
       const expected = {
         department_id: 1,
         name: 'test-department',
