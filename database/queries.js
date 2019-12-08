@@ -54,15 +54,16 @@ function getCommittees() {
  * @param fullName            Name of the faculty member
  * @param email               Email of the faculty member
  * @param jobTitle            Job title of the faculty member
+ * @param phoneNum            Phone number of faculty member
  * @param senateDivision      Senate division the faculty member belongs to
  * @returns {Promise}         Query response on success, error on failure
  */
-function addFaculty(fullName, email, jobTitle, senateDivision) {
+function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   db = loadDatabaseConnection();
 
   return db.none(
-    'INSERT INTO faculty(full_name, email, job_title, senate_division) values($1, $2, $3, $4)',
-    [fullName, email, jobTitle, senateDivision]
+    'INSERT INTO faculty(full_name, email, job_title, phone_num, senate_division_short_name) values($1, $2, $3, $4, $5)',
+    [fullName, email, jobTitle, phoneNum, senateDivision]
   );
 }
 

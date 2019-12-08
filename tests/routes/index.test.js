@@ -110,6 +110,7 @@ describe('Request routing', () => {
         fullName: 'test-full-name',
         email: 'test-email',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
       stubs['../database/queries'].addFaculty.resolves(true);
@@ -123,6 +124,7 @@ describe('Request routing', () => {
       req.body = {
         email: 'test-email',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
 
@@ -138,6 +140,7 @@ describe('Request routing', () => {
       req.body = {
         fullName: 'test-full-name',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
 
@@ -153,6 +156,7 @@ describe('Request routing', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-email',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
 
@@ -168,6 +172,7 @@ describe('Request routing', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-email',
+        phoneNum: 'test-phone-num',
         jobTitle: 'test-job-title',
       };
 
@@ -184,6 +189,7 @@ describe('Request routing', () => {
         fullName: 'test-full-name',
         email: 'test-existing-email',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
       stubs['../database/queries'].addFaculty.rejects({ code: '23505' });
@@ -198,6 +204,7 @@ describe('Request routing', () => {
         fullName: 'test-full-name',
         email: 'test-email',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
       stubs['../database/queries'].addFaculty.rejects(
