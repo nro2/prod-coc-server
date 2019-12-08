@@ -20,7 +20,10 @@ const stubs = {
     getCommittees: sinon.stub(),
     getFaculty: sinon.stub(),
     UNIQUENESS_VIOLATION: '23505',
+<<<<<<< HEAD
     getDepartments: sinon.stub(),
+=======
+>>>>>>> 7995a1f3978083519d3fb18beaf42ee2fdb710ab
   },
 };
 
@@ -48,6 +51,9 @@ describe('Request routing', () => {
     routerActions.getDepartments = routerGet.secondCall.args[1];
     routerActions.getRoot = routerGet.firstCall.args[1];
     routerActions.postRoot = routerPost.firstCall.args[1];
+
+    sinon.stub(console, 'info');
+    sinon.stub(console, 'error');
   });
 
   beforeEach(() => {
@@ -102,12 +108,15 @@ describe('Request routing', () => {
         assert.equal(res.status.firstCall.args[0], 404);
       });
     });
+  });
 
+  describe('Routing for /faculty', () => {
     it('POST returns 201 when faculty is added to database', () => {
       req.body = {
-        firstName: 'test-first-name',
-        lastName: 'test-last-name',
-        phoneNum: 'test-phone-num',
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        senateDivision: 'test-senate-division',
       };
       stubs['../database/queries'].addFaculty.resolves(true);
 
@@ -116,10 +125,11 @@ describe('Request routing', () => {
       });
     });
 
-    it('POST returns 400 when missing firstName in request body', () => {
+    it('POST returns 400 when missing fullName in request body', () => {
       req.body = {
-        lastName: 'test-last-name',
-        phoneNum: 'test-phone-num',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        senateDivision: 'test-senate-division',
       };
 
       return routerActions.postRoot(req, res).then(() => {
@@ -130,10 +140,11 @@ describe('Request routing', () => {
       });
     });
 
-    it('POST returns 400 when missing lastName in request body', () => {
+    it('POST returns 400 when missing email in request body', () => {
       req.body = {
-        firstName: 'test-first-name',
-        phoneNum: 'test-phone-num',
+        fullName: 'test-full-name',
+        jobTitle: 'test-job-title',
+        senateDivision: 'test-senate-division',
       };
 
       return routerActions.postRoot(req, res).then(() => {
@@ -144,10 +155,11 @@ describe('Request routing', () => {
       });
     });
 
-    it('POST returns 400 when missing phoneNum in request body', () => {
+    it('POST returns 400 when missing jobTitle in request body', () => {
       req.body = {
-        firstName: 'test-first-name',
-        lastName: 'test-last-name',
+        fullName: 'test-full-name',
+        email: 'test-email',
+        senateDivision: 'test-senate-division',
       };
 
       return routerActions.postRoot(req, res).then(() => {
@@ -155,16 +167,48 @@ describe('Request routing', () => {
         assert.deepEqual(res.send.firstCall.args[0], {
           message: '400 Bad Request',
         });
+      });
+    });
+
+    it('POST returns 400 when missing senateDivision in request body', () => {
+      req.body = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+      };
+
+      return routerActions.postRoot(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 400);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          message: '400 Bad Request',
+        });
+      });
+    });
+
+    it('POST returns 409 when primary key already exists in the database', () => {
+      req.body = {
+        fullName: 'test-full-name',
+        email: 'test-existing-email',
+        jobTitle: 'test-job-title',
+        senateDivision: 'test-senate-division',
+      };
+      stubs['../database/queries'].addFaculty.rejects({ code: '23505' });
+
+      return routerActions.postRoot(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 409);
       });
     });
 
     it('POST returns 500 when unable to add faculty to database', () => {
       req.body = {
-        firstName: 'test-first-name',
-        lastName: 'test-last-name',
-        phoneNum: 'test-phone-num',
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        senateDivision: 'test-senate-division',
       };
-      stubs['../database/queries'].addFaculty.resolves(false);
+      stubs['../database/queries'].addFaculty.rejects(
+        new Error('test-database-error')
+      );
 
       return routerActions.postRoot(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
@@ -174,9 +218,19 @@ describe('Request routing', () => {
       });
     });
   });
+
   describe('Routing for /committees', () => {
     it('GET returns 200 when committees are retrieved from database', () => {
-      const committees = ['test-first-committee', 'test-second-committee'];
+      const committees = [
+        {
+          name: 'test-name1',
+          committee_id: 'test-committee_id1',
+        },
+        {
+          name: 'test-name2',
+          committee_id: 'test-committee_id2',
+        },
+      ];
       stubs['../database/queries'].getCommittees.resolves(committees);
 
       return routerActions.getCommittees(req, res).then(() => {
