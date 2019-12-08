@@ -39,7 +39,7 @@ function getDepartments() {
   db = loadDatabaseConnection();
 
   return db
-    .any('SELECT * FROM department')
+    .any('SELECT department_id, name, description FROM department')
     .then(data => {
       return data;
     })
@@ -84,8 +84,5 @@ module.exports = {
   getCommittees,
   getFaculty,
   UNIQUENESS_VIOLATION: '23505',
-<<<<<<< HEAD
   getDepartments,
-=======
->>>>>>> 7995a1f3978083519d3fb18beaf42ee2fdb710ab
 };
