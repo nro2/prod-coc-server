@@ -19,6 +19,7 @@ const stubs = {
     addFaculty: sinon.stub(),
     getCommittees: sinon.stub(),
     getFaculty: sinon.stub(),
+    getDepartment: sinon.stub(),
     UNIQUENESS_VIOLATION: '23505',
   },
 };
@@ -46,6 +47,7 @@ describe('Request routing', () => {
     routerActions.getCommittees = routerGet.secondCall.args[1];
     routerActions.getRoot = routerGet.firstCall.args[1];
     routerActions.postRoot = routerPost.firstCall.args[1];
+    routerActions.getDepartment = routerGet.thirdCall.args[1];
 
     sinon.stub(console, 'info');
     sinon.stub(console, 'error');
@@ -63,6 +65,7 @@ describe('Request routing', () => {
     stubs['../database/queries'].addFaculty.resetHistory();
     stubs['../database/queries'].getCommittees.resetHistory();
     stubs['../database/queries'].getFaculty.resetHistory();
+    stubs['../database/queries'].getDepartment.resetHistory();
   });
 
   describe('Routing for /', () => {
@@ -262,6 +265,58 @@ describe('Request routing', () => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
           error: 'Unable to retrieve committees',
+        });
+      });
+    });
+  });
+
+  describe('Routing for departments', () => {
+    it('GET Returns 200 when committees are retrieved from database', () => {
+      const expected = {
+        department_id: 1,
+        name: 'test-department',
+      };
+      stubs['../database/queries'].getDepartment.resolves(expected);
+
+      req.params = {
+        id: 1,
+      };
+
+      return routerActions.getDepartment(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 200);
+        assert.deepEqual(res.send.firstCall.args[0], expected);
+      });
+    });
+
+    it('GET Returns 400 when id is missing', () => {
+      const expected = {
+        department_id: 1,
+        name: 'test-department',
+      };
+
+      req.params = {};
+      stubs['../database/queries'].getDepartment.resolves(expected);
+      return routerActions.getDepartment(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 400);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          message: '400 Bad Request',
+        });
+      });
+    });
+
+    it('GET Returns 500 when department cant be retrieved', () => {
+      stubs['../database/queries'].getDepartment.rejects(
+        new Error('test-database-error')
+      );
+
+      req.params = {
+        id: 1,
+      };
+
+      return routerActions.getDepartment(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 500);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          error: 'Unable to complete database transaction',
         });
       });
     });

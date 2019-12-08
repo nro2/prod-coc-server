@@ -74,7 +74,7 @@ router.get('/departments/:id', async (req, res) => {
     .catch(err => {
       console.error(`Error retrieving department: ${err}`);
       return res
-        .status(404)
+        .status(500)
         .send({ error: 'Unable to complete database transaction' });
     });
 });
