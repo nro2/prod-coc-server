@@ -43,7 +43,6 @@ describe('Request routing', () => {
 
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
-
     routerActions.getCommittees = routerGet.secondCall.args[1];
     routerActions.getDepartments = routerGet.thirdCall.args[1];
     routerActions.getRoot = routerGet.firstCall.args[1];
