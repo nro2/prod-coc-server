@@ -16,6 +16,19 @@ router.get('/', async (req, res) => {
   return res.status(200).send(faculty);
 });
 
+router.get('/departments/:id', async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+  const department = await db.getDepartment(req.params.id);
+
+  if (!department) {
+    return res.status(404).send();
+  }
+
+  return res.status(200).send(department);
+});
+
 router.post('/faculty', async (req, res) => {
   if (
     !req.body ||
