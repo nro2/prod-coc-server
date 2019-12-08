@@ -111,4 +111,29 @@ describe('Database queries', () => {
       assert.equal(result, undefined);
     });
   });
+
+  describe('getDepartment', () => {
+    it('returns nothing when when query has no parameters', async () => {
+      stubs.one.resolves();
+      const result = await underTest.getDepartment(1);
+      assert.equal(result, undefined);
+    });
+
+    it('returns department info when queried with a parmater', async () => {
+      stubs.one.resolves({
+        department_id: 1,
+        name: 'Computer Science Department',
+        description: 'Computer sci stuff',
+      });
+
+      const result = await underTest.getDepartment(1);
+
+      const expected = {
+        department_id: 1,
+        name: 'Computer Science Department',
+        description: 'Computer sci stuff',
+      };
+      assert.deepEqual(result, expected);
+    });
+  });
 });
