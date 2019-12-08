@@ -5,13 +5,21 @@ create table department(
   primary key (department_id)
 );
 
+create table senate_division(
+  senate_division_short_name varchar not null,
+  name varchar not null,
+  primary key (senate_division_short_name)
+);
+
 create table faculty(
   faculty_id serial not null,
   full_name varchar not null,
   email varchar(256) not null,
+  phone_num varchar,
   job_title varchar(256) default null,
-  senate_division varchar(256) not null,
-  primary key(email)
+  senate_division_short_name varchar(256) not null,
+  primary key(email),
+  foreign key(senate_division_short_name) references senate_division (senate_division_short_name)
 );
 
 create table survey_data(
@@ -27,6 +35,7 @@ create table committee(
   committee_id serial not null,
   name varchar not null,
   description varchar,
+  total_slots int,
   primary key(committee_id)
 );
 
@@ -58,6 +67,15 @@ create table department_associations(
   foreign key (department_id) references department (department_id)
 );
 
+create table committee_slots(
+    committee_id int not null,
+    senate_division_short_name varchar not null,
+    slot_requirements int,
+    primary key(committee_id, senate_division_short_name),
+    foreign key (committee_id) references committee (committee_id),
+    foreign key (senate_division_short_name) references senate_division (senate_division_short_name)
+);
+
 
 insert into department(name, description) values
     ('Computer Science Department', 'In charge of all the CS'),
@@ -67,14 +85,20 @@ insert into department(name, description) values
     ('Music Department', 'Makes sounds and stuff')
 ;
 
-insert into faculty(full_name, email, job_title, senate_division) values
-    ('Josh Wolsborn', 'wolsborn@pdx.edu', 'Professor', 'AO'),
-    ('Steve Stevens', 'stevens@pdx.edu', 'Adjunct', 'AO'),
-    ('Grace Hopper', 'ghopper@gmail.com', 'Badass', 'BP'),
-    ('Issac Newton', 'newtons@gmail.com', 'Professor', 'CQ'),
-    ('Name Namerson', 'name@pdx.edu', 'AJob', 'BP'),
-    ('Boaty McBoatface', 'boat@gmail.com', 'ABoat', 'AO'),
-    ('Betty Brandon', 'betty@oregon.gov', 'Professor', 'BP')
+insert into senate_division(senate_division_short_name, name) values
+    ('AO', 'All Other Faculty'),
+    ('BP', 'Blipum Polis'),
+    ('CQ', 'Cuantus Qualum')
+;
+
+insert into faculty(full_name, email, job_title, senate_division_short_name, phone_num) values
+    ('Josh Wolsborn', 'wolsborn@pdx.edu', 'Professor', 'AO', '111-111-1111'),
+    ('Steve Stevens', 'stevens@pdx.edu', 'Adjunct', 'AO', '111-111-1111'),
+    ('Grace Hopper', 'ghopper@gmail.com', 'Badass', 'BP', '111-111-1111'),
+    ('Issac Newton', 'newtons@gmail.com', 'Professor', 'CQ', '111-111-1111'),
+    ('Name Namerson', 'name@pdx.edu', 'AJob', 'BP', '111-111-1111'),
+    ('Boaty McBoatface', 'boat@gmail.com', 'ABoat', 'AO', '111-111-1111'),
+    ('Betty Brandon', 'betty@oregon.gov', 'Professor', 'BP', '111-111-1111')
 
 ;
 
@@ -101,17 +125,17 @@ insert into survey_data(survey_date, email, is_interested) values
     ('2019-01-01', 'betty@oregon.gov', false)
 ;
 
-insert into committee(committee_id, name, description) values
-    (1, 'Committee on Space Exploration', 'About exploring space'),
-    (2, 'Committee on Committees', 'About committees'),
-    (3, 'Committee on athletics', 'Sports stuff'),
-    (4, 'Committee for advanced learning', 'Making folks smart'),
-    (5, 'Committee on safety', 'Making people safe'),
-    (6, 'Craft brewing committee', 'We make beer'),
-    (7, 'Linux Committee', 'Open source stuff'),
-    (8, 'Gaming Committee', 'We play games'),
-    (9, 'Comp Sci Committee', 'We make apps like this one'),
-    (10, 'Student Committee', 'We care about you')
+insert into committee(committee_id, name, description, total_slots) values
+    (1, 'Committee on Space Exploration', 'About exploring space', 10),
+    (2, 'Committee on Committees', 'About committees', 11),
+    (3, 'Committee on athletics', 'Sports stuff', 12),
+    (4, 'Committee for advanced learning', 'Making folks smart', 10),
+    (5, 'Committee on safety', 'Making people safe', 12),
+    (6, 'Craft brewing committee', 'We make beer', 10),
+    (7, 'Linux Committee', 'Open source stuff', 12),
+    (8, 'Gaming Committee', 'We play games', 10),
+    (9, 'Comp Sci Committee', 'We make apps like this one', 12),
+    (10, 'Student Committee', 'We care about you', 10)
 ;
 
 insert into survey_choice(survey_date, email, choice_id, committee_id) values
@@ -158,4 +182,17 @@ insert into committee_assignment(email, committee_id, start_date, end_date) valu
     ('betty@oregon.gov', 5, '2019-1-1', '2020-1-1'),
     ('betty@oregon.gov', 6, '2019-1-1', '2020-1-1'),
     ('betty@oregon.gov', 7, '2019-1-1', '2020-1-1')
+;
+
+insert into committee_slots(committee_id, senate_division_short_name, slot_requirements) values
+    (1, 'BP', 3),
+    (2, 'CQ', 4),
+    (3, 'AO', 5),
+    (4, 'BP', 1),
+    (5, 'CQ', 1),
+    (6, 'AO', 2),
+    (7, 'BP', 3),
+    (8, 'CQ', 4),
+    (9, 'AO', 4),
+    (10, 'BP', 3)
 ;
