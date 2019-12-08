@@ -103,6 +103,7 @@ describe('Database queries', () => {
         'test-full-name',
         'test-email',
         'test-job-title',
+        'test-phone-num',
         'test-senate-division',
         1
       );

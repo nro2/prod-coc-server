@@ -110,6 +110,7 @@ describe('Request routing', () => {
         fullName: 'test-full-name',
         email: 'test-email',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
       stubs['../database/queries'].addFaculty.resolves(true);
@@ -118,11 +119,27 @@ describe('Request routing', () => {
         assert.equal(res.status.firstCall.args[0], 201);
       });
     });
+    it('POST returns 400 when missing phoneNum in request body', () => {
+      req.body = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        senateDivision: 'test-senate-division',
+      };
+
+      return routerActions.postRoot(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 400);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          message: '400 Bad Request',
+        });
+      });
+    });
 
     it('POST returns 400 when missing fullName in request body', () => {
       req.body = {
         email: 'test-email',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
 
@@ -138,6 +155,7 @@ describe('Request routing', () => {
       req.body = {
         fullName: 'test-full-name',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
 
@@ -153,6 +171,7 @@ describe('Request routing', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-email',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
 
@@ -168,6 +187,7 @@ describe('Request routing', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-email',
+        phoneNum: 'test-phone-num',
         jobTitle: 'test-job-title',
       };
 
@@ -184,6 +204,7 @@ describe('Request routing', () => {
         fullName: 'test-full-name',
         email: 'test-existing-email',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
       stubs['../database/queries'].addFaculty.rejects({ code: '23505' });
@@ -198,6 +219,7 @@ describe('Request routing', () => {
         fullName: 'test-full-name',
         email: 'test-email',
         jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
       stubs['../database/queries'].addFaculty.rejects(
