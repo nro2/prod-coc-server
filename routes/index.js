@@ -22,15 +22,16 @@ router.post('/faculty', async (req, res) => {
     !req.body.fullName ||
     !req.body.email ||
     !req.body.jobTitle ||
+    !req.body.phoneNum ||
     !req.body.senateDivision
   ) {
     return res.status(400).send({ message: '400 Bad Request' });
   }
 
-  const { fullName, email, jobTitle, senateDivision } = req.body;
+  const { fullName, email, jobTitle, phoneNum, senateDivision } = req.body;
 
   return await db
-    .addFaculty(fullName, email, jobTitle, senateDivision)
+    .addFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
     .then(() => {
       console.info('Added faculty member to database');
       return res.status(201).send();
