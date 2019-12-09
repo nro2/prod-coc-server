@@ -35,6 +35,19 @@ function getFaculty(firstName) {
     });
 }
 
+function getDepartments() {
+  db = loadDatabaseConnection();
+
+  return db
+    .any('SELECT department_id, name, description FROM department')
+    .then(data => {
+      return data;
+    })
+    .catch(err => {
+      console.log(err.message);
+    });
+}
+
 function getCommittees() {
   db = loadDatabaseConnection();
 
@@ -82,4 +95,5 @@ module.exports = {
   getFaculty,
   getDepartment,
   UNIQUENESS_VIOLATION: '23505',
+  getDepartments,
 };

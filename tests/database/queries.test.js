@@ -94,7 +94,23 @@ describe('Database queries', () => {
       assert.equal(result, undefined);
     });
   });
+  describe('getDepartments', () => {
+    it('returns data when query is successful', async () => {
+      stubs.any.resolves('department-name');
 
+      const result = await underTest.getDepartments();
+
+      assert.equal(result, 'department-name');
+    });
+
+    it('returns undefined when query is unsuccessful', async () => {
+      stubs.any.rejects(new Error('test-error'));
+
+      const result = await underTest.getDepartments();
+
+      assert.equal(result, undefined);
+    });
+  });
   describe('addFaculty', () => {
     it('returns nothing when query is successful', async () => {
       stubs.none.resolves();
