@@ -80,10 +80,20 @@ function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   );
 }
 
+function getDepartment(id) {
+  db = loadDatabaseConnection();
+
+  return db.one(
+    'SELECT department_id, name, description FROM department WHERE department_id=$1',
+    [id]
+  );
+}
+
 module.exports = {
   addFaculty,
   getCommittees,
   getFaculty,
+  getDepartment,
   UNIQUENESS_VIOLATION: '23505',
   getDepartments,
 };
