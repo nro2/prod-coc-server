@@ -20,6 +20,7 @@ const stubs = {
     getCommittees: sinon.stub(),
     getFaculty: sinon.stub(),
     UNIQUENESS_VIOLATION: '23505',
+    getDepartments: sinon.stub(),
   },
 };
 
@@ -42,8 +43,8 @@ describe('Request routing', () => {
 
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
-
     routerActions.getCommittees = routerGet.secondCall.args[1];
+    routerActions.getDepartments = routerGet.thirdCall.args[1];
     routerActions.getRoot = routerGet.firstCall.args[1];
     routerActions.postRoot = routerPost.firstCall.args[1];
 
@@ -63,6 +64,7 @@ describe('Request routing', () => {
     stubs['../database/queries'].addFaculty.resetHistory();
     stubs['../database/queries'].getCommittees.resetHistory();
     stubs['../database/queries'].getFaculty.resetHistory();
+    stubs['../database/queries'].getDepartments.resetHistory();
   });
 
   describe('Routing for /', () => {
@@ -262,6 +264,37 @@ describe('Request routing', () => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
           error: 'Unable to retrieve committees',
+        });
+      });
+    });
+  });
+  describe('Routing for /departments', () => {
+    it('GET returns 200 when departments are retrieved from database', () => {
+      const departments = [
+        {
+          name: 'test-department1',
+          department_id: 'test-department_id1',
+        },
+        {
+          name: 'test-department2',
+          department_id: 'test-department_id2',
+        },
+      ];
+      stubs['../database/queries'].getDepartments.resolves(departments);
+
+      return routerActions.getDepartments(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 200);
+        assert.equal(res.send.firstCall.args[0], departments);
+      });
+    });
+
+    it('GET returns 404 when unable to get departments from database', () => {
+      stubs['../database/queries'].getDepartments.resolves(undefined);
+
+      return routerActions.getDepartments(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 404);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          error: 'Unable to retrieve departments',
         });
       });
     });
