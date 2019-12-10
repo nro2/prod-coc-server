@@ -2,7 +2,7 @@ const assert = require('assert');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 
-const underTestFilename = '../../database/queries.js';
+const underTestFilename = '../../src/database/queries.js';
 
 const stubs = {
   any: sinon.stub(),

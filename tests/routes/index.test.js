@@ -2,7 +2,7 @@ const assert = require('assert');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 
-const underTestFilename = '../../routes/index.js';
+const underTestFilename = '../../src/routes/index.js';
 
 const routerGet = sinon.stub();
 const routerPost = sinon.stub();
@@ -15,13 +15,13 @@ const stubs = {
       post: routerPost,
     }),
   },
-  '../database/queries': {
+  '../../src/database/queries': {
     addFaculty: sinon.stub(),
     getCommittees: sinon.stub(),
     getFaculty: sinon.stub(),
     getDepartment: sinon.stub(),
-    UNIQUENESS_VIOLATION: '23505',
     getDepartments: sinon.stub(),
+    UNIQUENESS_VIOLATION: '23505',
   },
 };
 
@@ -63,11 +63,11 @@ describe('Request routing', () => {
     routerGet.resetHistory();
     routerPost.resetHistory();
 
-    stubs['../database/queries'].addFaculty.resetHistory();
-    stubs['../database/queries'].getCommittees.resetHistory();
-    stubs['../database/queries'].getFaculty.resetHistory();
-    stubs['../database/queries'].getDepartment.resetHistory();
-    stubs['../database/queries'].getDepartments.resetHistory();
+    stubs['../../src/database/queries'].addFaculty.resetHistory();
+    stubs['../../src/database/queries'].getCommittees.resetHistory();
+    stubs['../../src/database/queries'].getFaculty.resetHistory();
+    stubs['../../src/database/queries'].getDepartment.resetHistory();
+    stubs['../../src/database/queries'].getDepartments.resetHistory();
   });
 
   describe('Routing for /', () => {
@@ -80,7 +80,7 @@ describe('Request routing', () => {
       req.query = {
         firstName: 'test-first-name',
       };
-      stubs['../database/queries'].getFaculty.resolves(expected);
+      stubs['../../src/database/queries'].getFaculty.resolves(expected);
 
       return routerActions.getRoot(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 200);
@@ -101,7 +101,7 @@ describe('Request routing', () => {
       req.query = {
         firstName: 'test-first-name',
       };
-      stubs['../database/queries'].getFaculty.resolves(undefined);
+      stubs['../../src/database/queries'].getFaculty.resolves(undefined);
 
       return routerActions.getRoot(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
@@ -118,7 +118,7 @@ describe('Request routing', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
-      stubs['../database/queries'].addFaculty.resolves(true);
+      stubs['../../src/database/queries'].addFaculty.resolves(true);
 
       return routerActions.postRoot(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 201);
@@ -212,7 +212,7 @@ describe('Request routing', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
-      stubs['../database/queries'].addFaculty.rejects({ code: '23505' });
+      stubs['../../src/database/queries'].addFaculty.rejects({ code: '23505' });
 
       return routerActions.postRoot(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 409);
@@ -227,7 +227,7 @@ describe('Request routing', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
-      stubs['../database/queries'].addFaculty.rejects(
+      stubs['../../src/database/queries'].addFaculty.rejects(
         new Error('test-database-error')
       );
 
@@ -252,7 +252,7 @@ describe('Request routing', () => {
           committee_id: 'test-committee_id2',
         },
       ];
-      stubs['../database/queries'].getCommittees.resolves(committees);
+      stubs['../../src/database/queries'].getCommittees.resolves(committees);
 
       return routerActions.getCommittees(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 200);
@@ -261,7 +261,7 @@ describe('Request routing', () => {
     });
 
     it('GET returns 500 when unable to get committees from database', () => {
-      stubs['../database/queries'].getCommittees.resolves(undefined);
+      stubs['../../src/database/queries'].getCommittees.resolves(undefined);
 
       return routerActions.getCommittees(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
@@ -284,7 +284,7 @@ describe('Request routing', () => {
           department_id: 'test-department_id2',
         },
       ];
-      stubs['../database/queries'].getDepartments.resolves(departments);
+      stubs['../../src/database/queries'].getDepartments.resolves(departments);
 
       return routerActions.getDepartments(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 200);
@@ -293,7 +293,7 @@ describe('Request routing', () => {
     });
 
     it('GET returns 404 when unable to get departments from database', () => {
-      stubs['../database/queries'].getDepartments.resolves(undefined);
+      stubs['../../src/database/queries'].getDepartments.resolves(undefined);
 
       return routerActions.getDepartments(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
@@ -310,7 +310,7 @@ describe('Request routing', () => {
         department_id: 1,
         name: 'test-department',
       };
-      stubs['../database/queries'].getDepartment.resolves(expected);
+      stubs['../../src/database/queries'].getDepartment.resolves(expected);
 
       req.params = {
         id: 1,
@@ -329,7 +329,7 @@ describe('Request routing', () => {
       };
 
       req.params = {};
-      stubs['../database/queries'].getDepartment.resolves(expected);
+      stubs['../../src/database/queries'].getDepartment.resolves(expected);
       return routerActions.getDepartment(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
@@ -339,7 +339,7 @@ describe('Request routing', () => {
     });
 
     it('GET Returns 500 when department cant be retrieved', () => {
-      stubs['../database/queries'].getDepartment.rejects(
+      stubs['../../src/database/queries'].getDepartment.rejects(
         new Error('test-database-error')
       );
 
