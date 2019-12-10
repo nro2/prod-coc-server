@@ -2,20 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/queries');
 
-router.get('/', async (req, res) => {
-  if (!req.query || !req.query.firstName) {
-    return res.status(400).send({ message: '400 Bad Request' });
-  }
-
-  const faculty = await db.getFaculty(req.query.firstName);
-
-  if (!faculty) {
-    return res.status(404).send();
-  }
-
-  return res.status(200).send(faculty);
-});
-
 router.post('/faculty', async (req, res) => {
   if (
     !req.body ||
