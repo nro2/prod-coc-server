@@ -13,7 +13,7 @@ const stubs = {
       get: routerGet,
     }),
   },
-  '../../database/queries': {
+  '../../database': {
     getDepartment: sinon.stub(),
   },
 };
@@ -51,7 +51,7 @@ describe('Request routing for /department', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database/queries'].getDepartment.resetHistory();
+    stubs['../../database'].getDepartment.resetHistory();
   });
 
   it('GET Returns 200 when departments are retrieved from database', () => {
@@ -59,7 +59,7 @@ describe('Request routing for /department', () => {
       department_id: 1,
       name: 'test-department',
     };
-    stubs['../../database/queries'].getDepartment.resolves(expected);
+    stubs['../../database'].getDepartment.resolves(expected);
 
     req.params = {
       id: 1,
@@ -78,7 +78,7 @@ describe('Request routing for /department', () => {
     };
 
     req.params = {};
-    stubs['../../database/queries'].getDepartment.resolves(expected);
+    stubs['../../database'].getDepartment.resolves(expected);
     return routerActions.getDepartment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
@@ -88,9 +88,7 @@ describe('Request routing for /department', () => {
   });
 
   it('GET Returns 500 when department cant be retrieved', () => {
-    stubs['../../database/queries'].getDepartment.rejects(
-      new Error('test-database-error')
-    );
+    stubs['../../database'].getDepartment.rejects(new Error('test-database-error'));
 
     req.params = {
       id: 1,

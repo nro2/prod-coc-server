@@ -13,7 +13,7 @@ const stubs = {
       get: routerGet,
     }),
   },
-  '../../database/queries': {
+  '../../database': {
     getCommittees: sinon.stub(),
   },
 };
@@ -48,7 +48,7 @@ describe('Request routing for /committee', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database/queries'].getCommittees.resetHistory();
+    stubs['../../database'].getCommittees.resetHistory();
   });
 
   it('GET returns 200 when committees are retrieved from database', () => {
@@ -62,7 +62,7 @@ describe('Request routing for /committee', () => {
         committee_id: 'test-committee_id2',
       },
     ];
-    stubs['../../database/queries'].getCommittees.resolves(committees);
+    stubs['../../database'].getCommittees.resolves(committees);
 
     return routerActions.getCommittees(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -71,7 +71,7 @@ describe('Request routing for /committee', () => {
   });
 
   it('GET returns 500 when unable to get committees from database', () => {
-    stubs['../../database/queries'].getCommittees.resolves(undefined);
+    stubs['../../database'].getCommittees.resolves(undefined);
 
     return routerActions.getCommittees(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);

@@ -13,7 +13,7 @@ const stubs = {
       post: routerPost,
     }),
   },
-  '../../database/queries': {
+  '../../database': {
     addFaculty: sinon.stub(),
     UNIQUENESS_VIOLATION: '23505',
   },
@@ -49,7 +49,7 @@ describe('Request routing for /faculty', () => {
   afterEach(() => {
     routerPost.resetHistory();
 
-    stubs['../../database/queries'].addFaculty.resetHistory();
+    stubs['../../database'].addFaculty.resetHistory();
   });
 
   it('POST returns 201 when faculty is added to database', () => {
@@ -60,7 +60,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database/queries'].addFaculty.resolves(true);
+    stubs['../../database'].addFaculty.resolves(true);
 
     return routerActions.postFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 201);
@@ -154,7 +154,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database/queries'].addFaculty.rejects({ code: '23505' });
+    stubs['../../database'].addFaculty.rejects({ code: '23505' });
 
     return routerActions.postFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);
@@ -169,9 +169,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database/queries'].addFaculty.rejects(
-      new Error('test-database-error')
-    );
+    stubs['../../database'].addFaculty.rejects(new Error('test-database-error'));
 
     return routerActions.postFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);

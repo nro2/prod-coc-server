@@ -10,7 +10,7 @@ const stubs = {
   one: sinon.stub(),
 };
 
-const pgp = () => ({
+const connection = () => ({
   any: stubs.any,
   none: stubs.none,
   one: stubs.one,
@@ -20,7 +20,11 @@ describe('Database queries', () => {
   let underTest;
 
   beforeEach(() => {
-    underTest = proxyquire(underTestFilename, { 'pg-promise': () => pgp });
+    underTest = proxyquire(underTestFilename, {
+      './connection': {
+        loadDatabaseConnection: connection,
+      },
+    });
     sinon.stub(console, 'log');
   });
 

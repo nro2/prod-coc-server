@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { addFaculty, UNIQUENESS_VIOLATION } = require('../../database/queries');
+const { addFaculty, UNIQUENESS_VIOLATION } = require('../../database');
 
 router.post('/', async (req, res) => {
   if (

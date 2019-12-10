@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getDepartments } = require('../../database/queries');
+const { getDepartments } = require('../../database');
 
 router.get('/', async (req, res) => {
   const departments = await getDepartments();

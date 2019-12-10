@@ -1,27 +1,9 @@
-const pgp = require('pg-promise')({ noLocking: true });
-
-const config = {
-  host: 'localhost',
-  port: 54320,
-  database: 'coc',
-  user: 'coc',
-  password: 'pwd123',
-};
-
-let db;
-
-function loadDatabaseConnection() {
-  if (!db) {
-    db = pgp(config);
-  }
-
-  return db;
-}
+const { loadDatabaseConnection } = require('./connection');
 
 function getFaculty(firstName) {
-  db = loadDatabaseConnection();
+  const connection = loadDatabaseConnection();
 
-  return db
+  return connection
     .one('SELECT * FROM users WHERE first_name=$1', [firstName])
     .then(data => {
       return {
@@ -36,9 +18,9 @@ function getFaculty(firstName) {
 }
 
 function getDepartments() {
-  db = loadDatabaseConnection();
+  const connection = loadDatabaseConnection();
 
-  return db
+  return connection
     .any('SELECT department_id, name, description FROM department')
     .then(data => {
       return data;
@@ -49,9 +31,9 @@ function getDepartments() {
 }
 
 function getCommittees() {
-  db = loadDatabaseConnection();
+  const connection = loadDatabaseConnection();
 
-  return db
+  return connection
     .any('SELECT name, committee_id FROM committee')
     .then(data => {
       return data;
@@ -72,16 +54,16 @@ function getCommittees() {
  * @returns {Promise}         Query response on success, error on failure
  */
 function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
-  db = loadDatabaseConnection();
+  const connection = loadDatabaseConnection();
 
-  return db.none(
+  return connection.none(
     'INSERT INTO faculty(full_name, email, job_title, phone_num, senate_division_short_name) values($1, $2, $3, $4, $5)',
     [fullName, email, jobTitle, phoneNum, senateDivision]
   );
 }
 
 function getDepartment(id) {
-  db = loadDatabaseConnection();
+  const db = loadDatabaseConnection();
 
   return db.one(
     'SELECT department_id, name, description FROM department WHERE department_id=$1',
@@ -94,6 +76,5 @@ module.exports = {
   getCommittees,
   getFaculty,
   getDepartment,
-  UNIQUENESS_VIOLATION: '23505',
   getDepartments,
 };
