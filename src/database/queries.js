@@ -110,8 +110,8 @@ function groupDepartmentIdByFaculty(arr) {
 module.exports = {
   addFaculty,
   getCommittees,
-  getFaculty,
   getDepartment,
   getDepartments,
   getDepartmentAssociationsFaculty,
+  getFaculty,
 };

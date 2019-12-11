@@ -1,6 +1,7 @@
 const assert = require('assert');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
+const mock = require('../mock');
 
 const underTestFilename = '../../../src/routes/faculty/index.js';
 
@@ -19,18 +20,6 @@ const stubs = {
   },
 };
 
-const mockResponse = () => {
-  const res = {};
-  res.send = sinon.stub().returns(res);
-  res.status = sinon.stub().returns(res);
-
-  return res;
-};
-
-const mockRequest = (body, query) => {
-  return { body, query };
-};
-
 describe('Request routing for /faculty', () => {
   let underTest; // eslint-disable-line
   let req;
@@ -42,8 +31,8 @@ describe('Request routing for /faculty', () => {
   });
 
   beforeEach(() => {
-    req = mockRequest();
-    res = mockResponse();
+    req = mock.request();
+    res = mock.response();
   });
 
   afterEach(() => {
