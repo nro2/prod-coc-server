@@ -107,6 +107,19 @@ function groupDepartmentIdByFaculty(arr) {
   }, []);
 }
 
+/**
+ * Gets all the senate divisions.
+ *
+ * @returns {Promise}   Query response object on success, error on failure
+ */
+function getSenateDivisions() {
+  const connection = loadDatabaseConnection();
+
+  return connection.any(
+    'SELECT senate_division_short_name, name FROM senate_division'
+  );
+}
+
 module.exports = {
   addFaculty,
   getCommittees,
@@ -114,4 +127,5 @@ module.exports = {
   getDepartments,
   getDepartmentAssociationsFaculty,
   getFaculty,
+  getSenateDivisions,
 };
