@@ -98,6 +98,7 @@ describe('Database queries', () => {
       assert.equal(result, undefined);
     });
   });
+
   describe('getDepartments', () => {
     it('returns data when query is successful', async () => {
       stubs.any.resolves('department-name');
@@ -115,6 +116,55 @@ describe('Database queries', () => {
       assert.equal(result, undefined);
     });
   });
+
+  describe('getDepartmentAssociationsFaculty', () => {
+    it('returns data when query is successful', async () => {
+      stubs.any.resolves([
+        {
+          email: 'test-email',
+          department_id: 1,
+        },
+      ]);
+      const expected = {
+        email: 'test-email',
+        department_ids: [1],
+      };
+
+      const result = await underTest.getDepartmentAssociationsFaculty();
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('returns empty array when query returns no results', async () => {
+      stubs.any.resolves([]);
+
+      const result = await underTest.getDepartmentAssociationsFaculty();
+
+      assert.equal(result.length, 0);
+    });
+
+    it('returns list of ids grouped by email', async () => {
+      stubs.any.resolves([
+        {
+          email: 'test-email',
+          department_id: 1,
+        },
+        {
+          email: 'test-email',
+          department_id: 2,
+        },
+      ]);
+      const expected = {
+        email: 'test-email',
+        department_ids: [1, 2],
+      };
+
+      const result = await underTest.getDepartmentAssociationsFaculty();
+
+      assert.deepEqual(result, expected);
+    });
+  });
+
   describe('addFaculty', () => {
     it('returns nothing when query is successful', async () => {
       stubs.none.resolves();

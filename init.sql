@@ -104,6 +104,7 @@ insert into faculty(full_name, email, job_title, senate_division_short_name, pho
 
 insert into department_associations(email, department_id) values
     ('wolsborn@pdx.edu', 1),
+    ('wolsborn@pdx.edu', 3),
     ('ghopper@gmail.com', 1),
     ('stevens@pdx.edu', 2),
     ('newtons@gmail.com', 2),

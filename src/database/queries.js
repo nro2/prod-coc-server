@@ -63,12 +63,48 @@ function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
 }
 
 function getDepartment(id) {
-  const db = loadDatabaseConnection();
+  const connection = loadDatabaseConnection();
 
-  return db.one(
+  return connection.one(
     'SELECT department_id, name, description FROM department WHERE department_id=$1',
     [id]
   );
+}
+
+/**
+ *
+ * @param email         Email of the faculty member
+ * @returns {Promise}   Query response object on success, error on failure
+ */
+async function getDepartmentAssociationsFaculty(email) {
+  const connection = loadDatabaseConnection();
+
+  const result = await connection.any(
+    'SELECT email, department_id FROM department_associations WHERE email=$1',
+    [email]
+  );
+
+  return groupDepartmentIdByFaculty(result);
+}
+
+/**
+ * Group array of department associations results by email, creating a key-value
+ * pair where the value is a list of department IDs.
+ *
+ * @param arr     The array to group
+ * @returns {*}   The object with the user email and list of department IDs
+ */
+function groupDepartmentIdByFaculty(arr) {
+  return arr.reduce((acc, cur) => {
+    const exists = acc.email === cur.email;
+
+    if (!exists) {
+      return { email: cur.email, department_ids: [cur.department_id] };
+    }
+
+    acc['department_ids'].push(cur.department_id);
+    return acc;
+  }, []);
 }
 
 module.exports = {
@@ -77,4 +113,5 @@ module.exports = {
   getFaculty,
   getDepartment,
   getDepartments,
+  getDepartmentAssociationsFaculty,
 };
