@@ -30,6 +30,24 @@ function getDepartments() {
     });
 }
 
+function getCommitteeAssignmentByCommittee(id) {
+  const connection = loadDatabaseConnection();
+
+  return connection.any(
+    'SELECT email, committee_id, start_date, end_date FROM committee_assignment WHERE committee_id=$1',
+    [id]
+  );
+}
+
+function getCommitteeAssignmentByFaculty(email) {
+  const connection = loadDatabaseConnection();
+
+  return connection.any(
+    'SELECT email, committee_id, start_date, end_date FROM committee_assignment WHERE email=$1',
+    [email]
+  );
+}
+
 function getCommittees() {
   const connection = loadDatabaseConnection();
 
@@ -122,6 +140,8 @@ function getSenateDivisions() {
 
 module.exports = {
   addFaculty,
+  getCommitteeAssignmentByCommittee,
+  getCommitteeAssignmentByFaculty,
   getCommittees,
   getDepartment,
   getDepartments,
