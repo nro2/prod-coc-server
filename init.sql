@@ -187,6 +187,7 @@ insert into committee_assignment(email, committee_id, start_date, end_date) valu
 
 insert into committee_slots(committee_id, senate_division_short_name, slot_requirements) values
     (1, 'BP', 3),
+    (1, 'AO', 7),
     (2, 'CQ', 4),
     (3, 'AO', 5),
     (4, 'BP', 1),

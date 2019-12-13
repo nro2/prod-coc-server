@@ -16,73 +16,145 @@ const stubs = {
   },
   '../../database': {
     getCommitteeSlotsBySenate: sinon.stub(),
+    getCommitteeSlotsByCommittee: sinon.stub(),
   },
 };
+describe('Request routing for /committee-slots', () => {
+  describe('Request routing for /committee-slots/senate-division/:shortname', () => {
+    let underTest; // eslint-disable-line
+    let req;
+    let res;
 
-describe('Request routing for /committee-slots/senate-division/:shortname', () => {
-  let underTest; // eslint-disable-line
-  let req;
-  let res;
+    before(() => {
+      underTest = proxyquire(underTestFilename, stubs);
+      routerActions.getCommitteeSlotsBySenate = routerGet.firstCall.args[1];
+    });
 
-  before(() => {
-    underTest = proxyquire(underTestFilename, stubs);
-    routerActions.getCommitteeSlotsBySenate = routerGet.firstCall.args[1];
-  });
+    beforeEach(() => {
+      req = mock.request();
+      res = mock.response();
+    });
 
-  beforeEach(() => {
-    req = mock.request();
-    res = mock.response();
-  });
+    afterEach(() => {
+      routerGet.resetHistory();
 
-  afterEach(() => {
-    routerGet.resetHistory();
+      stubs['../../database'].getCommitteeSlotsBySenate.resetHistory();
+    });
 
-    stubs['../../database'].getCommitteeSlotsBySenate.resetHistory();
-  });
+    it('GET returns 200 when slot-requirements are retrieved from database', () => {
+      const slotRequirements = [
+        { committee_id: 1, slot_requirements: 2 },
+        { committee_id: 2, slot_requirements: 5 },
+      ];
 
-  it('GET returns 200 when slot-requirements are retrieved from database', () => {
-    const slotRequirements = [
-      { committee_id: 1, slot_requirements: 2 },
-      { committee_id: 2, slot_requirements: 5 },
-    ];
+      req.params.shortname = 'AO';
 
-    req.params.shortname = 'AO';
+      stubs['../../database'].getCommitteeSlotsBySenate.resolves(slotRequirements);
 
-    stubs['../../database'].getCommitteeSlotsBySenate.resolves(slotRequirements);
+      return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 200);
+        assert.equal(res.send.firstCall.args[0], slotRequirements);
+      });
+    });
 
-    return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 200);
-      assert.equal(res.send.firstCall.args[0], slotRequirements);
+    it('GET returns 404 when there are no slot requirements', () => {
+      req.params.shortname = 'AO';
+
+      stubs['../../database'].getCommitteeSlotsBySenate.resolves([]);
+
+      return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 404);
+      });
+    });
+
+    it('GET returns 400 when senate short name is missing from route parameters', () => {
+      stubs['../../database'].getCommitteeSlotsBySenate.resolves([]);
+
+      return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 400);
+      });
+    });
+
+    it('GET returns 500 when there is a database error', () => {
+      req.params.shortname = 'AO';
+
+      stubs['../../database'].getCommitteeSlotsBySenate.rejects(
+        new Error('test-error')
+      );
+
+      return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 500);
+      });
     });
   });
 
-  it('GET returns 404 when there are no slot requirements', () => {
-    req.params.shortname = 'AO';
+  describe('Request routing for /committee-slots/committee/:id', () => {
+    let underTest; // eslint-disable-line
+    let req;
+    let res;
 
-    stubs['../../database'].getCommitteeSlotsBySenate.resolves([]);
-
-    return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 404);
+    before(() => {
+      underTest = proxyquire(underTestFilename, stubs);
+      routerActions.getCommitteeSlotsByCommittee = routerGet.secondCall.args[1];
     });
-  });
 
-  it('GET returns 400 when senate short name is missing from route parameters', () => {
-    stubs['../../database'].getCommitteeSlotsBySenate.resolves([]);
-
-    return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 400);
+    beforeEach(() => {
+      req = mock.request();
+      res = mock.response();
     });
-  });
 
-  it('GET returns 500 when there is a database error', () => {
-    req.params.shortname = 'AO';
+    afterEach(() => {
+      routerGet.resetHistory();
 
-    stubs['../../database'].getCommitteeSlotsBySenate.rejects(
-      new Error('test-error')
-    );
+      stubs['../../database'].getCommitteeSlotsByCommittee.resetHistory();
+    });
 
-    return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 500);
+    it('GET returns 200 when slot-requirements are retrieved from database', () => {
+      const slotRequirements = [
+        { senate_division_short_name: 'BQ', slot_requirements: 2 },
+        { senate_division_short_name: 'AO', slot_requirements: 5 },
+      ];
+
+      req.params.id = 1;
+
+      stubs['../../database'].getCommitteeSlotsByCommittee.resolves(
+        slotRequirements
+      );
+
+      return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 200);
+        assert.equal(res.send.firstCall.args[0], slotRequirements);
+      });
+    });
+
+    it('GET returns 404 when there are no slot requirements', () => {
+      req.params.id = 1;
+
+      stubs['../../database'].getCommitteeSlotsByCommittee.resolves([]);
+
+      return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 404);
+      });
+    });
+
+    it('GET returns 400 when Committee id is missing from route parameters', () => {
+      stubs['../../database'].getCommitteeSlotsByCommittee.resolves([]);
+
+      return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 400);
+      });
+    });
+
+    it('GET returns 500 when there is a database error', () => {
+      req.params.id = 1;
+
+      stubs['../../database'].getCommitteeSlotsByCommittee.rejects(
+        new Error('test-error')
+      );
+
+      return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 500);
+      });
     });
   });
 });
