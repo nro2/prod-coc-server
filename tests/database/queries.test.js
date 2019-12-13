@@ -205,4 +205,30 @@ describe('Database queries', () => {
       assert.deepEqual(result, expected);
     });
   });
+
+  describe('Get slot requirements by senate division', () => {
+    let expected;
+    beforeEach(() => {
+      expected = [
+        { committee_id: 1, slot_requirements: 2 },
+        { committee_id: 2, slot_requirements: 5 },
+      ];
+    });
+
+    it('returns nothing when query has no parameters', async () => {
+      stubs.any.resolves();
+
+      const result = await underTest.getCommitteeSlotsBySenate();
+
+      assert.equal(result, undefined);
+    });
+
+    it('returns data when query is successful', async () => {
+      stubs.any.resolves(expected);
+
+      const result = await underTest.getCommitteeSlotsBySenate('AO');
+
+      assert.deepEqual(result, expected);
+    });
+  });
 });
