@@ -126,17 +126,17 @@ insert into survey_data(survey_date, email, is_interested) values
     ('2019-01-01', 'betty@oregon.gov', false)
 ;
 
-insert into committee(committee_id, name, description, total_slots) values
-    (1, 'Committee on Space Exploration', 'About exploring space', 10),
-    (2, 'Committee on Committees', 'About committees', 11),
-    (3, 'Committee on athletics', 'Sports stuff', 12),
-    (4, 'Committee for advanced learning', 'Making folks smart', 10),
-    (5, 'Committee on safety', 'Making people safe', 12),
-    (6, 'Craft brewing committee', 'We make beer', 10),
-    (7, 'Linux Committee', 'Open source stuff', 12),
-    (8, 'Gaming Committee', 'We play games', 10),
-    (9, 'Comp Sci Committee', 'We make apps like this one', 12),
-    (10, 'Student Committee', 'We care about you', 10)
+insert into committee(name, description, total_slots) values
+    ('Committee on Space Exploration', 'About exploring space', 10),
+    ('Committee on Committees', 'About committees', 11),
+    ('Committee on athletics', 'Sports stuff', 12),
+    ('Committee for advanced learning', 'Making folks smart', 10),
+    ('Committee on safety', 'Making people safe', 12),
+    ('Craft brewing committee', 'We make beer', 10),
+    ('Linux Committee', 'Open source stuff', 12),
+    ('Gaming Committee', 'We play games', 10),
+    ('Comp Sci Committee', 'We make apps like this one', 12),
+    ('Student Committee', 'We care about you', 10)
 ;
 
 insert into survey_choice(survey_date, email, choice_id, committee_id) values
