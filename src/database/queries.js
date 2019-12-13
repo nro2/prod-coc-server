@@ -111,6 +111,42 @@ function getDepartment(id) {
  * @param email         Email of the faculty member
  * @returns {Promise}   Query response object on success, error on failure
  */
+async function getDepartmentAssociationsByDepartment(id) {
+  const connection = loadDatabaseConnection();
+
+  const result = await connection.any(
+    'SELECT email, department_id FROM department_associations WHERE department_id=$1',
+    [id]
+  );
+
+  return groupDepartmentFacultyById(result);
+}
+
+/**
+ * Group array of department associations results by id, creating a key-value
+ * pair where the value is a list of faculty emails.
+ *
+ * @param arr     The array to group
+ * @returns {*}   The object with the department id and list of user emails
+ */
+function groupDepartmentFacultyById(arr) {
+  return arr.reduce((acc, cur) => {
+    const exists = acc.department_id === cur.department_id;
+
+    if (!exists) {
+      return { department_id: cur.department_id, emails: [cur.email] };
+    }
+
+    acc.emails.push(cur.email);
+    return acc;
+  }, []);
+}
+
+/**
+ *
+ * @param email         Email of the faculty member
+ * @returns {Promise}   Query response object on success, error on failure
+ */
 async function getDepartmentAssociationsFaculty(email) {
   const connection = loadDatabaseConnection();
 
@@ -172,6 +208,7 @@ module.exports = {
   getCommittees,
   getDepartment,
   getDepartments,
+  getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsFaculty,
   getFaculty,
   getSenateDivisions,
