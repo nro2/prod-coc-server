@@ -16,7 +16,7 @@ const stubs = {
   },
   '../../database': {
     getDepartmentAssociationsByDepartment: sinon.stub(),
-    getDepartmentAssociationsFaculty: sinon.stub(),
+    getDepartmentAssociationsByFaculty: sinon.stub(),
   },
 };
 
@@ -29,7 +29,7 @@ describe('Request routing for /department-associations', () => {
     underTest = proxyquire(underTestFilename, stubs);
     routerActions.getDepartmentAssociationsByDepartment =
       routerGet.firstCall.args[1];
-    routerActions.getDepartmentAssociationsFaculty = routerGet.secondCall.args[1];
+    routerActions.getDepartmentAssociationsByFaculty = routerGet.secondCall.args[1];
   });
 
   beforeEach(() => {
@@ -41,10 +41,10 @@ describe('Request routing for /department-associations', () => {
     routerGet.resetHistory();
 
     stubs['../../database'].getDepartmentAssociationsByDepartment.resetHistory();
-    stubs['../../database'].getDepartmentAssociationsFaculty.resetHistory();
+    stubs['../../database'].getDepartmentAssociationsByFaculty.resetHistory();
   });
 
-  describe('/department-associations/department', () => {
+  describe('Route /department', () => {
     it('GET returns 200 when department associations are retrieved from database', () => {
       const departmentAssociations = [
         {
@@ -100,7 +100,7 @@ describe('Request routing for /department-associations', () => {
     });
   });
 
-  describe('/department-associations/faculty', () => {
+  describe('Route /faculty', () => {
     it('GET returns 200 when department associations are retrieved from database', () => {
       const departmentAssociations = [
         {
@@ -111,11 +111,11 @@ describe('Request routing for /department-associations', () => {
       req.params = {
         email: 'test@email.com',
       };
-      stubs['../../database'].getDepartmentAssociationsFaculty.resolves(
+      stubs['../../database'].getDepartmentAssociationsByFaculty.resolves(
         departmentAssociations
       );
 
-      return routerActions.getDepartmentAssociationsFaculty(req, res).then(() => {
+      return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 200);
         assert.equal(res.send.firstCall.args[0], departmentAssociations);
       });
@@ -123,28 +123,28 @@ describe('Request routing for /department-associations', () => {
 
     it('GET returns 404 when department associations returns an empty array', () => {
       req.params.email = 'test@email.com';
-      stubs['../../database'].getDepartmentAssociationsFaculty.resolves([]);
+      stubs['../../database'].getDepartmentAssociationsByFaculty.resolves([]);
 
-      return routerActions.getDepartmentAssociationsFaculty(req, res).then(() => {
+      return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
       });
     });
 
     it('GET returns 400 when faculty email is missing from route parameters', () => {
-      stubs['../../database'].getDepartmentAssociationsFaculty.resolves([]);
+      stubs['../../database'].getDepartmentAssociationsByFaculty.resolves([]);
 
-      return routerActions.getDepartmentAssociationsFaculty(req, res).then(() => {
+      return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
       });
     });
 
     it('GET returns 500 when there is a database error', () => {
       req.params.email = 'test@email.com';
-      stubs['../../database'].getDepartmentAssociationsFaculty.rejects(
+      stubs['../../database'].getDepartmentAssociationsByFaculty.rejects(
         new Error('test-error')
       );
 
-      return routerActions.getDepartmentAssociationsFaculty(req, res).then(() => {
+      return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
       });
     });

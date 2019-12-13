@@ -174,7 +174,7 @@ describe('Database queries', () => {
     });
   });
 
-  describe('getDepartmentAssociationsFaculty', () => {
+  describe('getDepartmentAssociationsByFaculty', () => {
     it('returns data when query is successful', async () => {
       stubs.any.resolves([
         {
@@ -187,7 +187,7 @@ describe('Database queries', () => {
         department_ids: [1],
       };
 
-      const result = await underTest.getDepartmentAssociationsFaculty();
+      const result = await underTest.getDepartmentAssociationsByFaculty();
 
       assert.deepEqual(result, expected);
     });
@@ -195,7 +195,7 @@ describe('Database queries', () => {
     it('returns empty array when query returns no results', async () => {
       stubs.any.resolves([]);
 
-      const result = await underTest.getDepartmentAssociationsFaculty();
+      const result = await underTest.getDepartmentAssociationsByFaculty();
 
       assert.equal(result.length, 0);
     });
@@ -216,7 +216,7 @@ describe('Database queries', () => {
         department_ids: [1, 2],
       };
 
-      const result = await underTest.getDepartmentAssociationsFaculty();
+      const result = await underTest.getDepartmentAssociationsByFaculty();
 
       assert.deepEqual(result, expected);
     });

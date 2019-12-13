@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   getDepartmentAssociationsByDepartment,
-  getDepartmentAssociationsFaculty,
+  getDepartmentAssociationsByFaculty,
 } = require('../../database');
 
 router.get('/department/:id', async (req, res) => {
@@ -33,7 +33,7 @@ router.get('/faculty/:email', async (req, res) => {
     return res.status(400).send({ message: '400 Bad Request' });
   }
 
-  return await getDepartmentAssociationsFaculty(req.params.email)
+  return await getDepartmentAssociationsByFaculty(req.params.email)
     .then(data => {
       if (data.length === 0) {
         console.info(

@@ -147,7 +147,7 @@ function groupDepartmentFacultyById(arr) {
  * @param email         Email of the faculty member
  * @returns {Promise}   Query response object on success, error on failure
  */
-async function getDepartmentAssociationsFaculty(email) {
+async function getDepartmentAssociationsByFaculty(email) {
   const connection = loadDatabaseConnection();
 
   const result = await connection.any(
@@ -209,7 +209,7 @@ module.exports = {
   getDepartment,
   getDepartments,
   getDepartmentAssociationsByDepartment,
-  getDepartmentAssociationsFaculty,
+  getDepartmentAssociationsByFaculty,
   getFaculty,
   getSenateDivisions,
   getCommitteeSlotsBySenate,
