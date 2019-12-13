@@ -27,6 +27,9 @@ describe('Request routing for /committee', () => {
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
     routerActions.addCommittee = routerPost.firstCall.args[1];
+
+    sinon.stub(console, 'info');
+    sinon.stub(console, 'error');
   });
 
   beforeEach(() => {
