@@ -15,18 +15,21 @@ const stubs = {
     }),
   },
   '../../database': {
-    getDepartmentAssociationsFaculty: sinon.stub(),
+    getDepartmentAssociationsByDepartment: sinon.stub(),
+    getDepartmentAssociationsByFaculty: sinon.stub(),
   },
 };
 
-describe('Request routing for /department-associations/faculty', () => {
+describe('Request routing for /department-associations', () => {
   let underTest; // eslint-disable-line
   let req;
   let res;
 
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
-    routerActions.getDepartmentAssociationsFaculty = routerGet.firstCall.args[1];
+    routerActions.getDepartmentAssociationsByDepartment =
+      routerGet.firstCall.args[1];
+    routerActions.getDepartmentAssociationsByFaculty = routerGet.secondCall.args[1];
   });
 
   beforeEach(() => {
@@ -37,54 +40,113 @@ describe('Request routing for /department-associations/faculty', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].getDepartmentAssociationsFaculty.resetHistory();
+    stubs['../../database'].getDepartmentAssociationsByDepartment.resetHistory();
+    stubs['../../database'].getDepartmentAssociationsByFaculty.resetHistory();
   });
 
-  it('GET returns 200 when department associations are retrieved from database', () => {
-    const departmentAssociations = [
-      {
+  describe('Route /department', () => {
+    it('GET returns 200 when department associations are retrieved from database', () => {
+      const departmentAssociations = [
+        {
+          email: 'test@email.com',
+          department_id: 42,
+        },
+      ];
+      req.params.id = 42;
+      stubs['../../database'].getDepartmentAssociationsByDepartment.resolves(
+        departmentAssociations
+      );
+
+      return routerActions
+        .getDepartmentAssociationsByDepartment(req, res)
+        .then(() => {
+          assert.equal(res.status.firstCall.args[0], 200);
+          assert.equal(res.send.firstCall.args[0], departmentAssociations);
+        });
+    });
+
+    it('GET returns 404 when department associations returns an empty array', () => {
+      req.params.id = 42;
+      stubs['../../database'].getDepartmentAssociationsByDepartment.resolves([]);
+
+      return routerActions
+        .getDepartmentAssociationsByDepartment(req, res)
+        .then(() => {
+          assert.equal(res.status.firstCall.args[0], 404);
+        });
+    });
+
+    it('GET returns 400 when department id is missing from route parameters', () => {
+      stubs['../../database'].getDepartmentAssociationsByDepartment.resolves([]);
+
+      return routerActions
+        .getDepartmentAssociationsByDepartment(req, res)
+        .then(() => {
+          assert.equal(res.status.firstCall.args[0], 400);
+        });
+    });
+
+    it('GET returns 500 when there is a database error', () => {
+      req.params.id = 42;
+      stubs['../../database'].getDepartmentAssociationsByDepartment.rejects(
+        new Error('test-error')
+      );
+
+      return routerActions
+        .getDepartmentAssociationsByDepartment(req, res)
+        .then(() => {
+          assert.equal(res.status.firstCall.args[0], 500);
+        });
+    });
+  });
+
+  describe('Route /faculty', () => {
+    it('GET returns 200 when department associations are retrieved from database', () => {
+      const departmentAssociations = [
+        {
+          email: 'test@email.com',
+          department_id: 1,
+        },
+      ];
+      req.params = {
         email: 'test@email.com',
-        department_id: 1,
-      },
-    ];
-    req.params = {
-      email: 'test@email.com',
-    };
-    stubs['../../database'].getDepartmentAssociationsFaculty.resolves(
-      departmentAssociations
-    );
+      };
+      stubs['../../database'].getDepartmentAssociationsByFaculty.resolves(
+        departmentAssociations
+      );
 
-    return routerActions.getDepartmentAssociationsFaculty(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 200);
-      assert.equal(res.send.firstCall.args[0], departmentAssociations);
+      return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 200);
+        assert.equal(res.send.firstCall.args[0], departmentAssociations);
+      });
     });
-  });
 
-  it('GET returns 404 when department associations returns an empty array', () => {
-    req.params.email = 'test@email.com';
-    stubs['../../database'].getDepartmentAssociationsFaculty.resolves([]);
+    it('GET returns 404 when department associations returns an empty array', () => {
+      req.params.email = 'test@email.com';
+      stubs['../../database'].getDepartmentAssociationsByFaculty.resolves([]);
 
-    return routerActions.getDepartmentAssociationsFaculty(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 404);
+      return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 404);
+      });
     });
-  });
 
-  it('GET returns 400 when faculty email is missing from route parameters', () => {
-    stubs['../../database'].getDepartmentAssociationsFaculty.resolves([]);
+    it('GET returns 400 when faculty email is missing from route parameters', () => {
+      stubs['../../database'].getDepartmentAssociationsByFaculty.resolves([]);
 
-    return routerActions.getDepartmentAssociationsFaculty(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 400);
+      return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 400);
+      });
     });
-  });
 
-  it('GET returns 500 when there is a database error', () => {
-    req.params.email = 'test@email.com';
-    stubs['../../database'].getDepartmentAssociationsFaculty.rejects(
-      new Error('test-error')
-    );
+    it('GET returns 500 when there is a database error', () => {
+      req.params.email = 'test@email.com';
+      stubs['../../database'].getDepartmentAssociationsByFaculty.rejects(
+        new Error('test-error')
+      );
 
-    return routerActions.getDepartmentAssociationsFaculty(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 500);
+      return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 500);
+      });
     });
   });
 });
