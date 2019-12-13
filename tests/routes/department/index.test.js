@@ -27,9 +27,6 @@ describe('Request routing for /department', () => {
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
     routerActions.getDepartment = routerGet.firstCall.args[1];
-
-    sinon.stub(console, 'info');
-    sinon.stub(console, 'error');
   });
 
   beforeEach(() => {
