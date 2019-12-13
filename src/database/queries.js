@@ -217,8 +217,7 @@ function getCommitteeSlotsBySenate(senateDivision) {
  * @param jobTitle            Job title of the faculty member
  * @param phoneNum            Phone number of faculty member
  * @param senateDivision      Senate division the faculty member belongs to
- * @returns {Promise}         Response object with rowCount on success
- * @throws {Error}            Connection problem or exception
+ * @returns {Promise}         Resolves object with rowCount or rejects
  */
 async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   const connection = loadDatabaseConnection();

@@ -8,12 +8,16 @@ const stubs = {
   any: sinon.stub(),
   none: sinon.stub(),
   one: sinon.stub(),
+  result: sinon.stub(),
+  tx: sinon.stub(),
 };
 
 const connection = () => ({
   any: stubs.any,
   none: stubs.none,
   one: stubs.one,
+  result: stubs.result,
+  tx: stubs.tx,
 });
 
 describe('Database queries', () => {
@@ -312,6 +316,68 @@ describe('Database queries', () => {
       const result = await underTest.getCommitteeSlotsByCommittee(1);
 
       assert.deepEqual(result, expected);
+    });
+  });
+
+  describe('updateFaculty', () => {
+    before(() => {
+      // Suppress UnhandledPromiseRejection logging when running these tests
+      process.on('unhandledRejection', () => {});
+    });
+
+    it('returns object when update succeeds', async () => {
+      const fullName = 'test-full-name';
+      const email = 'test-email';
+      const jobTitle = 'test-job-title';
+      const phoneNum = '555-55-5555';
+      const senateDivision = 'test-senate-division';
+      const expected = { rowCount: 1 };
+
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
+
+      const result = await underTest.updateFaculty(
+        fullName,
+        email,
+        jobTitle,
+        phoneNum,
+        senateDivision
+      );
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('throws exception when result query errors', async () => {
+      const fullName = 'test-full-name';
+      const email = 'test-email';
+      const jobTitle = 'test-job-title';
+      const phoneNum = '555-55-5555';
+      const senateDivision = 'test-senate-division';
+
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
+
+      await assert.rejects(
+        underTest
+          .updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+
+    it('rejects when transaction throws an exception', async () => {
+      const fullName = 'test-full-name';
+      const email = 'test-email';
+      const jobTitle = 'test-job-title';
+      const phoneNum = '555-55-5555';
+      const senateDivision = 'test-senate-division';
+
+      await stubs.tx.rejects(new Error('test-error'));
+
+      await assert.rejects(
+        underTest
+          .updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
+          .catch(() => assert.fail('Should not have failed'))
+      );
     });
   });
 });
