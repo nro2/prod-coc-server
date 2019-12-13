@@ -191,15 +191,6 @@ function getSenateDivisions() {
   );
 }
 
-function getCommitteeSlotsBySenate(senateDivision) {
-  const connection = loadDatabaseConnection();
-
-  return connection.any(
-    'SELECT committee_id, slot_requirements FROM committee_slots where senate_division_short_name=$1',
-    [senateDivision]
-  );
-}
-
 function getCommitteeSlotsByCommittee(id) {
   const connection = loadDatabaseConnection();
 
@@ -209,11 +200,45 @@ function getCommitteeSlotsByCommittee(id) {
   );
 }
 
+function getCommitteeSlotsBySenate(senateDivision) {
+  const connection = loadDatabaseConnection();
+
+  return connection.any(
+    'SELECT committee_id, slot_requirements FROM committee_slots where senate_division_short_name=$1',
+    [senateDivision]
+  );
+}
+
+/**
+ * Updates a faculty member in the database.
+ *
+ * @param fullName            Name of the faculty member
+ * @param email               Email of the faculty member
+ * @param jobTitle            Job title of the faculty member
+ * @param phoneNum            Phone number of faculty member
+ * @param senateDivision      Senate division the faculty member belongs to
+ * @returns {Promise}         Resolves object with rowCount or rejects
+ */
+async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection
+      .result(
+        'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+        [fullName, jobTitle, phoneNum, senateDivision, email]
+      )
+      .then(result => result);
+  });
+}
+
 module.exports = {
   addCommittee,
   addFaculty,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
+  getCommitteeSlotsBySenate,
+  getCommitteeSlotsByCommittee,
   getCommittees,
   getDepartment,
   getDepartments,
@@ -221,6 +246,5 @@ module.exports = {
   getDepartmentAssociationsByFaculty,
   getFaculty,
   getSenateDivisions,
-  getCommitteeSlotsBySenate,
-  getCommitteeSlotsByCommittee,
+  updateFaculty,
 };
