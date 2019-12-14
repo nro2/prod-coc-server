@@ -223,6 +223,7 @@ function getCommitteeSlotsBySenate(senateDivision) {
  *
  * Allows for a committee's properties to be changed, except a committee's name.
  *
+ * @param id                  Id of the committee (Required)
  * @param name                Name of the committee (Required)
  * @param description         Description of the committee
  * @param slots               Number of total available slots
@@ -237,6 +238,29 @@ async function updateCommittee(id, name, description, slots) {
       .result(
         'UPDATE committee SET name = $1, description = $2, total_slots = $3 WHERE committee_id = $4',
         [name, description, slots, id]
+      )
+      .then(result => result);
+  });
+}
+
+/**
+ * Updates a committee assignment in the database.
+ *
+ * @param email               Email of committee member
+ * @param committeeId         Id of the committee
+ * @param startDate           Start date for the committee member
+ * @param endDate             End date for the committee member
+ * @returns {Promise}         Response object with rowCount on success
+ * @throws {Error}            Connection problem or exception
+ */
+async function updateCommitteeAssignment(email, committeeId, startDate, endDate) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection
+      .result(
+        'UPDATE committee_assignment SET start_date = $1, end_date = $2 WHERE email = $3 and committee_id = $4',
+        [startDate, endDate, email, committeeId]
       )
       .then(result => result);
   });
@@ -281,5 +305,6 @@ module.exports = {
   getSenateDivisions,
   getSenateDivision,
   updateCommittee,
+  updateCommitteeAssignment,
   updateFaculty,
 };

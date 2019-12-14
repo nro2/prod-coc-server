@@ -23,6 +23,11 @@ const connection = () => ({
 describe('Database queries', () => {
   let underTest;
 
+  before(() => {
+    // Suppress UnhandledPromiseRejection logging when running these tests
+    process.on('unhandledRejection', () => {});
+  });
+
   beforeEach(() => {
     underTest = proxyquire(underTestFilename, {
       './connection': {
@@ -324,11 +329,6 @@ describe('Database queries', () => {
   });
 
   describe('updateCommittee', () => {
-    before(() => {
-      // Suppress UnhandledPromiseRejection logging when running these tests
-      process.on('unhandledRejection', () => {});
-    });
-
     it('returns object when update succeeds', async () => {
       const committeeId = 42;
       const name = 'test-committee-name';
@@ -366,12 +366,45 @@ describe('Database queries', () => {
     });
   });
 
-  describe('updateFaculty', () => {
-    before(() => {
-      // Suppress UnhandledPromiseRejection logging when running these tests
-      process.on('unhandledRejection', () => {});
+  describe('updateCommitteeAssignment', () => {
+    it('returns object when update succeeds', async () => {
+      const email = 'test-email';
+      const committeeId = 42;
+      const startDate = '1970-01-01';
+      const endDate = '2050-01-01';
+      const expected = { rowCount: 1 };
+
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
+
+      const result = await underTest.updateCommitteeAssignment(
+        email,
+        committeeId,
+        startDate,
+        endDate
+      );
+
+      assert.deepEqual(result, expected);
     });
 
+    it('throws exception when result query errors', async () => {
+      const email = 'test-email';
+      const committeeId = 42;
+      const startDate = '1970-01-01';
+      const endDate = '2050-01-01';
+
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
+
+      await assert.rejects(
+        underTest
+          .updateCommitteeAssignment(email, committeeId, startDate, endDate)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
+
+  describe('updateFaculty', () => {
     it('returns object when update succeeds', async () => {
       const fullName = 'test-full-name';
       const email = 'test-email';
