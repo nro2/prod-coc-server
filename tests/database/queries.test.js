@@ -29,7 +29,7 @@ describe('Database queries', () => {
         loadDatabaseConnection: connection,
       },
     });
-    // sinon.stub(console, 'log');
+    sinon.stub(console, 'log');
   });
 
   afterEach(() => {
@@ -364,21 +364,6 @@ describe('Database queries', () => {
           .catch(() => assert.fail('Should not have failed'))
       );
     });
-
-    it('rejects when transaction throws an exception', async () => {
-      const committeeId = 42;
-      const name = 'test-committee-name';
-      const description = 'test-committee-description';
-      const totalSlots = 3;
-
-      await stubs.tx.rejects(new Error('test-error'));
-
-      await assert.rejects(
-        underTest
-          .updateCommittee(committeeId, name, description, totalSlots)
-          .catch(() => assert.fail('Should not have failed'))
-      );
-    });
   });
 
   describe('updateFaculty', () => {
@@ -387,7 +372,7 @@ describe('Database queries', () => {
       process.on('unhandledRejection', () => {});
     });
 
-    it.skip('returns object when update succeeds', async () => {
+    it('returns object when update succeeds', async () => {
       const fullName = 'test-full-name';
       const email = 'test-email';
       const jobTitle = 'test-job-title';
@@ -425,22 +410,6 @@ describe('Database queries', () => {
           .catch(() => assert.fail('Should not have failed'))
       );
     });
-
-    it('rejects when transaction throws an exception', async () => {
-      const fullName = 'test-full-name';
-      const email = 'test-email';
-      const jobTitle = 'test-job-title';
-      const phoneNum = '555-55-5555';
-      const senateDivision = 'test-senate-division';
-
-      await stubs.tx.rejects(new Error('test-error'));
-
-      await assert.rejects(
-        underTest
-          .updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
-          .catch(() => assert.fail('Should not have failed'))
-      );
-    });
   });
 
   describe('Get senate division by short name', () => {
@@ -449,8 +418,8 @@ describe('Database queries', () => {
       expected = { senate_division_short_name: 'AO', name: 'All Other Faculty' };
     });
 
-    it.skip('returns nothing when query has no parameters', async () => {
-      stubs.any.resolves();
+    it('returns nothing when query has no parameters', async () => {
+      stubs.one.resolves();
 
       const result = await underTest.getSenateDivision();
 
