@@ -29,7 +29,7 @@ describe('Request routing for /committee', () => {
 
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
-    routerActions.addCommittee = routerPost.firstCall.args[1];
+    routerActions.postCommittee = routerPost.firstCall.args[1];
     routerActions.putCommittee = routerPut.firstCall.args[1];
 
     sinon.stub(console, 'info');
@@ -49,7 +49,7 @@ describe('Request routing for /committee', () => {
     stubs['../../database'].updateCommittee.resetHistory();
   });
 
-  it('GET returns 201 when committee is added to the database', () => {
+  it('PUT returns 201 when committee is added to the database', () => {
     req.body = {
       name: 'test-committee-name',
       description: 'test-committee-description',
@@ -57,48 +57,48 @@ describe('Request routing for /committee', () => {
     };
     stubs['../../database'].addCommittee.resolves();
 
-    return routerActions.addCommittee(req, res).then(() => {
+    return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 201);
     });
   });
 
-  it('GET returns 400 when missing name in request body', () => {
+  it('PUT returns 400 when missing name in request body', () => {
     req.body = {
       description: 'test-committee-description',
       totalSlots: 42,
     };
 
-    return routerActions.addCommittee(req, res).then(() => {
+    return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
     });
   });
 
-  it('GET returns 400 when missing description in request body', () => {
+  it('PUT returns 400 when missing description in request body', () => {
     req.body = {
       name: 'test-committee-name',
       totalSlots: 42,
     };
 
-    return routerActions.addCommittee(req, res).then(() => {
+    return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
     });
   });
 
-  it('GET returns 400 when missing totalSlots in request body', () => {
+  it('PUT returns 400 when missing totalSlots in request body', () => {
     req.body = {
       name: 'test-committee-name',
       description: 'test-committee-description',
     };
 
-    return routerActions.addCommittee(req, res).then(() => {
+    return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
     });
   });
 
-  it('GET returns 500 when unable to get committees from database', () => {
+  it('PUT returns 500 when unable to get committees from database', () => {
     req.body = {
       name: 'test-committee-name',
       description: 'test-committee-description',
@@ -106,7 +106,7 @@ describe('Request routing for /committee', () => {
     };
     stubs['../../database'].addCommittee.rejects(new Error('test-error'));
 
-    return routerActions.addCommittee(req, res).then(() => {
+    return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
         error: 'Unable to complete database transaction',
@@ -114,7 +114,6 @@ describe('Request routing for /committee', () => {
     });
   });
 
-  // FIXME: start here
   it('PUT returns 200 when committee is updated in the database', () => {
     req.body = {
       committeeId: 42,
