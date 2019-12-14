@@ -210,6 +210,30 @@ function getCommitteeSlotsBySenate(senateDivision) {
 }
 
 /**
+ * Updates a committee in the database.
+ *
+ * Allows for a committee's properties to be changed, except a committee's name.
+ *
+ * @param name                Name of the committee (Required)
+ * @param description         Description of the committee
+ * @param slots               Number of total available slots
+ * @returns {Promise}         Response object with rowCount on success
+ * @throws {Error}            Connection problem or exception
+ */
+async function updateCommittee(id, name, description, slots) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection
+      .result(
+        'UPDATE committee SET name = $1, description = $2, total_slots = $3 WHERE committee_id = $4',
+        [name, description, slots, id]
+      )
+      .then(result => result);
+  });
+}
+
+/**
  * Updates a faculty member in the database.
  *
  * @param fullName            Name of the faculty member
@@ -246,5 +270,6 @@ module.exports = {
   getDepartmentAssociationsByFaculty,
   getFaculty,
   getSenateDivisions,
+  updateCommittee,
   updateFaculty,
 };
