@@ -365,7 +365,7 @@ describe('Database queries', () => {
       );
     });
 
-    it.skip('rejects when transaction throws an exception', async () => {
+    it('rejects when transaction throws an exception', async () => {
       const committeeId = 42;
       const name = 'test-committee-name';
       const description = 'test-committee-description';
@@ -387,7 +387,7 @@ describe('Database queries', () => {
       process.on('unhandledRejection', () => {});
     });
 
-    it('returns object when update succeeds', async () => {
+    it.skip('returns object when update succeeds', async () => {
       const fullName = 'test-full-name';
       const email = 'test-email';
       const jobTitle = 'test-job-title';
@@ -440,6 +440,29 @@ describe('Database queries', () => {
           .updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
           .catch(() => assert.fail('Should not have failed'))
       );
+    });
+  });
+
+  describe('Get senate division by short name', () => {
+    let expected;
+    beforeEach(() => {
+      expected = { senate_division_short_name: 'AO', name: 'All Other Faculty' };
+    });
+
+    it.skip('returns nothing when query has no parameters', async () => {
+      stubs.any.resolves();
+
+      const result = await underTest.getSenateDivision();
+
+      assert.equal(result, undefined);
+    });
+
+    it('returns data when query is successful', async () => {
+      stubs.one.resolves(expected);
+
+      const result = await underTest.getSenateDivision('AO');
+
+      assert.equal(result, expected);
     });
   });
 });
