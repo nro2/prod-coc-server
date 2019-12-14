@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const {
+  addCommitteeAssignment,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   updateCommitteeAssignment,
+  FOREIGN_KEY_VIOLATION,
+  UNIQUENESS_VIOLATION,
 } = require('../../database');
 
 router.get('/committee/:id', async (req, res) => {
@@ -46,6 +49,39 @@ router.get('/faculty/:email', async (req, res) => {
     })
     .catch(err => {
       console.error(`Error retrieving committee assignments: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
+
+router.post('/', async (req, res) => {
+  if (
+    !req.body ||
+    !req.body.email ||
+    !req.body.committeeId ||
+    !req.body.startDate ||
+    !req.body.endDate
+  ) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+
+  const { email, committeeId, startDate, endDate } = req.body;
+
+  return addCommitteeAssignment(email, committeeId, startDate, endDate)
+    .then(() => {
+      console.info('Successfully added committee assignment to database');
+      return res.status(201).send();
+    })
+    .catch(err => {
+      if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
+        console.error(
+          `Attempted to add an existing committee association with invalid keys: ${err}`
+        );
+        return res.status(409).send();
+      }
+
+      console.error(`Error adding committee assignment: ${err}`);
       return res
         .status(500)
         .send({ error: 'Unable to complete database transaction' });

@@ -6,6 +6,7 @@ const mock = require('../mock');
 const underTestFilename = '../../../src/routes/committee-assignment/index.js';
 
 const routerGet = sinon.stub();
+const routerPost = sinon.stub();
 const routerPut = sinon.stub();
 const routerActions = {};
 
@@ -13,10 +14,12 @@ const stubs = {
   express: {
     Router: () => ({
       get: routerGet,
+      post: routerPost,
       put: routerPut,
     }),
   },
   '../../database': {
+    addCommitteeAssignment: sinon.stub(),
     getCommitteeAssignmentByCommittee: sinon.stub(),
     getCommitteeAssignmentByFaculty: sinon.stub(),
     updateCommitteeAssignment: sinon.stub(),
@@ -30,6 +33,7 @@ describe('Request routing for /committee-assignment', () => {
 
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
+    routerActions.postCommitteeAssignment = routerPost.firstCall.args[1];
     routerActions.putCommitteeAssignment = routerPut.firstCall.args[1];
   });
 
@@ -39,9 +43,120 @@ describe('Request routing for /committee-assignment', () => {
   });
 
   afterEach(() => {
-    routerGet.resetHistory();
+    routerPut.resetHistory();
 
     stubs['../../database'].updateCommitteeAssignment.resetHistory();
+  });
+
+  it('POST returns 201 when committee assignment is added to the database', () => {
+    req.body = {
+      email: 'test-email',
+      committeeId: 42,
+      startDate: '1970-01-01',
+      endDate: '2050-01-01',
+    };
+    stubs['../../database'].addCommitteeAssignment.resolves();
+
+    return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 201);
+    });
+  });
+
+  it('POST returns 400 when missing email in request body', () => {
+    req.body = {
+      committeeId: 42,
+      startDate: '1970-01-01',
+      endDate: '2050-01-01',
+    };
+
+    return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+    });
+  });
+
+  it('POST returns 400 when missing committeeId in request body', () => {
+    req.body = {
+      email: 'test-email',
+      startDate: '1970-01-01',
+      endDate: '2050-01-01',
+    };
+
+    return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+    });
+  });
+
+  it('POST returns 400 when missing startDate in request body', () => {
+    req.body = {
+      email: 'test-email',
+      committeeId: 42,
+      endDate: '2050-01-01',
+    };
+
+    return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+    });
+  });
+
+  it('POST returns 400 when missing endDate in request body', () => {
+    req.body = {
+      email: 'test-email',
+      committeeId: 42,
+      startDate: '1970-01-01',
+    };
+
+    return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+    });
+  });
+
+  it('POST returns 409 when foreign keys do not exist in the database', () => {
+    req.body = {
+      email: 'test-email',
+      committeeId: 42,
+      startDate: '1970-01-01',
+      endDate: '2050-01-01',
+    };
+    stubs['../../database'].addCommitteeAssignment.rejects({ code: '23503' });
+
+    return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 409);
+    });
+  });
+
+  it('POST returns 409 when email and committee id pair already exists in the database', () => {
+    req.body = {
+      email: 'test-existing-email',
+      committeeId: 42,
+      startDate: '1970-01-01',
+      endDate: '2050-01-01',
+    };
+    stubs['../../database'].addCommitteeAssignment.rejects({ code: '23505' });
+
+    return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 409);
+    });
+  });
+
+  it('POST returns 500 when unable to get committee assignment from database', () => {
+    req.body = {
+      email: 'test-email',
+      committeeId: 42,
+      startDate: '1970-01-01',
+      endDate: '2050-01-01',
+    };
+    stubs['../../database'].addCommitteeAssignment.rejects(new Error('test-error'));
+
+    return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 500);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        error: 'Unable to complete database transaction',
+      });
+    });
   });
 
   it('PUT returns 200 when committee is updated in the database', () => {
@@ -169,7 +284,6 @@ describe('Request routing for /committee-assignment/committee', () => {
 
   afterEach(() => {
     routerGet.resetHistory();
-    routerPut.resetHistory();
 
     stubs['../../database'].getCommitteeAssignmentByCommittee.resetHistory();
   });

@@ -18,6 +18,24 @@ function addCommittee(name, description, slots) {
 }
 
 /**
+ * Adds a committee assignment to the database.
+ *
+ * @param email               Email of committee member
+ * @param committeeId         Id of the committee
+ * @param startDate           Start date for the committee member
+ * @param endDate             End date for the committee member
+ * @returns {Promise}         Query response on success, error on failure
+ */
+function addCommitteeAssignment(email, committeeId, startDate, endDate) {
+  const connection = loadDatabaseConnection();
+
+  return connection.none(
+    'INSERT INTO committee_assignment(email, committee_id, start_date, end_date) values($1, $2, $3, $4)',
+    [email, committeeId, startDate, endDate]
+  );
+}
+
+/**
  * Adds a faculty member to the database.
  *
  * @param fullName            Name of the faculty member
@@ -291,6 +309,7 @@ async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision
 
 module.exports = {
   addCommittee,
+  addCommitteeAssignment,
   addFaculty,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
