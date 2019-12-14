@@ -29,11 +29,15 @@ describe('Database queries', () => {
         loadDatabaseConnection: connection,
       },
     });
-    sinon.stub(console, 'log');
+    // sinon.stub(console, 'log');
   });
 
   afterEach(() => {
+    stubs.any.resetHistory();
+    stubs.none.resetHistory();
     stubs.one.resetHistory();
+    stubs.result.resetHistory();
+    stubs.tx.resetHistory();
     sinon.restore();
   });
 
@@ -316,6 +320,64 @@ describe('Database queries', () => {
       const result = await underTest.getCommitteeSlotsByCommittee(1);
 
       assert.deepEqual(result, expected);
+    });
+  });
+
+  describe('updateCommittee', () => {
+    before(() => {
+      // Suppress UnhandledPromiseRejection logging when running these tests
+      process.on('unhandledRejection', () => {});
+    });
+
+    it('returns object when update succeeds', async () => {
+      const committeeId = 42;
+      const name = 'test-committee-name';
+      const description = 'test-committee-description';
+      const totalSlots = 3;
+      const expected = { rowCount: 1 };
+
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
+
+      const result = await underTest.updateCommittee(
+        committeeId,
+        name,
+        description,
+        totalSlots
+      );
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('throws exception when result query errors', async () => {
+      const committeeId = 42;
+      const name = 'test-committee-name';
+      const description = 'test-committee-description';
+      const totalSlots = 3;
+
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
+
+      await assert.rejects(
+        underTest
+          .updateCommittee(committeeId, name, description, totalSlots)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+
+    it.skip('rejects when transaction throws an exception', async () => {
+      const committeeId = 42;
+      const name = 'test-committee-name';
+      const description = 'test-committee-description';
+      const totalSlots = 3;
+
+      await stubs.tx.rejects(new Error('test-error'));
+
+      await assert.rejects(
+        underTest
+          .updateCommittee(committeeId, name, description, totalSlots)
+          .catch(() => assert.fail('Should not have failed'))
+      );
     });
   });
 
