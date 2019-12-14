@@ -191,6 +191,15 @@ function getSenateDivisions() {
   );
 }
 
+function getSenateDivision(shortName) {
+  const connection = loadDatabaseConnection();
+
+  return connection.one(
+    'SELECT senate_division_short_name, name FROM senate_division WHERE senate_division_short_name=$1',
+    [shortName]
+  );
+}
+
 function getCommitteeSlotsByCommittee(id) {
   const connection = loadDatabaseConnection();
 
@@ -270,6 +279,7 @@ module.exports = {
   getDepartmentAssociationsByFaculty,
   getFaculty,
   getSenateDivisions,
+  getSenateDivision,
   updateCommittee,
   updateFaculty,
 };

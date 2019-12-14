@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const { getSenateDivision } = require('../../database');
 
-router.get('/name', async (req, res) => {
+router.get('/:name', async (req, res) => {
   if (!req.params.name) {
     return res.status(400).send({ message: '400 Bad Request' });
   }
-  return await getSenateDivision()
+  return await getSenateDivision(req.params.name)
     .then(data => {
       if (data.length === 0) {
         console.info('Found no senate division in the database');
