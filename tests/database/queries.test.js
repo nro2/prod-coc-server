@@ -442,4 +442,27 @@ describe('Database queries', () => {
       );
     });
   });
+
+  describe('Get senate division by short name', () => {
+    let expected;
+    beforeEach(() => {
+      expected = { senate_division_short_name: 'AO', name: 'All Other Faculty' };
+    });
+
+    it('returns nothing when query has no parameters', async () => {
+      stubs.any.resolves();
+
+      const result = await underTest.getSenateDivision();
+
+      assert.equal(result, undefined);
+    });
+
+    it('returns data when query is successful', async () => {
+      stubs.one.resolves(expected);
+
+      const result = await underTest.getSenateDivision('AO');
+
+      assert.equal(result, expected);
+    });
+  });
 });
