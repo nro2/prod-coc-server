@@ -49,7 +49,7 @@ describe('Request routing for /committee', () => {
     stubs['../../database'].updateCommittee.resetHistory();
   });
 
-  it('PUT returns 201 when committee is added to the database', () => {
+  it('POST returns 201 when committee is added to the database', () => {
     req.body = {
       name: 'test-committee-name',
       description: 'test-committee-description',
@@ -62,7 +62,7 @@ describe('Request routing for /committee', () => {
     });
   });
 
-  it('PUT returns 400 when missing name in request body', () => {
+  it('POST returns 400 when missing name in request body', () => {
     req.body = {
       description: 'test-committee-description',
       totalSlots: 42,
@@ -74,7 +74,7 @@ describe('Request routing for /committee', () => {
     });
   });
 
-  it('PUT returns 400 when missing description in request body', () => {
+  it('POST returns 400 when missing description in request body', () => {
     req.body = {
       name: 'test-committee-name',
       totalSlots: 42,
@@ -86,7 +86,7 @@ describe('Request routing for /committee', () => {
     });
   });
 
-  it('PUT returns 400 when missing totalSlots in request body', () => {
+  it('POST returns 400 when missing totalSlots in request body', () => {
     req.body = {
       name: 'test-committee-name',
       description: 'test-committee-description',
@@ -98,7 +98,7 @@ describe('Request routing for /committee', () => {
     });
   });
 
-  it('PUT returns 500 when unable to get committees from database', () => {
+  it('POST returns 500 when unable to get committees from database', () => {
     req.body = {
       name: 'test-committee-name',
       description: 'test-committee-description',

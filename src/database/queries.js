@@ -18,6 +18,24 @@ function addCommittee(name, description, slots) {
 }
 
 /**
+ * Adds a committee assignment to the database.
+ *
+ * @param email               Email of committee member
+ * @param committeeId         Id of the committee
+ * @param startDate           Start date for the committee member
+ * @param endDate             End date for the committee member
+ * @returns {Promise}         Query response on success, error on failure
+ */
+function addCommitteeAssignment(email, committeeId, startDate, endDate) {
+  const connection = loadDatabaseConnection();
+
+  return connection.none(
+    'INSERT INTO committee_assignment(email, committee_id, start_date, end_date) values($1, $2, $3, $4)',
+    [email, committeeId, startDate, endDate]
+  );
+}
+
+/**
  * Adds a faculty member to the database.
  *
  * @param fullName            Name of the faculty member
@@ -223,6 +241,7 @@ function getCommitteeSlotsBySenate(senateDivision) {
  *
  * Allows for a committee's properties to be changed, except a committee's name.
  *
+ * @param id                  Id of the committee (Required)
  * @param name                Name of the committee (Required)
  * @param description         Description of the committee
  * @param slots               Number of total available slots
@@ -237,6 +256,29 @@ async function updateCommittee(id, name, description, slots) {
       .result(
         'UPDATE committee SET name = $1, description = $2, total_slots = $3 WHERE committee_id = $4',
         [name, description, slots, id]
+      )
+      .then(result => result);
+  });
+}
+
+/**
+ * Updates a committee assignment in the database.
+ *
+ * @param email               Email of committee member
+ * @param committeeId         Id of the committee
+ * @param startDate           Start date for the committee member
+ * @param endDate             End date for the committee member
+ * @returns {Promise}         Response object with rowCount on success
+ * @throws {Error}            Connection problem or exception
+ */
+async function updateCommitteeAssignment(email, committeeId, startDate, endDate) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection
+      .result(
+        'UPDATE committee_assignment SET start_date = $1, end_date = $2 WHERE email = $3 and committee_id = $4',
+        [startDate, endDate, email, committeeId]
       )
       .then(result => result);
   });
@@ -267,6 +309,7 @@ async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision
 
 module.exports = {
   addCommittee,
+  addCommitteeAssignment,
   addFaculty,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
@@ -281,5 +324,6 @@ module.exports = {
   getSenateDivisions,
   getSenateDivision,
   updateCommittee,
+  updateCommitteeAssignment,
   updateFaculty,
 };
