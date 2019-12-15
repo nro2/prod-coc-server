@@ -54,24 +54,20 @@ describe('Database queries', () => {
         lastName: 'stub-last-name',
         phoneNum: 'stub-phone-number',
       };
-      stubs.one.resolves({
-        first_name: 'stub-first-name',
-        last_name: 'stub-last-name',
-        phone_number: 'stub-phone-number',
-      });
+      stubs.one.resolves(expected);
 
       const result = await underTest.getFaculty(firstName);
 
       assert.deepEqual(result, expected);
     });
 
-    it('returns undefined when query is unsuccessful', async () => {
+    it('returns empty array when there are no query results', async () => {
       const firstName = 'test-first-name';
-      await stubs.one.rejects(new Error('test-error'));
+      await stubs.one.resolves([]);
 
       const result = await underTest.getFaculty(firstName);
 
-      assert.equal(result, undefined);
+      assert.deepEqual(result, []);
     });
   });
 
@@ -79,36 +75,23 @@ describe('Database queries', () => {
     it('returns data when query is successful', async () => {
       const expected = [
         {
-          name: 'stub-name1',
-          committee_id: 'stub-committee_id1',
-        },
-        {
-          name: 'stub-name2',
-          committee_id: 'stub-committee_id2',
+          name: 'test-committee-name',
+          committee_id: 1,
         },
       ];
-      stubs.any.resolves([
-        {
-          name: 'stub-name1',
-          committee_id: 'stub-committee_id1',
-        },
-        {
-          name: 'stub-name2',
-          committee_id: 'stub-committee_id2',
-        },
-      ]);
+      stubs.any.resolves(expected);
 
       const result = await underTest.getCommittees();
 
       assert.deepEqual(result, expected);
     });
 
-    it('returns undefined when query is unsuccessful', async () => {
-      await stubs.any.rejects(new Error('test-error'));
+    it('returns empty array when there are no query results', async () => {
+      await stubs.any.resolves([]);
 
       const result = await underTest.getCommittees();
 
-      assert.equal(result, undefined);
+      assert.deepEqual(result, []);
     });
   });
 
@@ -121,12 +104,12 @@ describe('Database queries', () => {
       assert.equal(result, 'department-name');
     });
 
-    it('returns undefined when query is unsuccessful', async () => {
-      stubs.any.rejects(new Error('test-error'));
+    it('returns empty array when there are no query results', async () => {
+      await stubs.any.resolves([]);
 
       const result = await underTest.getDepartments();
 
-      assert.equal(result, undefined);
+      assert.deepEqual(result, []);
     });
   });
 

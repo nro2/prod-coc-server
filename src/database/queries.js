@@ -54,34 +54,10 @@ function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   );
 }
 
-function getFaculty(firstName) {
-  const connection = loadDatabaseConnection();
-
-  return connection
-    .one('SELECT * FROM users WHERE first_name=$1', [firstName])
-    .then(data => {
-      return {
-        firstName: data.first_name,
-        lastName: data.last_name,
-        phoneNum: data.phone_number,
-      };
-    })
-    .catch(err => {
-      console.log(err.message);
-    });
-}
-
 function getDepartments() {
   const connection = loadDatabaseConnection();
 
-  return connection
-    .any('SELECT department_id, name, description FROM department')
-    .then(data => {
-      return data;
-    })
-    .catch(err => {
-      console.log(err.message);
-    });
+  return connection.any('SELECT department_id, name, description FROM department');
 }
 
 function getCommitteeAssignmentByCommittee(id) {
@@ -102,17 +78,28 @@ function getCommitteeAssignmentByFaculty(email) {
   );
 }
 
+function getCommitteeSlotsByCommittee(id) {
+  const connection = loadDatabaseConnection();
+
+  return connection.any(
+    'SELECT senate_division_short_name, slot_requirements FROM committee_slots where committee_id=$1',
+    [id]
+  );
+}
+
+function getCommitteeSlotsBySenate(senateDivision) {
+  const connection = loadDatabaseConnection();
+
+  return connection.any(
+    'SELECT committee_id, slot_requirements FROM committee_slots where senate_division_short_name=$1',
+    [senateDivision]
+  );
+}
+
 function getCommittees() {
   const connection = loadDatabaseConnection();
 
-  return connection
-    .any('SELECT name, committee_id FROM committee')
-    .then(data => {
-      return data;
-    })
-    .catch(err => {
-      console.log(err.message);
-    });
+  return connection.any('SELECT name, committee_id FROM committee');
 }
 
 function getDepartment(id) {
@@ -126,7 +113,7 @@ function getDepartment(id) {
 
 /**
  *
- * @param email         Email of the faculty member
+ * @param id            Department id
  * @returns {Promise}   Query response object on success, error on failure
  */
 async function getDepartmentAssociationsByDepartment(id) {
@@ -196,6 +183,12 @@ function groupDepartmentIdByFaculty(arr) {
   }, []);
 }
 
+function getFaculty(firstName) {
+  const connection = loadDatabaseConnection();
+
+  return connection.one('SELECT * FROM users WHERE first_name=$1', [firstName]);
+}
+
 /**
  * Gets all the senate divisions.
  *
@@ -215,24 +208,6 @@ function getSenateDivision(shortName) {
   return connection.one(
     'SELECT senate_division_short_name, name FROM senate_division WHERE senate_division_short_name=$1',
     [shortName]
-  );
-}
-
-function getCommitteeSlotsByCommittee(id) {
-  const connection = loadDatabaseConnection();
-
-  return connection.any(
-    'SELECT senate_division_short_name, slot_requirements FROM committee_slots where committee_id=$1',
-    [id]
-  );
-}
-
-function getCommitteeSlotsBySenate(senateDivision) {
-  const connection = loadDatabaseConnection();
-
-  return connection.any(
-    'SELECT committee_id, slot_requirements FROM committee_slots where senate_division_short_name=$1',
-    [senateDivision]
   );
 }
 
