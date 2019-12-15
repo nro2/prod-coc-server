@@ -8,7 +8,9 @@
     "format": "prettier --write \"./**/*.js\"",
     "lint": "eslint --quiet . --ext .js",
     "test": "mocha --exit --recursive tests",
-    "migrate": "knex migrate:latest --env development"
+    "migrate": "knex migrate:latest --env development",
+    "down": "knex migrate:down --env development",
+    "seed": "knex seed:run --env development"
   },
   "repository": {
     "type": "git",
