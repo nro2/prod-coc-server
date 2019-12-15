@@ -8,7 +8,7 @@ const { loadDatabaseConnection } = require('./connection');
  * @param slots               Number of total available slots
  * @returns {Promise}         Query response on success, error on failure
  */
-function addCommittee(name, description, slots) {
+async function addCommittee(name, description, slots) {
   const connection = loadDatabaseConnection();
 
   return connection.none(
@@ -26,7 +26,7 @@ function addCommittee(name, description, slots) {
  * @param endDate             End date for the committee member
  * @returns {Promise}         Query response on success, error on failure
  */
-function addCommitteeAssignment(email, committeeId, startDate, endDate) {
+async function addCommitteeAssignment(email, committeeId, startDate, endDate) {
   const connection = loadDatabaseConnection();
 
   return connection.none(
@@ -45,7 +45,7 @@ function addCommitteeAssignment(email, committeeId, startDate, endDate) {
  * @param senateDivision      Senate division the faculty member belongs to
  * @returns {Promise}         Query response on success, error on failure
  */
-function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
+async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   const connection = loadDatabaseConnection();
 
   return connection.none(
@@ -59,7 +59,7 @@ function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
  *
  * @returns {Promise} Query response object on success, error on failure
  */
-function getDepartments() {
+async function getDepartments() {
   const connection = loadDatabaseConnection();
 
   return connection.any('SELECT department_id, name, description FROM department');
@@ -71,7 +71,7 @@ function getDepartments() {
  * @param id          Committee id
  * @returns {Promise} Query response object on success, error on failure
  */
-function getCommitteeAssignmentByCommittee(id) {
+async function getCommitteeAssignmentByCommittee(id) {
   const connection = loadDatabaseConnection();
 
   return connection.any(
@@ -86,7 +86,7 @@ function getCommitteeAssignmentByCommittee(id) {
  * @param email       Faculty email
  * @returns {Promise} Query response object on success, error on failure
  */
-function getCommitteeAssignmentByFaculty(email) {
+async function getCommitteeAssignmentByFaculty(email) {
   const connection = loadDatabaseConnection();
 
   return connection.any(
@@ -101,7 +101,7 @@ function getCommitteeAssignmentByFaculty(email) {
  * @param id          Committee id
  * @returns {Promise} Query response object on success, error on failure
  */
-function getCommitteeSlotsByCommittee(id) {
+async function getCommitteeSlotsByCommittee(id) {
   const connection = loadDatabaseConnection();
 
   return connection.any(
@@ -116,7 +116,7 @@ function getCommitteeSlotsByCommittee(id) {
  * @param senateDivision  Committee senate division
  * @returns {Promise}     Query response object on success, error on failure
  */
-function getCommitteeSlotsBySenate(senateDivision) {
+async function getCommitteeSlotsBySenate(senateDivision) {
   const connection = loadDatabaseConnection();
 
   return connection.any(
@@ -130,7 +130,7 @@ function getCommitteeSlotsBySenate(senateDivision) {
  *
  * @returns {Promise} Query response object on success, error on failure
  */
-function getCommittees() {
+async function getCommittees() {
   const connection = loadDatabaseConnection();
 
   return connection.any('SELECT name, committee_id FROM committee');
@@ -142,7 +142,7 @@ function getCommittees() {
  * @param id          Department id
  * @returns {Promise} Query response object on success, error on failure
  */
-function getDepartment(id) {
+async function getDepartment(id) {
   const connection = loadDatabaseConnection();
 
   return connection.one(
@@ -230,7 +230,7 @@ function groupDepartmentIdByFaculty(arr) {
  * @param firstName   Faculty first name
  * @returns {Promise} Query response on success, error on failure
  */
-function getFaculty(firstName) {
+async function getFaculty(firstName) {
   const connection = loadDatabaseConnection();
 
   return connection.one('SELECT * FROM users WHERE first_name=$1', [firstName]);
@@ -241,7 +241,7 @@ function getFaculty(firstName) {
  *
  * @returns {Promise}   Query response object on success, error on failure
  */
-function getSenateDivisions() {
+async function getSenateDivisions() {
   const connection = loadDatabaseConnection();
 
   return connection.any(
@@ -255,7 +255,7 @@ function getSenateDivisions() {
  * @param shortName   Short name of the senate division
  * @returns {Promise} Query response on success, error on failure
  */
-function getSenateDivision(shortName) {
+async function getSenateDivision(shortName) {
   const connection = loadDatabaseConnection();
 
   return connection.one(
