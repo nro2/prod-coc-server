@@ -1,13 +1,11 @@
-version: "3"
+version: '3'
 services:
   db:
     image: postgres
-    volumes:
-      - ./:/docker-entrypoint-initdb.d/
     container_name: coc_postgres
     environment:
       - POSTGRES_USER=coc
       - POSTGRES_PASSWORD=pwd123
       - POSTGRES_DB=coc
     ports:
-      - "54320:5432"
+      - '54320:5432'
