@@ -22,7 +22,7 @@ router.get('/senate-division/:shortname', async (req, res) => {
       console.info(
         `Successfully retrieved slot requirements for ${req.params.shortname}`
       );
-      res.status(200).send(data);
+      return res.status(200).send(data);
     })
     .catch(err => {
       console.error(`Error retrieving slot requirements: ${err}`);

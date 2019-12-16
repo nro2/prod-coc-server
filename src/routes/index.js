@@ -9,6 +9,7 @@ router.use('/departments', require('./departments'));
 router.use('/department-associations', require('./department-associations'));
 router.use('/faculty', require('./faculty'));
 router.use('/senate-divisions', require('./senate-divisions'));
+router.use('/senate-division', require('./senate-division'));
 router.use('/committee-slots', require('./committee-slots'));
 
 module.exports = router;

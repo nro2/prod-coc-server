@@ -8,12 +8,30 @@ const { loadDatabaseConnection } = require('./connection');
  * @param slots               Number of total available slots
  * @returns {Promise}         Query response on success, error on failure
  */
-function addCommittee(name, description, slots) {
+async function addCommittee(name, description, slots) {
   const connection = loadDatabaseConnection();
 
   return connection.none(
     'INSERT INTO committee(name, description, total_slots) values($1, $2, $3)',
     [name, description, slots]
+  );
+}
+
+/**
+ * Adds a committee assignment to the database.
+ *
+ * @param email               Email of committee member
+ * @param committeeId         Id of the committee
+ * @param startDate           Start date for the committee member
+ * @param endDate             End date for the committee member
+ * @returns {Promise}         Query response on success, error on failure
+ */
+async function addCommitteeAssignment(email, committeeId, startDate, endDate) {
+  const connection = loadDatabaseConnection();
+
+  return connection.none(
+    'INSERT INTO committee_assignment(email, committee_id, start_date, end_date) values($1, $2, $3, $4)',
+    [email, committeeId, startDate, endDate]
   );
 }
 
@@ -27,7 +45,7 @@ function addCommittee(name, description, slots) {
  * @param senateDivision      Senate division the faculty member belongs to
  * @returns {Promise}         Query response on success, error on failure
  */
-function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
+async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   const connection = loadDatabaseConnection();
 
   return connection.none(
@@ -52,20 +70,24 @@ async function getFaculty(email) {
     });
 }
 
-function getDepartments() {
+/**
+ * Gets department records.
+ *
+ * @returns {Promise} Query response object on success, error on failure
+ */
+async function getDepartments() {
   const connection = loadDatabaseConnection();
 
-  return connection
-    .any('SELECT department_id, name, description FROM department')
-    .then(data => {
-      return data;
-    })
-    .catch(err => {
-      console.log(err.message);
-    });
+  return connection.any('SELECT department_id, name, description FROM department');
 }
 
-function getCommitteeAssignmentByCommittee(id) {
+/**
+ * Gets committee assignment records by their committee id.
+ *
+ * @param id          Committee id
+ * @returns {Promise} Query response object on success, error on failure
+ */
+async function getCommitteeAssignmentByCommittee(id) {
   const connection = loadDatabaseConnection();
 
   return connection.any(
@@ -74,7 +96,13 @@ function getCommitteeAssignmentByCommittee(id) {
   );
 }
 
-function getCommitteeAssignmentByFaculty(email) {
+/**
+ * Gets committee assignment records by their faculty email.
+ *
+ * @param email       Faculty email
+ * @returns {Promise} Query response object on success, error on failure
+ */
+async function getCommitteeAssignmentByFaculty(email) {
   const connection = loadDatabaseConnection();
 
   return connection.any(
@@ -83,20 +111,54 @@ function getCommitteeAssignmentByFaculty(email) {
   );
 }
 
-function getCommittees() {
+/**
+ * Gets committee slot records by their id.
+ *
+ * @param id          Committee id
+ * @returns {Promise} Query response object on success, error on failure
+ */
+async function getCommitteeSlotsByCommittee(id) {
   const connection = loadDatabaseConnection();
 
-  return connection
-    .any('SELECT name, committee_id FROM committee')
-    .then(data => {
-      return data;
-    })
-    .catch(err => {
-      console.log(err.message);
-    });
+  return connection.any(
+    'SELECT senate_division_short_name, slot_requirements FROM committee_slots where committee_id=$1',
+    [id]
+  );
 }
 
-function getDepartment(id) {
+/**
+ * Gets committee slot records by their senate division.
+ *
+ * @param senateDivision  Committee senate division
+ * @returns {Promise}     Query response object on success, error on failure
+ */
+async function getCommitteeSlotsBySenate(senateDivision) {
+  const connection = loadDatabaseConnection();
+
+  return connection.any(
+    'SELECT committee_id, slot_requirements FROM committee_slots where senate_division_short_name=$1',
+    [senateDivision]
+  );
+}
+
+/**
+ * Gets committee records.
+ *
+ * @returns {Promise} Query response object on success, error on failure
+ */
+async function getCommittees() {
+  const connection = loadDatabaseConnection();
+
+  return connection.any('SELECT name, committee_id FROM committee');
+}
+
+/**
+ * Gets department record by its id.
+ *
+ * @param id          Department id
+ * @returns {Promise} Query response object on success, error on failure
+ */
+async function getDepartment(id) {
   const connection = loadDatabaseConnection();
 
   return connection.one(
@@ -106,8 +168,9 @@ function getDepartment(id) {
 }
 
 /**
+ * Gets department association records by department id.
  *
- * @param email         Email of the faculty member
+ * @param id            Department id
  * @returns {Promise}   Query response object on success, error on failure
  */
 async function getDepartmentAssociationsByDepartment(id) {
@@ -182,7 +245,7 @@ function groupDepartmentIdByFaculty(arr) {
  *
  * @returns {Promise}   Query response object on success, error on failure
  */
-function getSenateDivisions() {
+async function getSenateDivisions() {
   const connection = loadDatabaseConnection();
 
   return connection.any(
@@ -190,21 +253,18 @@ function getSenateDivisions() {
   );
 }
 
-function getCommitteeSlotsByCommittee(id) {
+/**
+ * Gets a senate division record by its short name.
+ *
+ * @param shortName   Short name of the senate division
+ * @returns {Promise} Query response on success, error on failure
+ */
+async function getSenateDivision(shortName) {
   const connection = loadDatabaseConnection();
 
-  return connection.any(
-    'SELECT senate_division_short_name, slot_requirements FROM committee_slots where committee_id=$1',
-    [id]
-  );
-}
-
-function getCommitteeSlotsBySenate(senateDivision) {
-  const connection = loadDatabaseConnection();
-
-  return connection.any(
-    'SELECT committee_id, slot_requirements FROM committee_slots where senate_division_short_name=$1',
-    [senateDivision]
+  return connection.one(
+    'SELECT senate_division_short_name, name FROM senate_division WHERE senate_division_short_name=$1',
+    [shortName]
   );
 }
 
@@ -213,6 +273,7 @@ function getCommitteeSlotsBySenate(senateDivision) {
  *
  * Allows for a committee's properties to be changed, except a committee's name.
  *
+ * @param id                  Id of the committee (Required)
  * @param name                Name of the committee (Required)
  * @param description         Description of the committee
  * @param slots               Number of total available slots
@@ -227,6 +288,29 @@ async function updateCommittee(id, name, description, slots) {
       .result(
         'UPDATE committee SET name = $1, description = $2, total_slots = $3 WHERE committee_id = $4',
         [name, description, slots, id]
+      )
+      .then(result => result);
+  });
+}
+
+/**
+ * Updates a committee assignment in the database.
+ *
+ * @param email               Email of committee member
+ * @param committeeId         Id of the committee
+ * @param startDate           Start date for the committee member
+ * @param endDate             End date for the committee member
+ * @returns {Promise}         Response object with rowCount on success
+ * @throws {Error}            Connection problem or exception
+ */
+async function updateCommitteeAssignment(email, committeeId, startDate, endDate) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection
+      .result(
+        'UPDATE committee_assignment SET start_date = $1, end_date = $2 WHERE email = $3 and committee_id = $4',
+        [startDate, endDate, email, committeeId]
       )
       .then(result => result);
   });
@@ -257,6 +341,7 @@ async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision
 
 module.exports = {
   addCommittee,
+  addCommitteeAssignment,
   addFaculty,
   getFaculty,
   getCommitteeAssignmentByCommittee,
@@ -269,6 +354,8 @@ module.exports = {
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
   getSenateDivisions,
+  getSenateDivision,
   updateCommittee,
+  updateCommitteeAssignment,
   updateFaculty,
 };

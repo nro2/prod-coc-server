@@ -40,16 +40,13 @@ describe('Request routing for /department', () => {
     stubs['../../database'].getDepartment.resetHistory();
   });
 
-  it('GET Returns 200 when departments are retrieved from database', () => {
+  it('GET returns 200 when departments are retrieved from database', () => {
     const expected = {
       department_id: 1,
       name: 'test-department',
     };
     stubs['../../database'].getDepartment.resolves(expected);
-
-    req.params = {
-      id: 1,
-    };
+    req.params.id = 1;
 
     return routerActions.getDepartment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -57,13 +54,12 @@ describe('Request routing for /department', () => {
     });
   });
 
-  it('GET Returns 400 when id is missing', () => {
+  it('GET returns 400 when id is missing', () => {
     const expected = {
       department_id: 1,
       name: 'test-department',
     };
 
-    req.params = {};
     stubs['../../database'].getDepartment.resolves(expected);
     return routerActions.getDepartment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
@@ -73,12 +69,18 @@ describe('Request routing for /department', () => {
     });
   });
 
-  it('GET Returns 500 when department cant be retrieved', () => {
-    stubs['../../database'].getDepartment.rejects(new Error('test-database-error'));
+  it('GET Returns 404 when department is not found', () => {
+    stubs['../../database'].getDepartment.rejects({ result: { rowCount: 0 } });
+    req.params.id = 1;
 
-    req.params = {
-      id: 1,
-    };
+    return routerActions.getDepartment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 404);
+    });
+  });
+
+  it('GET returns 500 when there is a database error', () => {
+    stubs['../../database'].getDepartment.rejects(new Error('test-database-error'));
+    req.params.id = 1;
 
     return routerActions.getDepartment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
