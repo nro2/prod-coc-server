@@ -43,19 +43,23 @@ describe('Database queries', () => {
 
   describe('getFaculty', () => {
     it('returns data when query is successful', async () => {
-      const firstName = 'test-first-name';
+      const email = 'test-full-email';
       const expected = {
-        firstName: 'stub-first-name',
-        lastName: 'stub-last-name',
-        phoneNum: 'stub-phone-number',
+        email: 'stub-full-name',
+        full_name: 'stub-phone-number',
+        phone_num: 'stub-phone-num',
+        job_title: 'stub-job-title',
+        senate_division_short_name: 'stub-senate-short-name',
       };
       stubs.one.resolves({
-        first_name: 'stub-first-name',
-        last_name: 'stub-last-name',
-        phone_number: 'stub-phone-number',
+        email: 'stub-full-name',
+        full_name: 'stub-phone-number',
+        phone_num: 'stub-phone-num',
+        job_title: 'stub-job-title',
+        senate_division_short_name: 'stub-senate-short-name',
       });
 
-      const result = await underTest.getFaculty(firstName);
+      const result = await underTest.getFaculty(email);
 
       assert.deepEqual(result, expected);
     });

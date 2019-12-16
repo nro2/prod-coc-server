@@ -36,17 +36,16 @@ function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   );
 }
 
-function getFaculty(firstName) {
+async function getFaculty(email) {
   const connection = loadDatabaseConnection();
 
   return connection
-    .one('SELECT * FROM users WHERE first_name=$1', [firstName])
+    .one(
+      'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty WHERE email=$1',
+      [email]
+    )
     .then(data => {
-      return {
-        firstName: data.first_name,
-        lastName: data.last_name,
-        phoneNum: data.phone_number,
-      };
+      return data;
     })
     .catch(err => {
       console.log(err.message);
@@ -259,6 +258,7 @@ async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision
 module.exports = {
   addCommittee,
   addFaculty,
+  getFaculty,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   getCommitteeSlotsBySenate,
@@ -268,7 +268,6 @@ module.exports = {
   getDepartments,
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
-  getFaculty,
   getSenateDivisions,
   updateCommittee,
   updateFaculty,
