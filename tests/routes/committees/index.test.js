@@ -43,12 +43,8 @@ describe('Request routing for /committee', () => {
   it('GET returns 200 when committees are retrieved from database', () => {
     const committees = [
       {
-        name: 'test-name1',
-        committee_id: 'test-committee_id1',
-      },
-      {
-        name: 'test-name2',
-        committee_id: 'test-committee_id2',
+        name: 'test-committee-name',
+        committee_id: 'test-committee-id',
       },
     ];
     stubs['../../database'].getCommittees.resolves(committees);
@@ -59,13 +55,21 @@ describe('Request routing for /committee', () => {
     });
   });
 
-  it('GET returns 500 when unable to get committees from database', () => {
-    stubs['../../database'].getCommittees.resolves(undefined);
+  it('GET returns 404 when there are no departments in the database', () => {
+    stubs['../../database'].getCommittees.resolves([]);
+
+    return routerActions.getCommittees(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 404);
+    });
+  });
+
+  it('GET returns 500 when there is a database error', () => {
+    stubs['../../database'].getCommittees.rejects(new Error('test-error'));
 
     return routerActions.getCommittees(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to retrieve committees',
+        error: 'Unable to complete database transaction',
       });
     });
   });

@@ -108,9 +108,7 @@ describe('Request routing for /department-associations', () => {
           department_id: 1,
         },
       ];
-      req.params = {
-        email: 'test@email.com',
-      };
+      req.params.email = 'test@email.com';
       stubs['../../database'].getDepartmentAssociationsByFaculty.resolves(
         departmentAssociations
       );

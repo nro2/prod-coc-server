@@ -43,12 +43,8 @@ describe('Request routing for /departments', () => {
   it('GET returns 200 when departments are retrieved from database', () => {
     const departments = [
       {
-        name: 'test-department1',
-        department_id: 'test-department_id1',
-      },
-      {
-        name: 'test-department2',
-        department_id: 'test-department_id2',
+        name: 'test-department-name',
+        department_id: 'test-department-id',
       },
     ];
     stubs['../../database'].getDepartments.resolves(departments);
@@ -59,13 +55,21 @@ describe('Request routing for /departments', () => {
     });
   });
 
-  it('GET returns 404 when unable to get departments from database', () => {
-    stubs['../../database'].getDepartments.resolves(undefined);
+  it('GET returns 404 when there are no departments in the database', () => {
+    stubs['../../database'].getDepartments.resolves([]);
 
     return routerActions.getDepartments(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
+    });
+  });
+
+  it('GET returns 500 when there is a database error', () => {
+    stubs['../../database'].getDepartments.rejects(new Error('test-error'));
+
+    return routerActions.getDepartments(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to retrieve departments',
+        error: 'Unable to complete database transaction',
       });
     });
   });
