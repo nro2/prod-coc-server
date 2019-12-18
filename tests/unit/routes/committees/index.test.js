@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('../mock');
 
-const underTestFilename = '../../../src/routes/committees/index.js';
+const underTestFilename = '../../../../src/routes/committees/index.js';
 
 const routerGet = sinon.stub();
 const routerActions = {};
