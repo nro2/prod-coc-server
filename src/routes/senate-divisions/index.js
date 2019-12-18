@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
     .then(data => {
       if (data.length === 0) {
         console.info('Found no senate division in the database');
-        return res.status(404);
+        return res.status(404).send();
       }
 
       console.info('Successfully retrieved senate divisions from database');

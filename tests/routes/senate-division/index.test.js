@@ -55,7 +55,7 @@ describe('Request routing for /senate-division', () => {
   });
 
   it('GET returns 404 when there are no senate division in the database', () => {
-    stubs['../../database'].getSenateDivision.resolves([]);
+    stubs['../../database'].getSenateDivision.rejects({ result: { rowCount: 0 } });
     req.params.name = 'test-senate-division-short-name';
 
     return routerActions.getSenateDivision(req, res).then(() => {

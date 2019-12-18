@@ -19,6 +19,7 @@ const stubs = {
   '../../database': {
     addFaculty: sinon.stub(),
     updateFaculty: sinon.stub(),
+    FOREIGN_KEY_VIOLATION: '23503',
     UNIQUENESS_VIOLATION: '23505',
   },
 };
@@ -279,6 +280,21 @@ describe('Request routing for /faculty', () => {
       senateDivision: 'test-senate-division',
     };
     stubs['../../database'].addFaculty.rejects({ code: '23505' });
+
+    return routerActions.postFaculty(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 409);
+    });
+  });
+
+  it('POST returns 409 when foreign key does not exist in the database', () => {
+    req.body = {
+      fullName: 'test-full-name',
+      email: 'test-existing-email',
+      jobTitle: 'test-job-title',
+      phoneNum: 'test-phone-num',
+      senateDivision: 'test-senate-division',
+    };
+    stubs['../../database'].addFaculty.rejects({ code: '23503' });
 
     return routerActions.postFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);
