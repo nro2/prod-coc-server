@@ -7,51 +7,48 @@ backend for poc-coc.
 
 ## How to Develop
 
+Run the application:
+
 1. Install the required packages: `npm install`
 2. Run the application: `npm start`
 3. Check that the application is running by visiting
    [localhost:8080](http://localhost:8080)
 
+Interact with the database:
+
+1. Provision database resources:
+   `docker-compose -f docker-compose.yml up --build`
+2. Create tables in the database: `npm run migrate:up development`
+3. Seed the database with data: `npm run seed`
+
+## How to Test
+
+**Unit Tests**:
+
+The unit tests are found in `/tests/unit`.
+
+Run them via `npm test`.
+
+**Integration Tests**
+
+The unit tests are found in `/tests/integration`.
+
+To run them,
+
+1. Provision database resources:
+   `docker-compose -f docker-compose.yml up --build`
+2. Run the integration tests: `npm run test:integration`
+
 ## Creating database migrations
 
-1. Install db-migrate globally run `npm install -g db-migrate`
-2. Install db-migrate locally by running `npm install db-migrate or npm install`
-3. To create a new migration run `db-migrate create [Name_Of_Migration]`
-4. Fill out the exports.up and exports.down functions with your schema changes.
-5. Run `db-migrate up -e [ENV]` where [ENV] is the name of the environment you
-   are targeting in the database.json file.
+1. Make sure the latest packages are installed by running `npm install`
+2. To create a new migration run `npm run migrate <name-of-migration>`
+3. Fill out the `exports.up` and `exports.down` functions with your schema
+   changes.
+4. Run `npm run migrate:up <env>` where `<env>` is the name of the environment
+   you are targeting in the [db/knexfile.js](./db/knexfile.js) file.
 
-example command to create a new migration and run it against an environment
-named "pg" targeting a postgres database: db-migrate create CreatUserTable
-db-migrate up -e pg
-
-Example database.json
-
-```json
-{
-  "dev": {
-    "driver": "sqlite3",
-    "filename": "database/database.db"
-  },
-
-  "test": {
-    "driver": "sqlite3",
-    "filename": ":memory:"
-  },
-
-  "pg": {
-    "driver": "pg",
-    "user": "user",
-    "password": "password",
-    "host": "localhost",
-    "port": 54320,
-    "database": "coc",
-    "schema": "public"
-  }
-}
-```
-
-Documentation https://db-migrate.readthedocs.io/en/latest/
+Documentation: [Knex Migrations](http://knexjs.org/#Migrations)
 
 ## How to install Docker on Linux
 
