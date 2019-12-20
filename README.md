@@ -81,3 +81,32 @@ Documentation: [Knex Migrations](http://knexjs.org/#Migrations)
 3. run npm start from the prod-coc-client project
 4. To access the database directly use the command
    `docker exec -it coc_postgres psql -U coc`
+
+## Help
+
+**Help! The database is displaying strange behavior**
+
+The database container might be logging
+`error: relation <table> already exists`, or that a relation already exists.
+This could be because it is out of sync with the current schema or data.
+
+There is the possibility that the database container might be cached, such that
+when it is spun up again it still holds outdated information that is
+incompatible with the current schema or data.
+
+To fix this, the nuclear option is to delete all of the docker images. You can
+do this by running `docker system prune`.
+
+A less abrasive option would be to:
+
+- List the docker images in your machine with `docker images`
+- Verify that there is a `postgres` image in the results
+- Make a note of the `postgres` image IMAGE ID
+- Remove the image via `docker rmi <IMAGE-ID> --force`
+
+**Help! There are Knex MySQL warnings when running `npm install`**
+
+According to [this thread](https://github.com/knex/knex/issues/3512) on GitHub
+issues, the problem should be solved by updating to the latest `npm`.
+
+To update to latest, run `npm install -g npm`.
