@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   addFaculty,
   updateFaculty,
+  FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
 } = require('../../database');
 
@@ -26,9 +27,9 @@ router.post('/', async (req, res) => {
       return res.status(201).send();
     })
     .catch(err => {
-      if (err.code === UNIQUENESS_VIOLATION) {
+      if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
         console.error(
-          `Attempted to add an existing faculty with a non unique-key: ${err}`
+          `Attempted to add an existing faculty with invalid keys: ${err}`
         );
         return res.status(409).send();
       }

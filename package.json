@@ -2,12 +2,18 @@
   "name": "poc-coc-server",
   "version": "0.0.0",
   "description": "Committee on Committees Server",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "format": "prettier --write \"./**/*.js\"",
     "lint": "eslint --quiet . --ext .js",
-    "test": "mocha --exit --recursive tests"
+    "test": "npm run test:unit",
+    "test:unit": "mocha --exit --recursive tests/unit",
+    "test:integration": "mocha --exit --recursive tests/integration",
+    "migrate": "knex migrate:make",
+    "migrate:up": "knex --knexfile=./db/knexfile.js migrate:latest --env",
+    "migrate:down": "knex --knexfile=./db/knexfile.js migrate:down --env",
+    "seed": "knex --knexfile=./db/knexfile.js seed:run --env development"
   },
   "repository": {
     "type": "git",
@@ -16,10 +22,9 @@
   "author": "Michael Heyman",
   "license": "ISC",
   "dependencies": {
-    "db-migrate": "^0.11.6",
-    "db-migrate-pg": "^1.0.0",
-    "db-migrate-sqlite3": "^0.4.0",
     "express": "^4.17.1",
+    "knex": "^0.20.4",
+    "pg": "^7.14.0",
     "pg-promise": "^10.2.1"
   },
   "devDependencies": {

@@ -8,15 +8,15 @@ router.get('/:name', async (req, res) => {
   }
   return await getSenateDivision(req.params.name)
     .then(data => {
-      if (data.length === 0) {
-        console.info('Found no senate division in the database');
-        return res.status(404);
-      }
-
       console.info('Successfully retrieved senate division from database');
       return res.status(200).send(data);
     })
     .catch(err => {
+      if (err.result && err.result.rowCount === 0) {
+        console.info('Found no senate division in the database');
+        return res.status(404).send();
+      }
+
       console.error(`Error retrieving senate division: ${err}`);
       return res
         .status(500)
