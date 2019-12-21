@@ -1,7 +1,7 @@
 const assert = require('assert');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
-const mock = require('../mock');
+const mock = require('./mock');
 
 const underTestFilename = '../../../../src/routes/committee-assignment/index.js';
 
