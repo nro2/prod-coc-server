@@ -55,6 +55,24 @@ async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
 }
 
 /**
+ * Adds a survey choice to the database.
+ *
+ * @param choiceId      Choice id
+ * @param surveyDate    Date of the survey
+ * @param email         Email of the faculty member
+ * @param committeeId   Committee id
+ * @returns {Promise}   Query response on success, error on failure
+ */
+async function addSurveyChoice(choiceId, surveyDate, email, committeeId) {
+  const connection = loadDatabaseConnection();
+
+  return connection.none(
+    'INSERT INTO survey_choice(choice_id, survey_date, email, committee_id) values($1, $2, $3, $4)',
+    [choiceId, surveyDate, email, committeeId]
+  );
+}
+
+/**
  * Gets department records.
  *
  * @returns {Promise} Query response object on success, error on failure
@@ -355,6 +373,7 @@ module.exports = {
   addCommittee,
   addCommitteeAssignment,
   addFaculty,
+  addSurveyChoice,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   getCommitteeSlotsBySenate,
