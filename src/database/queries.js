@@ -55,6 +55,24 @@ async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
 }
 
 /**
+ * Adds a survey choice to the database.
+ *
+ * @param choiceId      Choice id
+ * @param surveyDate    Date of the survey
+ * @param email         Email of the faculty member
+ * @param committeeId   Committee id
+ * @returns {Promise}   Query response on success, error on failure
+ */
+async function addSurveyChoice(choiceId, surveyDate, email, committeeId) {
+  const connection = loadDatabaseConnection();
+
+  return connection.none(
+    'INSERT INTO survey_choice(choice_id, survey_date, email, committee_id) values($1, $2, $3, $4)',
+    [choiceId, surveyDate, email, committeeId]
+  );
+}
+
+/**
  * Gets department records.
  *
  * @returns {Promise} Query response object on success, error on failure
@@ -265,6 +283,22 @@ async function getSenateDivision(shortName) {
 }
 
 /**
+ * Gets a list of survey choices by their date and email.
+ *
+ * @param date        Date of the survey choice
+ * @param email       Email of the faculty member
+ * @returns {Promise} Query response on success, error on failure
+ */
+async function getSurveyChoice(date, email) {
+  const connection = loadDatabaseConnection();
+
+  return connection.many(
+    'SELECT choice_id, survey_date, email, committee_id FROM survey_choice WHERE EXTRACT(year FROM survey_date) = $1 and email = $2',
+    [date, email]
+  );
+}
+
+/**
  * Updates a committee in the database.
  *
  * Allows for a committee's properties to be changed, except a committee's name.
@@ -339,6 +373,7 @@ module.exports = {
   addCommittee,
   addCommitteeAssignment,
   addFaculty,
+  addSurveyChoice,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   getCommitteeSlotsBySenate,
@@ -351,6 +386,7 @@ module.exports = {
   getFaculty,
   getSenateDivisions,
   getSenateDivision,
+  getSurveyChoice,
   updateCommittee,
   updateCommitteeAssignment,
   updateFaculty,

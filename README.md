@@ -18,8 +18,7 @@ Interact with the database:
 
 1. Provision database resources:
    `docker-compose -f docker-compose.yml up --build`
-2. Create tables in the database: `npm run migrate:up development`
-3. Seed the database with data: `npm run seed`
+2. Populate database with tables and data: `npm run database`
 
 ## How to Test
 
