@@ -293,8 +293,8 @@ async function getSurveyChoice(date, email) {
   const connection = loadDatabaseConnection();
 
   return connection.many(
-    'SELECT choice_id, survey_date, email, committee_id FROM survey_choice WHERE survey_date = $1 and email = $2',
-    ['2019-01-01', email]
+    'SELECT choice_id, survey_date, email, committee_id FROM survey_choice WHERE EXTRACT(year FROM survey_date) = $1 and email = $2',
+    [date, email]
   );
 }
 

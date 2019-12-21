@@ -14,7 +14,7 @@ router.get('/:date/:email', async (req, res) => {
 
   const { date, email } = req.params;
 
-  return await getSurveyChoice(date, email)
+  return getSurveyChoice(date, email)
     .then(data => {
       console.info('Successfully retrieved survey choice from database');
       return res.status(200).send(data);
