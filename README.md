@@ -22,21 +22,31 @@ Interact with the database:
 
 ## How to Test
 
-**Unit Tests**:
+### Unit Tests
 
 The unit tests are found in `/tests/unit`.
 
 Run them via `npm test`.
 
-**Integration Tests**
+### Integration Tests
 
 The unit tests are found in `/tests/integration`.
 
-To run them,
+They can be ran manually, by provisioning database resources and running the
+integration tests:
 
 1. Provision database resources:
    `docker-compose -f docker-compose.yml up --build`
 2. Run the integration tests: `npm run test:integration`
+
+Another easy option is to run the integration tests automatically within a
+docker network
+
+1. `docker-compose -f docker-compose-tests.yml up --build`
+2. Verify that the process ends with code 0 and all tests pass
+
+To exist these containers after finishing press CTRL-C to send an interrupt
+signal.
 
 ## Creating database migrations
 

@@ -1,0 +1,29 @@
+version: '3'
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_DB: coc
+      POSTGRES_PASSWORD: pwd123
+      POSTGRES_USER: coc
+    ports:
+      - 5432
+  server:
+    image: node:12-alpine
+    command: 'npm run test:integration'
+    volumes:
+      - .:/app
+    working_dir: /app
+    depends_on:
+      - database
+    ports:
+      - 3000
+    links:
+      - database
+    environment:
+      DATABASE_HOST: database
+      DATABASE_NAME: coc
+      DATABASE_PASSWORD: pwd123
+      DATABASE_PORT: 5432
+      DATABASE_USER: coc
+      NODE_ENV: test

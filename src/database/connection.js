@@ -1,11 +1,11 @@
 const pgp = require('pg-promise')({ noLocking: true });
 
 const config = {
-  host: 'localhost',
-  port: 54320,
-  database: 'coc',
-  user: 'coc',
-  password: 'pwd123',
+  host: process.env.DATABASE_HOST || 'localhost',
+  port: process.env.DATABASE_PORT || 54320,
+  database: process.env.DATABASE_NAME || 'coc',
+  user: process.env.DATABASE_USER || 'coc',
+  password: process.env.DATABASE_PASSWORD || 'pwd123',
 };
 
 let connection;
