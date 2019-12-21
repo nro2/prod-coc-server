@@ -5,7 +5,7 @@ const {
   updateFaculty,
   FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
-} = require('../../database');
+} = require('../database');
 
 router.post('/', async (req, res) => {
   if (

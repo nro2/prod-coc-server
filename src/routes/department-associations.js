@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
-} = require('../../database');
+} = require('../database');
 
 router.get('/department/:id', async (req, res) => {
   if (!req.params.id) {

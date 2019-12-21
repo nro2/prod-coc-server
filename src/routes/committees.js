@@ -1,20 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const { getSenateDivisions } = require('../../database');
+const { getCommittees } = require('../database');
 
 router.get('/', async (req, res) => {
-  return await getSenateDivisions()
+  return getCommittees()
     .then(data => {
       if (data.length === 0) {
-        console.info('Found no senate division in the database');
+        console.info('No committees found');
         return res.status(404).send();
       }
 
-      console.info('Successfully retrieved senate divisions from database');
+      console.info('Successfully retrieved committees from database');
       return res.status(200).send(data);
     })
     .catch(err => {
-      console.error(`Error retrieving senate divisions: ${err}`);
+      console.error(`Error retrieving committees: ${err}`);
       return res
         .status(500)
         .send({ error: 'Unable to complete database transaction' });

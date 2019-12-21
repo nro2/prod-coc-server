@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { addCommittee, updateCommittee } = require('../../database');
+const { addCommittee, updateCommittee } = require('../database');
 
 router.post('/', async (req, res) => {
   if (

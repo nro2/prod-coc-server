@@ -5,7 +5,7 @@ const {
   getSurveyChoice,
   FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
-} = require('../../database');
+} = require('../database');
 
 router.get('/:date/:email', async (req, res) => {
   if (!req.params.date || !req.params.email) {

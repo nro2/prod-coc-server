@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getSenateDivision } = require('../../database');
+const { getSenateDivision } = require('../database');
 
 router.get('/:name', async (req, res) => {
   if (!req.params.name) {

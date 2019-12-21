@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getDepartment } = require('../../database');
+const { getDepartment } = require('../database');
 
 router.get('/:id', async (req, res) => {
   if (!req.params.id) {

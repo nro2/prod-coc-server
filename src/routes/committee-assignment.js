@@ -7,7 +7,7 @@ const {
   updateCommitteeAssignment,
   FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
-} = require('../../database');
+} = require('../database');
 
 router.get('/committee/:id', async (req, res) => {
   if (!req.params.id) {

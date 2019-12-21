@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   getCommitteeSlotsBySenate,
   getCommitteeSlotsByCommittee,
-} = require('../../database');
+} = require('../database');
 
 router.get('/senate-division/:shortname', async (req, res) => {
   if (!req.params.shortname) {
