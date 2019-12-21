@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/survey-choice/index.js';
+const underTestFilename = '../../../src/routes/survey-choice.js';
 
 const routerGet = sinon.stub();
 const routerPost = sinon.stub();
@@ -16,7 +16,7 @@ const stubs = {
       post: routerPost,
     }),
   },
-  '../../database': {
+  '../database': {
     addSurveyChoice: sinon.stub(),
     getSurveyChoice: sinon.stub(),
   },
@@ -41,8 +41,8 @@ describe('Request routing for /survey-choices', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].addSurveyChoice.resetHistory();
-    stubs['../../database'].getSurveyChoice.resetHistory();
+    stubs['../database'].addSurveyChoice.resetHistory();
+    stubs['../database'].getSurveyChoice.resetHistory();
   });
 
   it('GET returns 200 when survey choices are retrieved from database', () => {
@@ -58,7 +58,7 @@ describe('Request routing for /survey-choices', () => {
         committee_id: 1,
       },
     ];
-    stubs['../../database'].getSurveyChoice.resolves(surveyChoices);
+    stubs['../database'].getSurveyChoice.resolves(surveyChoices);
 
     return routerActions.getSurveyChoice(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -71,7 +71,7 @@ describe('Request routing for /survey-choices', () => {
       date: '2019',
       email: 'test-email',
     };
-    stubs['../../database'].getSurveyChoice.rejects({ result: { rowCount: 0 } });
+    stubs['../database'].getSurveyChoice.rejects({ result: { rowCount: 0 } });
 
     return routerActions.getSurveyChoice(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -83,7 +83,7 @@ describe('Request routing for /survey-choices', () => {
       date: '2019',
       email: 'test-email',
     };
-    stubs['../../database'].getSurveyChoice.rejects(new Error('test-error'));
+    stubs['../database'].getSurveyChoice.rejects(new Error('test-error'));
 
     return routerActions.getSurveyChoice(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
@@ -100,7 +100,7 @@ describe('Request routing for /survey-choices', () => {
       email: 'test-email',
       committeeId: 1,
     };
-    stubs['../../database'].addSurveyChoice.resolves(true);
+    stubs['../database'].addSurveyChoice.resolves(true);
 
     return routerActions.postSurveyChoice(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 201);
@@ -174,7 +174,7 @@ describe('Request routing for /survey-choices', () => {
       email: 'test-email',
       committeeId: 1,
     };
-    stubs['../../database'].addSurveyChoice.rejects({ code: '23505' });
+    stubs['../database'].addSurveyChoice.rejects({ code: '23505' });
 
     return routerActions.postSurveyChoice(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);
@@ -188,7 +188,7 @@ describe('Request routing for /survey-choices', () => {
       email: 'test-email',
       committeeId: 1,
     };
-    stubs['../../database'].addSurveyChoice.rejects({ code: '23503' });
+    stubs['../database'].addSurveyChoice.rejects({ code: '23503' });
 
     return routerActions.postSurveyChoice(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);
@@ -202,9 +202,7 @@ describe('Request routing for /survey-choices', () => {
       email: 'test-email',
       committeeId: 1,
     };
-    stubs['../../database'].addSurveyChoice.rejects(
-      new Error('test-database-error')
-    );
+    stubs['../database'].addSurveyChoice.rejects(new Error('test-database-error'));
 
     return routerActions.postSurveyChoice(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);

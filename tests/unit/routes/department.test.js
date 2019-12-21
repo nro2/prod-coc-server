@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/department/index.js';
+const underTestFilename = '../../../src/routes/department.js';
 
 const routerGet = sinon.stub();
 const routerActions = {};
@@ -14,7 +14,7 @@ const stubs = {
       get: routerGet,
     }),
   },
-  '../../database': {
+  '../database': {
     getDepartment: sinon.stub(),
   },
 };
@@ -37,7 +37,7 @@ describe('Request routing for /department', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].getDepartment.resetHistory();
+    stubs['../database'].getDepartment.resetHistory();
   });
 
   it('GET returns 200 when departments are retrieved from database', () => {
@@ -45,7 +45,7 @@ describe('Request routing for /department', () => {
       department_id: 1,
       name: 'test-department',
     };
-    stubs['../../database'].getDepartment.resolves(expected);
+    stubs['../database'].getDepartment.resolves(expected);
     req.params.id = 1;
 
     return routerActions.getDepartment(req, res).then(() => {
@@ -60,7 +60,7 @@ describe('Request routing for /department', () => {
       name: 'test-department',
     };
 
-    stubs['../../database'].getDepartment.resolves(expected);
+    stubs['../database'].getDepartment.resolves(expected);
     return routerActions.getDepartment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
@@ -70,7 +70,7 @@ describe('Request routing for /department', () => {
   });
 
   it('GET Returns 404 when department is not found', () => {
-    stubs['../../database'].getDepartment.rejects({ result: { rowCount: 0 } });
+    stubs['../database'].getDepartment.rejects({ result: { rowCount: 0 } });
     req.params.id = 1;
 
     return routerActions.getDepartment(req, res).then(() => {
@@ -79,7 +79,7 @@ describe('Request routing for /department', () => {
   });
 
   it('GET returns 500 when there is a database error', () => {
-    stubs['../../database'].getDepartment.rejects(new Error('test-database-error'));
+    stubs['../database'].getDepartment.rejects(new Error('test-database-error'));
     req.params.id = 1;
 
     return routerActions.getDepartment(req, res).then(() => {

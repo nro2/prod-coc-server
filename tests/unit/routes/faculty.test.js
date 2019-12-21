@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/faculty/index.js';
+const underTestFilename = '../../../src/routes/faculty.js';
 
 const routerPut = sinon.stub();
 const routerPost = sinon.stub();
@@ -16,7 +16,7 @@ const stubs = {
       post: routerPost,
     }),
   },
-  '../../database': {
+  '../database': {
     addFaculty: sinon.stub(),
     updateFaculty: sinon.stub(),
     FOREIGN_KEY_VIOLATION: '23503',
@@ -44,8 +44,8 @@ describe('Request routing for /faculty', () => {
     routerPut.resetHistory();
     routerPost.resetHistory();
 
-    stubs['../../database'].addFaculty.resetHistory();
-    stubs['../../database'].updateFaculty.resetHistory();
+    stubs['../database'].addFaculty.resetHistory();
+    stubs['../database'].updateFaculty.resetHistory();
   });
 
   it('PUT returns 200 when faculty is updated in the database', () => {
@@ -56,7 +56,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database'].updateFaculty.resolves({ rowCount: 1 });
+    stubs['../database'].updateFaculty.resolves({ rowCount: 1 });
 
     return routerActions.putFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -151,7 +151,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database'].updateFaculty.resolves({ rowCount: 0 });
+    stubs['../database'].updateFaculty.resolves({ rowCount: 0 });
 
     return routerActions.putFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -166,7 +166,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database'].updateFaculty.rejects(new Error('test-database-error'));
+    stubs['../database'].updateFaculty.rejects(new Error('test-database-error'));
 
     return routerActions.putFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
@@ -184,7 +184,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database'].addFaculty.resolves(true);
+    stubs['../database'].addFaculty.resolves(true);
 
     return routerActions.postFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 201);
@@ -279,7 +279,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database'].addFaculty.rejects({ code: '23505' });
+    stubs['../database'].addFaculty.rejects({ code: '23505' });
 
     return routerActions.postFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);
@@ -294,7 +294,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database'].addFaculty.rejects({ code: '23503' });
+    stubs['../database'].addFaculty.rejects({ code: '23503' });
 
     return routerActions.postFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);
@@ -309,7 +309,7 @@ describe('Request routing for /faculty', () => {
       phoneNum: 'test-phone-num',
       senateDivision: 'test-senate-division',
     };
-    stubs['../../database'].addFaculty.rejects(new Error('test-database-error'));
+    stubs['../database'].addFaculty.rejects(new Error('test-database-error'));
 
     return routerActions.postFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);

@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/senate-divisions/index.js';
+const underTestFilename = '../../../src/routes/senate-divisions.js';
 
 const routerGet = sinon.stub();
 const routerActions = {};
@@ -14,7 +14,7 @@ const stubs = {
       get: routerGet,
     }),
   },
-  '../../database': {
+  '../database': {
     getSenateDivisions: sinon.stub(),
   },
 };
@@ -37,7 +37,7 @@ describe('Request routing for /senate-divisions', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].getSenateDivisions.resetHistory();
+    stubs['../database'].getSenateDivisions.resetHistory();
   });
 
   it('GET returns 200 when senate divisions are retrieved from database', () => {
@@ -51,7 +51,7 @@ describe('Request routing for /senate-divisions', () => {
         name: 'test-senate-division-name-2',
       },
     ];
-    stubs['../../database'].getSenateDivisions.resolves(senateDivisions);
+    stubs['../database'].getSenateDivisions.resolves(senateDivisions);
 
     return routerActions.getSenateDivisions(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -60,7 +60,7 @@ describe('Request routing for /senate-divisions', () => {
   });
 
   it('GET returns 404 when there are no senate divisions in the database', () => {
-    stubs['../../database'].getSenateDivisions.resolves([]);
+    stubs['../database'].getSenateDivisions.resolves([]);
 
     return routerActions.getSenateDivisions(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -68,7 +68,7 @@ describe('Request routing for /senate-divisions', () => {
   });
 
   it('GET returns 500 when there is an error getting senate divisions from database', () => {
-    stubs['../../database'].getSenateDivisions.rejects();
+    stubs['../database'].getSenateDivisions.rejects();
 
     return routerActions.getSenateDivisions(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);

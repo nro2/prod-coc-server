@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/senate-division/index.js';
+const underTestFilename = '../../../src/routes/senate-division.js';
 
 const routerGet = sinon.stub();
 const routerActions = {};
@@ -14,7 +14,7 @@ const stubs = {
       get: routerGet,
     }),
   },
-  '../../database': {
+  '../database': {
     getSenateDivision: sinon.stub(),
   },
 };
@@ -37,7 +37,7 @@ describe('Request routing for /senate-division', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].getSenateDivision.resetHistory();
+    stubs['../database'].getSenateDivision.resetHistory();
   });
 
   it('GET returns 200 when senate divisions are retrieved from database', () => {
@@ -45,7 +45,7 @@ describe('Request routing for /senate-division', () => {
       senate_division_short_name: 'test-senate-division-short-name',
       name: 'test-senate-division-name',
     };
-    stubs['../../database'].getSenateDivision.resolves(senateDivision);
+    stubs['../database'].getSenateDivision.resolves(senateDivision);
     req.params.name = 'test-senate-division-short-name';
 
     return routerActions.getSenateDivision(req, res).then(() => {
@@ -55,7 +55,7 @@ describe('Request routing for /senate-division', () => {
   });
 
   it('GET returns 404 when there are no senate division in the database', () => {
-    stubs['../../database'].getSenateDivision.rejects({ result: { rowCount: 0 } });
+    stubs['../database'].getSenateDivision.rejects({ result: { rowCount: 0 } });
     req.params.name = 'test-senate-division-short-name';
 
     return routerActions.getSenateDivision(req, res).then(() => {
@@ -64,7 +64,7 @@ describe('Request routing for /senate-division', () => {
   });
 
   it('GET returns 500 when there is an error getting senate divisions from database', () => {
-    stubs['../../database'].getSenateDivision.rejects();
+    stubs['../database'].getSenateDivision.rejects();
     req.params.name = 'test-senate-division-short-name';
 
     return routerActions.getSenateDivision(req, res).then(() => {
@@ -80,7 +80,7 @@ describe('Request routing for /senate-division', () => {
       senate_division_short_name: 'test-senate-division-short-name',
       name: 'test-senate-division-name',
     };
-    stubs['../../database'].getSenateDivision.resolves(senateDivision);
+    stubs['../database'].getSenateDivision.resolves(senateDivision);
 
     return routerActions.getSenateDivision(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);

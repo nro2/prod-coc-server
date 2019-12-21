@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/committees/index.js';
+const underTestFilename = '../../../src/routes/committees.js';
 
 const routerGet = sinon.stub();
 const routerActions = {};
@@ -14,7 +14,7 @@ const stubs = {
       get: routerGet,
     }),
   },
-  '../../database': {
+  '../database': {
     getCommittees: sinon.stub(),
   },
 };
@@ -37,7 +37,7 @@ describe('Request routing for /committee', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].getCommittees.resetHistory();
+    stubs['../database'].getCommittees.resetHistory();
   });
 
   it('GET returns 200 when committees are retrieved from database', () => {
@@ -47,7 +47,7 @@ describe('Request routing for /committee', () => {
         committee_id: 'test-committee-id',
       },
     ];
-    stubs['../../database'].getCommittees.resolves(committees);
+    stubs['../database'].getCommittees.resolves(committees);
 
     return routerActions.getCommittees(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -56,7 +56,7 @@ describe('Request routing for /committee', () => {
   });
 
   it('GET returns 404 when there are no departments in the database', () => {
-    stubs['../../database'].getCommittees.resolves([]);
+    stubs['../database'].getCommittees.resolves([]);
 
     return routerActions.getCommittees(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -64,7 +64,7 @@ describe('Request routing for /committee', () => {
   });
 
   it('GET returns 500 when there is a database error', () => {
-    stubs['../../database'].getCommittees.rejects(new Error('test-error'));
+    stubs['../database'].getCommittees.rejects(new Error('test-error'));
 
     return routerActions.getCommittees(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);

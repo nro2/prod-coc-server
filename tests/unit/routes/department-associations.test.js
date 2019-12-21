@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/department-associations/index.js';
+const underTestFilename = '../../../src/routes/department-associations.js';
 
 const routerGet = sinon.stub();
 const routerActions = {};
@@ -14,7 +14,7 @@ const stubs = {
       get: routerGet,
     }),
   },
-  '../../database': {
+  '../database': {
     getDepartmentAssociationsByDepartment: sinon.stub(),
     getDepartmentAssociationsByFaculty: sinon.stub(),
   },
@@ -40,8 +40,8 @@ describe('Request routing for /department-associations', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].getDepartmentAssociationsByDepartment.resetHistory();
-    stubs['../../database'].getDepartmentAssociationsByFaculty.resetHistory();
+    stubs['../database'].getDepartmentAssociationsByDepartment.resetHistory();
+    stubs['../database'].getDepartmentAssociationsByFaculty.resetHistory();
   });
 
   describe('Route /department', () => {
@@ -53,7 +53,7 @@ describe('Request routing for /department-associations', () => {
         },
       ];
       req.params.id = 42;
-      stubs['../../database'].getDepartmentAssociationsByDepartment.resolves(
+      stubs['../database'].getDepartmentAssociationsByDepartment.resolves(
         departmentAssociations
       );
 
@@ -67,7 +67,7 @@ describe('Request routing for /department-associations', () => {
 
     it('GET returns 404 when department associations returns an empty array', () => {
       req.params.id = 42;
-      stubs['../../database'].getDepartmentAssociationsByDepartment.resolves([]);
+      stubs['../database'].getDepartmentAssociationsByDepartment.resolves([]);
 
       return routerActions
         .getDepartmentAssociationsByDepartment(req, res)
@@ -77,7 +77,7 @@ describe('Request routing for /department-associations', () => {
     });
 
     it('GET returns 400 when department id is missing from route parameters', () => {
-      stubs['../../database'].getDepartmentAssociationsByDepartment.resolves([]);
+      stubs['../database'].getDepartmentAssociationsByDepartment.resolves([]);
 
       return routerActions
         .getDepartmentAssociationsByDepartment(req, res)
@@ -88,7 +88,7 @@ describe('Request routing for /department-associations', () => {
 
     it('GET returns 500 when there is a database error', () => {
       req.params.id = 42;
-      stubs['../../database'].getDepartmentAssociationsByDepartment.rejects(
+      stubs['../database'].getDepartmentAssociationsByDepartment.rejects(
         new Error('test-error')
       );
 
@@ -109,7 +109,7 @@ describe('Request routing for /department-associations', () => {
         },
       ];
       req.params.email = 'test@email.com';
-      stubs['../../database'].getDepartmentAssociationsByFaculty.resolves(
+      stubs['../database'].getDepartmentAssociationsByFaculty.resolves(
         departmentAssociations
       );
 
@@ -121,7 +121,7 @@ describe('Request routing for /department-associations', () => {
 
     it('GET returns 404 when department associations returns an empty array', () => {
       req.params.email = 'test@email.com';
-      stubs['../../database'].getDepartmentAssociationsByFaculty.resolves([]);
+      stubs['../database'].getDepartmentAssociationsByFaculty.resolves([]);
 
       return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
@@ -129,7 +129,7 @@ describe('Request routing for /department-associations', () => {
     });
 
     it('GET returns 400 when faculty email is missing from route parameters', () => {
-      stubs['../../database'].getDepartmentAssociationsByFaculty.resolves([]);
+      stubs['../database'].getDepartmentAssociationsByFaculty.resolves([]);
 
       return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
@@ -138,7 +138,7 @@ describe('Request routing for /department-associations', () => {
 
     it('GET returns 500 when there is a database error', () => {
       req.params.email = 'test@email.com';
-      stubs['../../database'].getDepartmentAssociationsByFaculty.rejects(
+      stubs['../database'].getDepartmentAssociationsByFaculty.rejects(
         new Error('test-error')
       );
 

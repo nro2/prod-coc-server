@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/committee-slots/index.js';
+const underTestFilename = '../../../src/routes/committee-slots.js';
 
 const routerGet = sinon.stub();
 const routerActions = {};
@@ -14,7 +14,7 @@ const stubs = {
       get: routerGet,
     }),
   },
-  '../../database': {
+  '../database': {
     getCommitteeSlotsBySenate: sinon.stub(),
     getCommitteeSlotsByCommittee: sinon.stub(),
   },
@@ -38,7 +38,7 @@ describe('Request routing for /committee-slots', () => {
     afterEach(() => {
       routerGet.resetHistory();
 
-      stubs['../../database'].getCommitteeSlotsBySenate.resetHistory();
+      stubs['../database'].getCommitteeSlotsBySenate.resetHistory();
     });
 
     it('GET returns 200 when slot-requirements are retrieved from database', () => {
@@ -49,7 +49,7 @@ describe('Request routing for /committee-slots', () => {
 
       req.params.shortname = 'AO';
 
-      stubs['../../database'].getCommitteeSlotsBySenate.resolves(slotRequirements);
+      stubs['../database'].getCommitteeSlotsBySenate.resolves(slotRequirements);
 
       return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 200);
@@ -60,7 +60,7 @@ describe('Request routing for /committee-slots', () => {
     it('GET returns 404 when there are no slot requirements', () => {
       req.params.shortname = 'AO';
 
-      stubs['../../database'].getCommitteeSlotsBySenate.resolves([]);
+      stubs['../database'].getCommitteeSlotsBySenate.resolves([]);
 
       return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
@@ -68,7 +68,7 @@ describe('Request routing for /committee-slots', () => {
     });
 
     it('GET returns 400 when senate short name is missing from route parameters', () => {
-      stubs['../../database'].getCommitteeSlotsBySenate.resolves([]);
+      stubs['../database'].getCommitteeSlotsBySenate.resolves([]);
 
       return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
@@ -78,7 +78,7 @@ describe('Request routing for /committee-slots', () => {
     it('GET returns 500 when there is a database error', () => {
       req.params.shortname = 'AO';
 
-      stubs['../../database'].getCommitteeSlotsBySenate.rejects(
+      stubs['../database'].getCommitteeSlotsBySenate.rejects(
         new Error('test-error')
       );
 
@@ -106,7 +106,7 @@ describe('Request routing for /committee-slots', () => {
     afterEach(() => {
       routerGet.resetHistory();
 
-      stubs['../../database'].getCommitteeSlotsByCommittee.resetHistory();
+      stubs['../database'].getCommitteeSlotsByCommittee.resetHistory();
     });
 
     it('GET returns 200 when slot-requirements are retrieved from database', () => {
@@ -117,9 +117,7 @@ describe('Request routing for /committee-slots', () => {
 
       req.params.id = 1;
 
-      stubs['../../database'].getCommitteeSlotsByCommittee.resolves(
-        slotRequirements
-      );
+      stubs['../database'].getCommitteeSlotsByCommittee.resolves(slotRequirements);
 
       return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 200);
@@ -130,7 +128,7 @@ describe('Request routing for /committee-slots', () => {
     it('GET returns 404 when there are no slot requirements', () => {
       req.params.id = 1;
 
-      stubs['../../database'].getCommitteeSlotsByCommittee.resolves([]);
+      stubs['../database'].getCommitteeSlotsByCommittee.resolves([]);
 
       return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
@@ -138,7 +136,7 @@ describe('Request routing for /committee-slots', () => {
     });
 
     it('GET returns 400 when Committee id is missing from route parameters', () => {
-      stubs['../../database'].getCommitteeSlotsByCommittee.resolves([]);
+      stubs['../database'].getCommitteeSlotsByCommittee.resolves([]);
 
       return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
@@ -148,7 +146,7 @@ describe('Request routing for /committee-slots', () => {
     it('GET returns 500 when there is a database error', () => {
       req.params.id = 1;
 
-      stubs['../../database'].getCommitteeSlotsByCommittee.rejects(
+      stubs['../database'].getCommitteeSlotsByCommittee.rejects(
         new Error('test-error')
       );
 

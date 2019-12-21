@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/departments/index.js';
+const underTestFilename = '../../../src/routes/departments.js';
 
 const routerGet = sinon.stub();
 const routerActions = {};
@@ -14,7 +14,7 @@ const stubs = {
       get: routerGet,
     }),
   },
-  '../../database': {
+  '../database': {
     getDepartments: sinon.stub(),
   },
 };
@@ -37,7 +37,7 @@ describe('Request routing for /departments', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].getDepartments.resetHistory();
+    stubs['../database'].getDepartments.resetHistory();
   });
 
   it('GET returns 200 when departments are retrieved from database', () => {
@@ -47,7 +47,7 @@ describe('Request routing for /departments', () => {
         department_id: 'test-department-id',
       },
     ];
-    stubs['../../database'].getDepartments.resolves(departments);
+    stubs['../database'].getDepartments.resolves(departments);
 
     return routerActions.getDepartments(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -56,7 +56,7 @@ describe('Request routing for /departments', () => {
   });
 
   it('GET returns 404 when there are no departments in the database', () => {
-    stubs['../../database'].getDepartments.resolves([]);
+    stubs['../database'].getDepartments.resolves([]);
 
     return routerActions.getDepartments(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -64,7 +64,7 @@ describe('Request routing for /departments', () => {
   });
 
   it('GET returns 500 when there is a database error', () => {
-    stubs['../../database'].getDepartments.rejects(new Error('test-error'));
+    stubs['../database'].getDepartments.rejects(new Error('test-error'));
 
     return routerActions.getDepartments(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);

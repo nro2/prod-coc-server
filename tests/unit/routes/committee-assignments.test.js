@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/committee-assignment/index.js';
+const underTestFilename = '../../../src/routes/committee-assignment.js';
 
 const routerGet = sinon.stub();
 const routerPost = sinon.stub();
@@ -18,7 +18,7 @@ const stubs = {
       put: routerPut,
     }),
   },
-  '../../database': {
+  '../database': {
     addCommitteeAssignment: sinon.stub(),
     getCommitteeAssignmentByCommittee: sinon.stub(),
     getCommitteeAssignmentByFaculty: sinon.stub(),
@@ -45,7 +45,7 @@ describe('Request routing for /committee-assignment', () => {
   afterEach(() => {
     routerPut.resetHistory();
 
-    stubs['../../database'].updateCommitteeAssignment.resetHistory();
+    stubs['../database'].updateCommitteeAssignment.resetHistory();
   });
 
   it('POST returns 201 when committee assignment is added to the database', () => {
@@ -55,7 +55,7 @@ describe('Request routing for /committee-assignment', () => {
       startDate: '1970-01-01',
       endDate: '2050-01-01',
     };
-    stubs['../../database'].addCommitteeAssignment.resolves();
+    stubs['../database'].addCommitteeAssignment.resolves();
 
     return routerActions.postCommitteeAssignment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 201);
@@ -121,7 +121,7 @@ describe('Request routing for /committee-assignment', () => {
       startDate: '1970-01-01',
       endDate: '2050-01-01',
     };
-    stubs['../../database'].addCommitteeAssignment.rejects({ code: '23503' });
+    stubs['../database'].addCommitteeAssignment.rejects({ code: '23503' });
 
     return routerActions.postCommitteeAssignment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);
@@ -135,7 +135,7 @@ describe('Request routing for /committee-assignment', () => {
       startDate: '1970-01-01',
       endDate: '2050-01-01',
     };
-    stubs['../../database'].addCommitteeAssignment.rejects({ code: '23505' });
+    stubs['../database'].addCommitteeAssignment.rejects({ code: '23505' });
 
     return routerActions.postCommitteeAssignment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);
@@ -149,7 +149,7 @@ describe('Request routing for /committee-assignment', () => {
       startDate: '1970-01-01',
       endDate: '2050-01-01',
     };
-    stubs['../../database'].addCommitteeAssignment.rejects(new Error('test-error'));
+    stubs['../database'].addCommitteeAssignment.rejects(new Error('test-error'));
 
     return routerActions.postCommitteeAssignment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
@@ -166,7 +166,7 @@ describe('Request routing for /committee-assignment', () => {
       startDate: '1970-01-01',
       endDate: '2050-01-01',
     };
-    stubs['../../database'].updateCommitteeAssignment.resolves({ rowCount: 1 });
+    stubs['../database'].updateCommitteeAssignment.resolves({ rowCount: 1 });
 
     return routerActions.putCommitteeAssignment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -240,7 +240,7 @@ describe('Request routing for /committee-assignment', () => {
       startDate: '1970-01-01',
       endDate: '2050-01-01',
     };
-    stubs['../../database'].updateCommitteeAssignment.resolves({ rowCount: 0 });
+    stubs['../database'].updateCommitteeAssignment.resolves({ rowCount: 0 });
 
     return routerActions.putCommitteeAssignment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -254,7 +254,7 @@ describe('Request routing for /committee-assignment', () => {
       startDate: '1970-01-01',
       endDate: '2050-01-01',
     };
-    stubs['../../database'].updateCommitteeAssignment.rejects(
+    stubs['../database'].updateCommitteeAssignment.rejects(
       new Error('test-database-error')
     );
 
@@ -285,7 +285,7 @@ describe('Request routing for /committee-assignment/committee', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].getCommitteeAssignmentByCommittee.resetHistory();
+    stubs['../database'].getCommitteeAssignmentByCommittee.resetHistory();
   });
 
   it('GET returns 200 when committee assignments are retrieved from database', () => {
@@ -299,7 +299,7 @@ describe('Request routing for /committee-assignment/committee', () => {
     ];
     req.params.id = 42;
 
-    stubs['../../database'].getCommitteeAssignmentByCommittee.resolves(
+    stubs['../database'].getCommitteeAssignmentByCommittee.resolves(
       committeeAssignments
     );
 
@@ -311,7 +311,7 @@ describe('Request routing for /committee-assignment/committee', () => {
 
   it('GET returns 404 when there are no committee assignments', () => {
     req.params.id = 42;
-    stubs['../../database'].getCommitteeAssignmentByCommittee.resolves([]);
+    stubs['../database'].getCommitteeAssignmentByCommittee.resolves([]);
 
     return routerActions.getCommitteeAssignmentByCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -319,7 +319,7 @@ describe('Request routing for /committee-assignment/committee', () => {
   });
 
   it('GET returns 400 when committee id is missing from route parameters', () => {
-    stubs['../../database'].getCommitteeAssignmentByCommittee.resolves([]);
+    stubs['../database'].getCommitteeAssignmentByCommittee.resolves([]);
 
     return routerActions.getCommitteeAssignmentByCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
@@ -329,7 +329,7 @@ describe('Request routing for /committee-assignment/committee', () => {
   it('GET returns 500 when there is a database error', () => {
     req.params.id = 42;
 
-    stubs['../../database'].getCommitteeAssignmentByCommittee.rejects(
+    stubs['../database'].getCommitteeAssignmentByCommittee.rejects(
       new Error('test-error')
     );
 
@@ -357,7 +357,7 @@ describe('Request routing for /committee-assignment/faculty', () => {
   afterEach(() => {
     routerGet.resetHistory();
 
-    stubs['../../database'].getCommitteeAssignmentByFaculty.resetHistory();
+    stubs['../database'].getCommitteeAssignmentByFaculty.resetHistory();
   });
 
   it('GET returns 200 when committee assignments are retrieved from database', () => {
@@ -371,7 +371,7 @@ describe('Request routing for /committee-assignment/faculty', () => {
     ];
     req.params.email = 'test-email';
 
-    stubs['../../database'].getCommitteeAssignmentByFaculty.resolves(
+    stubs['../database'].getCommitteeAssignmentByFaculty.resolves(
       committeeAssignments
     );
 
@@ -383,7 +383,7 @@ describe('Request routing for /committee-assignment/faculty', () => {
 
   it('GET returns 404 when there are no committee assignments', () => {
     req.params.email = 'test-email';
-    stubs['../../database'].getCommitteeAssignmentByFaculty.resolves([]);
+    stubs['../database'].getCommitteeAssignmentByFaculty.resolves([]);
 
     return routerActions.getCommitteeAssignmentByFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -391,7 +391,7 @@ describe('Request routing for /committee-assignment/faculty', () => {
   });
 
   it('GET returns 400 when faculty email is missing from route parameters', () => {
-    stubs['../../database'].getCommitteeAssignmentByFaculty.resolves([]);
+    stubs['../database'].getCommitteeAssignmentByFaculty.resolves([]);
 
     return routerActions.getCommitteeAssignmentByFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
@@ -400,7 +400,7 @@ describe('Request routing for /committee-assignment/faculty', () => {
 
   it('GET returns 500 when there is a database error', () => {
     req.params.email = 'test@email.com';
-    stubs['../../database'].getCommitteeAssignmentByFaculty.rejects(
+    stubs['../database'].getCommitteeAssignmentByFaculty.rejects(
       new Error('test-error')
     );
 

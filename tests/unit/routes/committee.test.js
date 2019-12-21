@@ -3,7 +3,7 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const mock = require('./mock');
 
-const underTestFilename = '../../../../src/routes/committee/index.js';
+const underTestFilename = '../../../src/routes/committee.js';
 
 const routerPost = sinon.stub();
 const routerPut = sinon.stub();
@@ -16,7 +16,7 @@ const stubs = {
       put: routerPut,
     }),
   },
-  '../../database': {
+  '../database': {
     addCommittee: sinon.stub(),
     updateCommittee: sinon.stub(),
   },
@@ -45,8 +45,8 @@ describe('Request routing for /committee', () => {
     routerPost.resetHistory();
     routerPut.resetHistory();
 
-    stubs['../../database'].addCommittee.resetHistory();
-    stubs['../../database'].updateCommittee.resetHistory();
+    stubs['../database'].addCommittee.resetHistory();
+    stubs['../database'].updateCommittee.resetHistory();
   });
 
   it('POST returns 201 when committee is added to the database', () => {
@@ -55,7 +55,7 @@ describe('Request routing for /committee', () => {
       description: 'test-committee-description',
       totalSlots: 42,
     };
-    stubs['../../database'].addCommittee.resolves();
+    stubs['../database'].addCommittee.resolves();
 
     return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 201);
@@ -104,7 +104,7 @@ describe('Request routing for /committee', () => {
       description: 'test-committee-description',
       totalSlots: 42,
     };
-    stubs['../../database'].addCommittee.rejects(new Error('test-error'));
+    stubs['../database'].addCommittee.rejects(new Error('test-error'));
 
     return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
@@ -121,7 +121,7 @@ describe('Request routing for /committee', () => {
       description: 'test-committee-description',
       totalSlots: 3,
     };
-    stubs['../../database'].updateCommittee.resolves({ rowCount: 1 });
+    stubs['../database'].updateCommittee.resolves({ rowCount: 1 });
 
     return routerActions.putCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -195,7 +195,7 @@ describe('Request routing for /committee', () => {
       description: 'test-committee-description',
       totalSlots: 3,
     };
-    stubs['../../database'].updateCommittee.resolves({ rowCount: 0 });
+    stubs['../database'].updateCommittee.resolves({ rowCount: 0 });
 
     return routerActions.putCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -209,9 +209,7 @@ describe('Request routing for /committee', () => {
       description: 'test-committee-description',
       totalSlots: 3,
     };
-    stubs['../../database'].updateCommittee.rejects(
-      new Error('test-database-error')
-    );
+    stubs['../database'].updateCommittee.rejects(new Error('test-database-error'));
 
     return routerActions.putCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
