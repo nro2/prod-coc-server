@@ -265,6 +265,22 @@ async function getSenateDivision(shortName) {
 }
 
 /**
+ * Gets a list of survey choices by their date and email.
+ *
+ * @param date        Date of the survey choice
+ * @param email       Email of the faculty member
+ * @returns {Promise} Query response on success, error on failure
+ */
+async function getSurveyChoice(date, email) {
+  const connection = loadDatabaseConnection();
+
+  return connection.many(
+    'SELECT choice_id, survey_date, email, committee_id FROM survey_choice WHERE survey_date = $1 and email = $2',
+    ['2019-01-01', email]
+  );
+}
+
+/**
  * Updates a committee in the database.
  *
  * Allows for a committee's properties to be changed, except a committee's name.
@@ -351,6 +367,7 @@ module.exports = {
   getFaculty,
   getSenateDivisions,
   getSenateDivision,
+  getSurveyChoice,
   updateCommittee,
   updateCommitteeAssignment,
   updateFaculty,
