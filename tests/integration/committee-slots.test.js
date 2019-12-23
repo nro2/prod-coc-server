@@ -20,6 +20,28 @@ describe('Request routing for /committee-slots', () => {
     });
   });
 
+  it('PUT returns 200 when update succeeds', done => {
+    const payload = {
+      slotRequirements: 3,
+    };
+
+    request(app)
+      .put('/committee-slots/1/AO')
+      .send(payload)
+      .expect(200, done);
+  });
+
+  it('PUT returns 404 when target record to update does not exist', done => {
+    const payload = {
+      slotRequirements: 3,
+    };
+
+    request(app)
+      .put('/committee-slots/1000/FF')
+      .send(payload)
+      .expect(404, done);
+  });
+
   it('POST returns 201 when insertion succeeds', done => {
     const payload = {
       committeeId: 1,

@@ -415,6 +415,41 @@ describe('Database queries', () => {
     });
   });
 
+  describe('updateCommitteeSlots', () => {
+    it('returns object when update succeeds', async () => {
+      const id = 1;
+      const name = 'test-senate-division';
+      const slotRequirements = 3;
+      const expected = { rowCount: 1 };
+
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
+
+      const result = await underTest.updateCommitteeSlots(
+        id,
+        name,
+        slotRequirements
+      );
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('throws exception when result query errors', async () => {
+      const id = 1;
+      const name = 'test-senate-division';
+      const slotRequirements = 3;
+
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
+
+      await assert.rejects(
+        underTest
+          .updateCommitteeSlots(id, name, slotRequirements)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
+
   describe('updateFaculty', () => {
     it('returns object when update succeeds', async () => {
       const fullName = 'test-full-name';

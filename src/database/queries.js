@@ -331,12 +331,10 @@ async function updateCommittee(id, name, description, slots) {
   const connection = loadDatabaseConnection();
 
   return connection.tx(() => {
-    return connection
-      .result(
-        'UPDATE committee SET name = $1, description = $2, total_slots = $3 WHERE committee_id = $4',
-        [name, description, slots, id]
-      )
-      .then(result => result);
+    return connection.result(
+      'UPDATE committee SET name = $1, description = $2, total_slots = $3 WHERE committee_id = $4',
+      [name, description, slots, id]
+    );
   });
 }
 
@@ -354,12 +352,30 @@ async function updateCommitteeAssignment(email, committeeId, startDate, endDate)
   const connection = loadDatabaseConnection();
 
   return connection.tx(() => {
-    return connection
-      .result(
-        'UPDATE committee_assignment SET start_date = $1, end_date = $2 WHERE email = $3 and committee_id = $4',
-        [startDate, endDate, email, committeeId]
-      )
-      .then(result => result);
+    return connection.result(
+      'UPDATE committee_assignment SET start_date = $1, end_date = $2 WHERE email = $3 and committee_id = $4',
+      [startDate, endDate, email, committeeId]
+    );
+  });
+}
+
+/**
+ * Updates committee slots in the database.
+ *
+ * @param committeeId         Committee id to add slots to
+ * @param senateDivision      The senate division
+ * @param slotRequirements    The number of slots this committee has
+ * @returns {Promise}         Response object with rowCount on success
+ * @throws {Error}            Connection problem or exception
+ */
+async function updateCommitteeSlots(committeeId, senateDivision, slotRequirements) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection.result(
+      'UPDATE committee_slots SET slot_requirements = $1 WHERE committee_id = $2 and senate_division_short_name = $3',
+      [slotRequirements, committeeId, senateDivision]
+    );
   });
 }
 
@@ -377,12 +393,10 @@ async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision
   const connection = loadDatabaseConnection();
 
   return connection.tx(() => {
-    return connection
-      .result(
-        'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
-        [fullName, jobTitle, phoneNum, senateDivision, email]
-      )
-      .then(result => result);
+    return connection.result(
+      'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+      [fullName, jobTitle, phoneNum, senateDivision, email]
+    );
   });
 }
 
@@ -407,5 +421,6 @@ module.exports = {
   getSurveyChoice,
   updateCommittee,
   updateCommitteeAssignment,
+  updateCommitteeSlots,
   updateFaculty,
 };

@@ -4,6 +4,7 @@ const {
   addCommitteeSlots,
   getCommitteeSlotsBySenate,
   getCommitteeSlotsByCommittee,
+  updateCommitteeSlots,
   FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
 } = require('../database');
@@ -54,6 +55,36 @@ router.get('/committee/:id', async (req, res) => {
     })
     .catch(err => {
       console.error(`Error retrieving slot requirements: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
+
+router.put('/:id/:name', async (req, res) => {
+  if (!req.body || !req.body.slotRequirements) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+
+  const { id, name } = req.params;
+  const { slotRequirements } = req.body;
+
+  return await updateCommitteeSlots(id, name, slotRequirements)
+    .then(result => {
+      if (!result.rowCount) {
+        console.info(
+          `Unable to update committee slots record, committee id ${id} or senate division ${name} do not exist`
+        );
+        return res.status(404).send();
+      }
+
+      console.info(
+        `Updated committee slots with committee id ${id} and senate division ${name}`
+      );
+      return res.status(200).send();
+    })
+    .catch(err => {
+      console.error(`Error updating committee slots record in database: ${err}`);
       return res
         .status(500)
         .send({ error: 'Unable to complete database transaction' });
