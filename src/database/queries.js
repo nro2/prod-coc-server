@@ -18,6 +18,23 @@ async function addCommittee(name, description, slots) {
 }
 
 /**
+ * Adds committee slots to the database.
+ *
+ * @param committeeId         Committee id to add slots to
+ * @param senateDivision      The senate division
+ * @param slotRequirements    The number of slots this committee has
+ * @returns {Promise}         Query response on success, error on failure
+ */
+async function addCommitteeSlots(committeeId, senateDivision, slotRequirements) {
+  const connection = loadDatabaseConnection();
+
+  return connection.none(
+    'INSERT INTO committee_slots(committee_id, senate_division_short_name, slot_requirements) values($1, $2, $3)',
+    [committeeId, senateDivision, slotRequirements]
+  );
+}
+
+/**
  * Adds a committee assignment to the database.
  *
  * @param email               Email of committee member
@@ -372,6 +389,7 @@ async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision
 module.exports = {
   addCommittee,
   addCommitteeAssignment,
+  addCommitteeSlots,
   addFaculty,
   addSurveyChoice,
   getCommitteeAssignmentByCommittee,

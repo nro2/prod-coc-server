@@ -46,6 +46,34 @@ describe('Database queries', () => {
     sinon.restore();
   });
 
+  describe('addCommittee', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
+
+      const result = await underTest.addCommittee(
+        'test-committee-name',
+        'test-committee-description',
+        3
+      );
+
+      assert.equal(result, undefined);
+    });
+  });
+
+  describe('addCommitteeSlots', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
+
+      const result = await underTest.addCommitteeSlots(
+        1,
+        'test-senate-division',
+        3
+      );
+
+      assert.equal(result, undefined);
+    });
+  });
+
   describe('getFaculty', () => {
     it('returns data when query is successful', async () => {
       const firstName = 'test-first-name';
