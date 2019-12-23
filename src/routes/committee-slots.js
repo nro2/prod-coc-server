@@ -19,7 +19,7 @@ router.get('/senate-division/:shortname', async (req, res) => {
         console.info(
           `No slot requirements found for senate division ${req.params.shortname}`
         );
-        return res.status(404).send;
+        return res.status(404).send();
       }
 
       console.info(
@@ -44,7 +44,7 @@ router.get('/committee/:id', async (req, res) => {
     .then(data => {
       if (data.length === 0) {
         console.info(`No slot requirements found for committee ${req.params.id}`);
-        return res.status(404).send;
+        return res.status(404).send();
       }
 
       console.info(

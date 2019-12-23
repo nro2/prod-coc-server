@@ -77,4 +77,32 @@ describe('Request routing for /committee-slots', () => {
           .expect(409, done);
       });
   });
+
+  describe('/committee/:id', () => {
+    it('GET returns 200 when record exists', done => {
+      request(app)
+        .get('/committee-slots/committee/1')
+        .expect(200, done);
+    });
+
+    it('GET returns 404 when record does not exist', done => {
+      request(app)
+        .get('/committee-slots/committee/1000')
+        .expect(404, done);
+    });
+  });
+
+  describe('/senate-division/:shortname', () => {
+    it('GET returns 200 when record exists', done => {
+      request(app)
+        .get('/committee-slots/senate-division/AO')
+        .expect(200, done);
+    });
+
+    it('GET returns 404 when record does not exist', done => {
+      request(app)
+        .get('/committee-slots/senate-division/XX')
+        .expect(404, done);
+    });
+  });
 });
