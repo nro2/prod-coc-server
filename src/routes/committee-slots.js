@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const {
+  addCommitteeSlots,
   getCommitteeSlotsBySenate,
   getCommitteeSlotsByCommittee,
+  updateCommitteeSlots,
+  FOREIGN_KEY_VIOLATION,
+  UNIQUENESS_VIOLATION,
 } = require('../database');
 
 router.get('/senate-division/:shortname', async (req, res) => {
@@ -16,7 +20,7 @@ router.get('/senate-division/:shortname', async (req, res) => {
         console.info(
           `No slot requirements found for senate division ${req.params.shortname}`
         );
-        return res.status(404).send;
+        return res.status(404).send();
       }
 
       console.info(
@@ -41,7 +45,7 @@ router.get('/committee/:id', async (req, res) => {
     .then(data => {
       if (data.length === 0) {
         console.info(`No slot requirements found for committee ${req.params.id}`);
-        return res.status(404).send;
+        return res.status(404).send();
       }
 
       console.info(
@@ -51,6 +55,67 @@ router.get('/committee/:id', async (req, res) => {
     })
     .catch(err => {
       console.error(`Error retrieving slot requirements: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
+
+router.put('/:id/:name', async (req, res) => {
+  if (!req.body || !req.body.slotRequirements) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+
+  const { id, name } = req.params;
+  const { slotRequirements } = req.body;
+
+  return await updateCommitteeSlots(id, name, slotRequirements)
+    .then(result => {
+      if (!result.rowCount) {
+        console.info(
+          `Unable to update committee slots record, committee id ${id} or senate division ${name} do not exist`
+        );
+        return res.status(404).send();
+      }
+
+      console.info(
+        `Updated committee slots with committee id ${id} and senate division ${name}`
+      );
+      return res.status(200).send();
+    })
+    .catch(err => {
+      console.error(`Error updating committee slots record in database: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
+
+router.post('/', async (req, res) => {
+  if (
+    !req.body ||
+    !req.body.committeeId ||
+    !req.body.senateDivision ||
+    !req.body.slotRequirements
+  ) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+
+  const { committeeId, senateDivision, slotRequirements } = req.body;
+
+  return addCommitteeSlots(committeeId, senateDivision, slotRequirements)
+    .then(() => {
+      console.info('Successfully added committee slots to database');
+      return res.status(201).send();
+    })
+    .catch(err => {
+      if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
+        console.error(
+          `Attempted to add existing committee slots with invalid keys: ${err}`
+        );
+        return res.status(409).send();
+      }
+      console.error(`Error adding committee slots: ${err}`);
       return res
         .status(500)
         .send({ error: 'Unable to complete database transaction' });

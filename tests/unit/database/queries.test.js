@@ -46,6 +46,34 @@ describe('Database queries', () => {
     sinon.restore();
   });
 
+  describe('addCommittee', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
+
+      const result = await underTest.addCommittee(
+        'test-committee-name',
+        'test-committee-description',
+        3
+      );
+
+      assert.equal(result, undefined);
+    });
+  });
+
+  describe('addCommitteeSlots', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
+
+      const result = await underTest.addCommitteeSlots(
+        1,
+        'test-senate-division',
+        3
+      );
+
+      assert.equal(result, undefined);
+    });
+  });
+
   describe('getFaculty', () => {
     it('returns data when query is successful', async () => {
       const firstName = 'test-first-name';
@@ -382,6 +410,41 @@ describe('Database queries', () => {
       await assert.rejects(
         underTest
           .updateCommitteeAssignment(email, committeeId, startDate, endDate)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
+
+  describe('updateCommitteeSlots', () => {
+    it('returns object when update succeeds', async () => {
+      const id = 1;
+      const name = 'test-senate-division';
+      const slotRequirements = 3;
+      const expected = { rowCount: 1 };
+
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
+
+      const result = await underTest.updateCommitteeSlots(
+        id,
+        name,
+        slotRequirements
+      );
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('throws exception when result query errors', async () => {
+      const id = 1;
+      const name = 'test-senate-division';
+      const slotRequirements = 3;
+
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
+
+      await assert.rejects(
+        underTest
+          .updateCommitteeSlots(id, name, slotRequirements)
           .catch(() => assert.fail('Should not have failed'))
       );
     });
