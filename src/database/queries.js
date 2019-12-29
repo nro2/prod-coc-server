@@ -101,8 +101,9 @@ async function addSurveyChoice(choiceId, surveyDate, email, committeeId) {
 
 async function addSurveyData(surveyDate, email, interested, expertise) {
   const connection = loadDatabaseConnection();
+
   return connection.none(
-    'INSERT INTO survey_data(data, email, is_interested, expertise) values($1, $2, $3, $4)',
+    'INSERT INTO survey_data(survey_date, email, is_interested, expertise) values($1, $2, $3, $4)',
     [surveyDate, email, interested, expertise]
   );
 }
@@ -378,6 +379,27 @@ async function updateCommitteeAssignment(email, committeeId, startDate, endDate)
 }
 
 /**
+ * Updates survey data in the database
+ *
+ * @param surveyDate    Date of Survey
+ * @param email         Email of faculty member
+ * @param interested    Interested in serving
+ * @param expertise     Expertise for serving
+ * @returns {Promise}   Response object with rowCount on success
+ * @throws  {Error}     Connection problem or exception
+ */
+async function updateSurveyData(surveyDate, email, interested, expertise) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection.result(
+      'UPDATE survey_data SET is_interested = $3, expertise = $4 WHERE survey_date = $1 AND email = $2',
+      [surveyDate, email, interested, expertise]
+    );
+  });
+}
+
+/**
  * Updates committee slots in the database.
  *
  * @param committeeId         Committee id to add slots to
@@ -442,4 +464,5 @@ module.exports = {
   updateCommitteeAssignment,
   updateCommitteeSlots,
   updateFaculty,
+  updateSurveyData,
 };
