@@ -23,12 +23,13 @@ describe('Request routing for /committees', () => {
     });
   });
 
-  it('GET returns 200 and committee records', () => {
+  it('GET returns 200 and committee records', done => {
     request(app)
       .get('/committees')
       .expect(200)
-      .end((err, response) => {
+      .then(response => {
         assert.equal(response.body.length, data.committee.length);
+        done();
       });
   });
 });

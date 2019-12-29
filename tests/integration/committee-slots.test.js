@@ -92,7 +92,7 @@ describe('Request routing for /committee-slots', () => {
       .post('/committee-slots')
       .send(payload)
       .expect(201)
-      .end(() => {
+      .then(() => {
         request(app)
           .post('/committee-slots')
           .send(payload)

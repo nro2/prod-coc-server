@@ -63,7 +63,7 @@ describe('Request routing for /faculty', () => {
       .post('/faculty')
       .send(payload)
       .expect(201)
-      .end(() => {
+      .then(() => {
         request(app)
           .post('/faculty')
           .send(payload)

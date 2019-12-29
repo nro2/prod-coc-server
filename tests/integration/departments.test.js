@@ -23,12 +23,13 @@ describe('Request routing for /departments', () => {
     });
   });
 
-  it('GET returns 200 and department records', () => {
+  it('GET returns 200 and department records', done => {
     request(app)
       .get('/departments')
       .expect(200)
-      .end((err, response) => {
+      .then(response => {
         assert.equal(response.body.length, data.department.length);
+        done();
       });
   });
 
