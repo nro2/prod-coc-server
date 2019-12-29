@@ -513,4 +513,19 @@ describe('Database queries', () => {
       assert.equal(result, expected);
     });
   });
+
+  describe('Post survey data', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
+
+      const result = await underTest.addSurveyData(
+        2019,
+        'faculty@pdx.edu',
+        true,
+        'Im a faculty member'
+      );
+
+      assert.equal(result, undefined);
+    });
+  });
 });
