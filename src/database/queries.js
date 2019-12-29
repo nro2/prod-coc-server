@@ -379,27 +379,6 @@ async function updateCommitteeAssignment(email, committeeId, startDate, endDate)
 }
 
 /**
- * Updates survey data in the database
- *
- * @param surveyDate    Date of Survey
- * @param email         Email of faculty member
- * @param interested    Interested in serving
- * @param expertise     Expertise for serving
- * @returns {Promise}   Response object with rowCount on success
- * @throws  {Error}     Connection problem or exception
- */
-async function updateSurveyData(surveyDate, email, interested, expertise) {
-  const connection = loadDatabaseConnection();
-
-  return connection.tx(() => {
-    return connection.result(
-      'UPDATE survey_data SET is_interested = $3, expertise = $4 WHERE survey_date = $1 AND email = $2',
-      [surveyDate, email, interested, expertise]
-    );
-  });
-}
-
-/**
  * Updates committee slots in the database.
  *
  * @param committeeId         Committee id to add slots to
@@ -436,6 +415,27 @@ async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision
     return connection.result(
       'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
       [fullName, jobTitle, phoneNum, senateDivision, email]
+    );
+  });
+}
+
+/**
+ * Updates survey data in the database
+ *
+ * @param surveyDate    Date of Survey
+ * @param email         Email of faculty member
+ * @param interested    Interested in serving
+ * @param expertise     Expertise for serving
+ * @returns {Promise}   Response object with rowCount on success
+ * @throws  {Error}     Connection problem or exception
+ */
+async function updateSurveyData(surveyDate, email, interested, expertise) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection.result(
+      'UPDATE survey_data SET is_interested = $3, expertise = $4 WHERE survey_date = $1 AND email = $2',
+      [surveyDate, email, interested, expertise]
     );
   });
 }
