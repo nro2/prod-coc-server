@@ -67,4 +67,32 @@ describe('Request routing for /survey-data', () => {
           .expect(409, done);
       });
   });
+
+  it('PUT returns 200 when update succeeds', done => {
+    const payload = {
+      surveyDate: '2019-01-01',
+      email: 'wolsborn@pdx.edu',
+      isInterested: true,
+      expertise: 'TEST',
+    };
+
+    request(app)
+      .put('/survey-data')
+      .send(payload)
+      .expect(200, done);
+  });
+
+  it('PUT returns 404 when target record to update does not exist', done => {
+    const payload = {
+      surveyDate: '2010-01-01',
+      email: 'test@pdx.edu',
+      isInterested: true,
+      expertise: 'TEST',
+    };
+
+    request(app)
+      .put('/survey-data')
+      .send(payload)
+      .expect(404, done);
+  });
 });
