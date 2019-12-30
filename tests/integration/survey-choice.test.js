@@ -69,8 +69,8 @@ describe('Request routing for /survey-choice', () => {
   it('POST returns 409 when the record already exists', done => {
     const payload = {
       choiceId: 1,
-      surveyDate: '2019-01-01',
-      email: 'test-email',
+      surveyDate: '2050-01-01',
+      email: 'wolsborn@pdx.edu',
       committeeId: 1,
     };
 
@@ -78,7 +78,7 @@ describe('Request routing for /survey-choice', () => {
       .post('/survey-choice')
       .send(payload)
       .expect(201)
-      .end(() => {
+      .then(() => {
         request(app)
           .post('/survey-choice')
           .send(payload)

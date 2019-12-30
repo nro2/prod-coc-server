@@ -61,7 +61,7 @@ describe('Request routing for /committee-assignment', () => {
         .post('/committee-assignment')
         .send(payload)
         .expect(201)
-        .end(() => {
+        .then(() => {
           request(app)
             .post('/committee-assignment')
             .send(payload)
