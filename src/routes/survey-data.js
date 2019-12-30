@@ -63,7 +63,7 @@ router.put('/', async (req, res) => {
       }
 
       console.info(
-        `Updated faculty member with email ${email} or date ${surveyDate}`
+        `Updated survey data with email ${email} and/or date ${surveyDate}`
       );
       return res.status(200).send();
     })
