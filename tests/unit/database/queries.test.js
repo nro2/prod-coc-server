@@ -513,4 +513,57 @@ describe('Database queries', () => {
       assert.equal(result, expected);
     });
   });
+
+  describe('Post survey data', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
+
+      const result = await underTest.addSurveyData(
+        2019,
+        'faculty@pdx.edu',
+        true,
+        'Im a faculty member'
+      );
+
+      assert.equal(result, undefined);
+    });
+  });
+
+  describe('Update survey data', () => {
+    it('returns object when update succeeds', async () => {
+      const surveyData = 2019;
+      const email = 'faculty@pdx.edu';
+      const interested = true;
+      const expertise = 'Im a faculty member';
+      const expected = { rowCount: 1 };
+
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
+
+      const result = await underTest.updateSurveyData(
+        surveyData,
+        email,
+        interested,
+        expertise
+      );
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('throws exception when result query errors', async () => {
+      const surveyData = 2019;
+      const email = 'faculty@pdx.edu';
+      const interested = true;
+      const expertise = 'Im a faculty member';
+
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
+
+      await assert.rejects(
+        underTest
+          .updateSurveyData(surveyData, email, interested, expertise)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
 });

@@ -90,6 +90,25 @@ async function addSurveyChoice(choiceId, surveyDate, email, committeeId) {
 }
 
 /**
+ * Adds a survey choice to the database.
+ *
+ * @param surveyDate    Date of the survey
+ * @param email         Email of the faculty member
+ * @param interested    Bool if the are interested in serving
+ * @param expertise     Description of expertise
+ * @returns {Promise}   Query response on success, error on failure
+ */
+
+async function addSurveyData(surveyDate, email, interested, expertise) {
+  const connection = loadDatabaseConnection();
+
+  return connection.none(
+    'INSERT INTO survey_data(survey_date, email, is_interested, expertise) values($1, $2, $3, $4)',
+    [surveyDate, email, interested, expertise]
+  );
+}
+
+/**
  * Gets department records.
  *
  * @returns {Promise} Query response object on success, error on failure
@@ -400,12 +419,34 @@ async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision
   });
 }
 
+/**
+ * Updates survey data in the database
+ *
+ * @param surveyDate    Date of Survey
+ * @param email         Email of faculty member
+ * @param interested    Interested in serving
+ * @param expertise     Expertise for serving
+ * @returns {Promise}   Response object with rowCount on success
+ * @throws  {Error}     Connection problem or exception
+ */
+async function updateSurveyData(surveyDate, email, interested, expertise) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection.result(
+      'UPDATE survey_data SET is_interested = $3, expertise = $4 WHERE survey_date = $1 AND email = $2',
+      [surveyDate, email, interested, expertise]
+    );
+  });
+}
+
 module.exports = {
   addCommittee,
   addCommitteeAssignment,
   addCommitteeSlots,
   addFaculty,
   addSurveyChoice,
+  addSurveyData,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   getCommitteeSlotsBySenate,
@@ -423,4 +464,5 @@ module.exports = {
   updateCommitteeAssignment,
   updateCommitteeSlots,
   updateFaculty,
+  updateSurveyData,
 };

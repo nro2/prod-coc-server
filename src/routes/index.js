@@ -12,5 +12,6 @@ router.use('/faculty', require('./faculty'));
 router.use('/senate-divisions', require('./senate-divisions'));
 router.use('/senate-division', require('./senate-division'));
 router.use('/survey-choice', require('./survey-choice'));
+router.use('/survey-data', require('./survey-data'));
 
 module.exports = router;
