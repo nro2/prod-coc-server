@@ -60,6 +60,99 @@ describe('Request routing for /survey-data', () => {
     });
   });
 
+  it('PUT returns 400 when missing surveyDate from body', () => {
+    req.body = {
+      email: 'test@test.edu',
+      isInterested: true,
+      expertise: 'TEST',
+    };
+
+    return routerActions.putSurveyData(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        message: '400 Bad Request',
+      });
+    });
+  });
+
+  it('PUT returns 400 when missing email from body', () => {
+    req.body = {
+      surveyDate: '2019-01-01',
+
+      expertise: 'TEST',
+    };
+
+    return routerActions.putSurveyData(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        message: '400 Bad Request',
+      });
+    });
+  });
+
+  it('PUT returns 400 when missing isInterested from body', () => {
+    req.body = {
+      surveyDate: '2019-01-01',
+      email: 'test@test.edu',
+      expertise: 'TEST',
+    };
+
+    return routerActions.putSurveyData(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        message: '400 Bad Request',
+      });
+    });
+  });
+
+  it('PUT returns 400 when missing expertise from body', () => {
+    req.body = {
+      surveyDate: '2019-01-01',
+      email: 'test@test.edu',
+      isInterested: true,
+    };
+
+    return routerActions.putSurveyData(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        message: '400 Bad Request',
+      });
+    });
+  });
+
+  it('PUT returns 404 when survey data record did not exist to update', () => {
+    req.body = {
+      surveyDate: '2019-01-01',
+      email: 'test@test.edu',
+      isInterested: true,
+      expertise: 'TEST',
+    };
+
+    stubs['../database'].updateSurveyData.resolves({ rowCount: 0 });
+
+    return routerActions.putSurveyData(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 404);
+    });
+  });
+
+  it('PUT returns 500 when unable to update survey data in the database', () => {
+    req.body = {
+      surveyDate: '2019-01-01',
+      email: 'test@test.edu',
+      isInterested: true,
+      expertise: 'TEST',
+    };
+
+    stubs['../database'].updateSurveyData.rejects(new Error('test-database-error'));
+
+    return routerActions.putSurveyData(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 500);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        error: 'Unable to complete database transaction',
+      });
+    });
+  });
+
   it('POST returns 201 when survey data is added to database', () => {
     req.body = {
       surveyDate: '2019-01-01',
