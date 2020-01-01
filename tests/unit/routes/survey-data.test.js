@@ -5,6 +5,7 @@ const mock = require('./mock');
 
 const underTestFilename = '../../../src/routes/survey-data.js';
 
+const routerGet = sinon.stub();
 const routerPost = sinon.stub();
 const routerPut = sinon.stub();
 const routerActions = {};
@@ -14,11 +15,13 @@ const stubs = {
     Router: () => ({
       put: routerPut,
       post: routerPost,
+      get: routerGet,
     }),
   },
   '../database': {
     addSurveyData: sinon.stub(),
     updateSurveyData: sinon.stub(),
+    getSurveyData: sinon.stub(),
     FOREIGN_KEY_VIOLATION: '23503',
     UNIQUENESS_VIOLATION: '23505',
   },
@@ -33,6 +36,7 @@ describe('Request routing for /survey-data', () => {
     underTest = proxyquire(underTestFilename, stubs);
     routerActions.putSurveyData = routerPut.firstCall.args[1];
     routerActions.postSurveyData = routerPost.firstCall.args[1];
+    routerActions.getSurveyData = routerGet.firstCall.args[1];
   });
 
   beforeEach(() => {
@@ -43,6 +47,7 @@ describe('Request routing for /survey-data', () => {
   afterEach(() => {
     stubs['../database'].addSurveyData.resetHistory();
     stubs['../database'].updateSurveyData.resetHistory();
+    stubs['../database'].getSurveyData.resetHistory();
   });
 
   it('PUT returns 200 when survey data is updated in the database', () => {
@@ -146,6 +151,54 @@ describe('Request routing for /survey-data', () => {
     stubs['../database'].updateSurveyData.rejects(new Error('test-database-error'));
 
     return routerActions.putSurveyData(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 500);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        error: 'Unable to complete database transaction',
+      });
+    });
+  });
+
+  it('GET returns 200 when survey data is retrieved from database', () => {
+    req.params = {
+      date: '2019',
+      email: 'test-email',
+    };
+    const surveyData = [
+      {
+        surveyDate: '2019-01-01',
+        email: 'test-email',
+        isInterested: true,
+        expertise: 'test-expertise',
+      },
+    ];
+    stubs['../database'].getSurveyData.resolves(surveyData);
+
+    return routerActions.getSurveyChoice(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 200);
+      assert.equal(res.send.firstCall.args[0], surveyData);
+    });
+  });
+
+  it('GET returns 404 when there are no survey data in the database', () => {
+    req.params = {
+      date: '2019',
+      email: 'test-email',
+    };
+    stubs['../database'].getSurveyData.rejects({ result: { rowCount: 0 } });
+
+    return routerActions.getSurveyData(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 404);
+    });
+  });
+
+  it('GET returns 500 when there is an error getting survey data from database', () => {
+    req.params = {
+      date: '2019',
+      email: 'test-email',
+    };
+    stubs['../database'].getSurveyData.rejects(new Error('test-error'));
+
+    return routerActions.getSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
         error: 'Unable to complete database transaction',
