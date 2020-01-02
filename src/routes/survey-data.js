@@ -76,14 +76,14 @@ router.put('/', async (req, res) => {
     });
 });
 
-router.get('/:year/:email', async (req, res) => {
-  if (!req.params.year || !req.params.email) {
+router.get('/:date/:email', async (req, res) => {
+  if (!req.params.date || !req.params.email) {
     return res.status(400).send({ message: '400 Bad Request' });
   }
 
-  const { year, email } = req.params;
+  const { date, email } = req.params;
 
-  return getSurveyData(year, email)
+  return getSurveyData(date, email)
     .then(data => {
       console.info('Successfully retrieved survey data from database');
       return res.status(200).send(data);
@@ -91,7 +91,7 @@ router.get('/:year/:email', async (req, res) => {
     .catch(err => {
       if (err.result && err.result.rowCount === 0) {
         console.info(
-          `No survey choice found for year ${req.params.year} and email ${req.params.email}`
+          `No survey data found for date ${req.params.date} and email ${req.params.email}`
         );
         return res.status(404).send();
       }

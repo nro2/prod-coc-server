@@ -173,7 +173,7 @@ describe('Request routing for /survey-data', () => {
     ];
     stubs['../database'].getSurveyData.resolves(surveyData);
 
-    return routerActions.getSurveyChoice(req, res).then(() => {
+    return routerActions.getSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
       assert.equal(res.send.firstCall.args[0], surveyData);
     });
