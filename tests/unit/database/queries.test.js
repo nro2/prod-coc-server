@@ -566,4 +566,28 @@ describe('Database queries', () => {
       );
     });
   });
+
+  describe('Get survey data', () => {
+    let expected;
+    beforeEach(() => {
+      expected = {
+        survey_date: 'stub-survey-date',
+        email: 'stub-email',
+        is_interested: true,
+        expertise: 'stub-expertise',
+      };
+    });
+
+    it('returns nothing when when query has no parameters', async () => {
+      stubs.one.resolves();
+      const result = await underTest.getSurveyData();
+      assert.equal(result, undefined);
+    });
+
+    it('returns data when query is successful', async () => {
+      stubs.one.resolves(expected);
+      const result = await underTest.getSurveyData(2019, 'boat@gmail.com');
+      assert.equal(result, expected);
+    });
+  });
 });
