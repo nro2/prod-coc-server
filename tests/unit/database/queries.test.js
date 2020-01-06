@@ -566,4 +566,39 @@ describe('Database queries', () => {
       );
     });
   });
+
+  describe('Update department association', () => {
+    it('Returns object when update succeeds', async () => {
+      const email = 'test@test.edu';
+      const oldDepartmentId = 1;
+      const newDepartmentId = 2;
+      const expected = { rowCount: 1 };
+
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
+
+      const result = await underTest.updateDepartmentAssociations(
+        email,
+        oldDepartmentId,
+        newDepartmentId
+      );
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('throws exception when query errors', async () => {
+      const email = 'test@test.edu';
+      const oldDepartmentId = 1;
+      const newDepartmentId = 2;
+
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
+
+      await assert.rejects(
+        underTest
+          .updateDepartmentAssociations(email, oldDepartmentId, newDepartmentId)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
 });

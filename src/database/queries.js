@@ -399,6 +399,30 @@ async function updateCommitteeSlots(committeeId, senateDivision, slotRequirement
 }
 
 /**
+ * Updates department for a faculty member
+ * @param email               Faculty email address
+ * @param newDepartmentId     The new department that the faculty member belongs to
+ * @param oldDepartmentId     The old department that the faculty member no longer belongs to
+ * @returns {Promise<any>}    Response object with rowCount on success
+ * @throws {Error}            Connection problem or exception
+ */
+
+async function updateDepartmentAssociations(
+  email,
+  oldDepartmentId,
+  newDepartmentId
+) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection.result(
+      'UPDATE department_associations SET department_id = $3 WHERE email = $1 and department_id =$2',
+      [email, oldDepartmentId, newDepartmentId]
+    );
+  });
+}
+
+/**
  * Updates a faculty member in the database.
  *
  * @param fullName            Name of the faculty member
@@ -463,6 +487,7 @@ module.exports = {
   updateCommittee,
   updateCommitteeAssignment,
   updateCommitteeSlots,
+  updateDepartmentAssociations,
   updateFaculty,
   updateSurveyData,
 };
