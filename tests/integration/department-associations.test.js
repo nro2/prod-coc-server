@@ -47,4 +47,32 @@ describe('Request routing for /department-associations', () => {
         .expect(404, done);
     });
   });
+
+  describe('/', () => {
+    it('PUT returns 200 when update succeeds', done => {
+      const payload = {
+        email: 'ghopper@gmail.com',
+        oldDepartmentId: 1,
+        newDepartmentId: 2,
+      };
+
+      request(app)
+        .put('/department-associations')
+        .send(payload)
+        .expect(200, done);
+    });
+
+    it('PUT returns 404 when unable to update', done => {
+      const payload = {
+        email: 'test@test.edu',
+        oldDepartmentId: 1,
+        newDepartmentId: 2,
+      };
+
+      request(app)
+        .put('/department-associations')
+        .send(payload)
+        .expect(404, done);
+    });
+  });
 });

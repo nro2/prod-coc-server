@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
+  updateDepartmentAssociations,
 } = require('../database');
 
 router.get('/department/:id', async (req, res) => {
@@ -47,6 +48,37 @@ router.get('/faculty/:email', async (req, res) => {
     })
     .catch(err => {
       console.error(`Error retrieving department association: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
+
+router.put('/', async (req, res) => {
+  if (
+    !req.body ||
+    !req.body.email ||
+    !req.body.oldDepartmentId ||
+    !req.body.newDepartmentId
+  ) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+
+  const { email, oldDepartmentId, newDepartmentId } = req.body;
+
+  return await updateDepartmentAssociations(email, oldDepartmentId, newDepartmentId)
+    .then(result => {
+      if (!result.rowCount) {
+        console.info(
+          `Unable to update department association, email ${email} does not exist`
+        );
+        return res.status(404).send();
+      }
+      console.info(`Updated department association with email ${email}`);
+      return res.status(200).send();
+    })
+    .catch(err => {
+      console.error(`Error updating department association in database: ${err}`);
       return res
         .status(500)
         .send({ error: 'Unable to complete database transaction' });
