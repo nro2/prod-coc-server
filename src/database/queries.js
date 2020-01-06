@@ -204,6 +204,20 @@ async function getDepartment(id) {
     [id]
   );
 }
+/**
+ * Gets committee record by its id.
+ *
+ * @param name      Committee name
+ * @returns {Promise} Query response object on success, error on failure
+ */
+async function getCommittee(name) {
+  const connection = loadedDatabaseConnection();
+
+  return connection.one(
+    'SELECT committee_id, name, description, total_slots FROM committee WHERE name=$1',
+    [name]
+  );
+}
 
 /**
  * Gets department association records by department id.
@@ -485,6 +499,7 @@ module.exports = {
   getCommitteeSlotsBySenate,
   getCommitteeSlotsByCommittee,
   getCommittees,
+  getCommittee,
   getDepartment,
   getDepartments,
   getDepartmentAssociationsByDepartment,
