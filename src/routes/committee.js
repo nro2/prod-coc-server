@@ -60,11 +60,11 @@ router.put('/', async (req, res) => {
     });
 });
 
-router.get('/committee/:id', async (req, res) => {
-  if (!req.params.id) {
+router.get('/:name', async (req, res) => {
+  if (!req.params.name) {
     return res.status(400).send({ message: '400 Bad Request' });
   }
-  return await getCommittee(req.params.id)
+  return await getCommittee(req.params.name)
     .then(data => {
       console.info('Successfully retrieved committee from database');
       return res.status(200).send(data);
@@ -72,7 +72,7 @@ router.get('/committee/:id', async (req, res) => {
     .catch(err => {
       if (err.result && err.result.rowCount === 0) {
         console.info(
-          `Found no committee in the database with id ${req.params.name}`
+          `Found no committee in the database with name ${req.params.name}`
         );
         return res.status(404).send();
       }

@@ -211,7 +211,7 @@ async function getDepartment(id) {
  * @returns {Promise} Query response object on success, error on failure
  */
 async function getCommittee(name) {
-  const connection = loadedDatabaseConnection();
+  const connection = loadDatabaseConnection();
 
   return connection.one(
     'SELECT committee_id, name, description, total_slots FROM committee WHERE name=$1',
