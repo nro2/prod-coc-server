@@ -20,6 +20,24 @@ describe('Request routing for /survey-data', () => {
     });
   });
 
+  it('GET returns 200 when record exists', done => {
+    request(app)
+      .get('/survey-data/2019/wolsborn@pdx.edu')
+      .expect(200, done);
+  });
+
+  it('GET returns 404 when date does not exist', done => {
+    request(app)
+      .get('/survey-data/3010/wolsborn@pdx.edu')
+      .expect(404, done);
+  });
+
+  it('GET returns 404 when email does not exist', done => {
+    request(app)
+      .get('/survey-data/2019/does-not-exist')
+      .expect(404, done);
+  });
+
   it('POST returns 201 when insertion succeeds', done => {
     const payload = {
       surveyDate: '2018-01-01',

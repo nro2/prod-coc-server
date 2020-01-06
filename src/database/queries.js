@@ -334,6 +334,15 @@ async function getSurveyChoice(date, email) {
   );
 }
 
+function getSurveyData(year, email) {
+  const connection = loadDatabaseConnection();
+
+  return connection.one(
+    'SELECT survey_date, email, is_interested, expertise FROM survey_data WHERE EXTRACT(year FROM "survey_date")=$1 AND email=$2',
+    [year, email]
+  );
+}
+
 /**
  * Updates a committee in the database.
  *
@@ -484,6 +493,7 @@ module.exports = {
   getSenateDivisions,
   getSenateDivision,
   getSurveyChoice,
+  getSurveyData,
   updateCommittee,
   updateCommitteeAssignment,
   updateCommitteeSlots,
