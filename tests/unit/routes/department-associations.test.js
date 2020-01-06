@@ -6,17 +6,20 @@ const mock = require('./mock');
 const underTestFilename = '../../../src/routes/department-associations.js';
 
 const routerGet = sinon.stub();
+const routerPut = sinon.stub();
 const routerActions = {};
 
 const stubs = {
   express: {
     Router: () => ({
       get: routerGet,
+      put: routerPut,
     }),
   },
   '../database': {
     getDepartmentAssociationsByDepartment: sinon.stub(),
     getDepartmentAssociationsByFaculty: sinon.stub(),
+    updateDepartmentAssociations: sinon.stub(),
   },
 };
 
@@ -30,6 +33,7 @@ describe('Request routing for /department-associations', () => {
     routerActions.getDepartmentAssociationsByDepartment =
       routerGet.firstCall.args[1];
     routerActions.getDepartmentAssociationsByFaculty = routerGet.secondCall.args[1];
+    routerActions.updateDepartmentAssociations = routerPut.firstCall.args[1];
   });
 
   beforeEach(() => {
@@ -42,6 +46,7 @@ describe('Request routing for /department-associations', () => {
 
     stubs['../database'].getDepartmentAssociationsByDepartment.resetHistory();
     stubs['../database'].getDepartmentAssociationsByFaculty.resetHistory();
+    stubs['../database'].updateDepartmentAssociations.resetHistory();
   });
 
   describe('Route /department', () => {
@@ -144,6 +149,94 @@ describe('Request routing for /department-associations', () => {
 
       return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
+      });
+    });
+  });
+
+  describe('Route put /', () => {
+    it('PUT returns 200 when department association is updated in the database', () => {
+      req.body = {
+        email: 'test@test.edu',
+        oldDepartmentId: 1,
+        newDepartmentId: 2,
+      };
+      stubs['../database'].updateDepartmentAssociations.resolves({ rowCount: 1 });
+
+      return routerActions.updateDepartmentAssociations(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 200);
+      });
+    });
+
+    it('PUT returns 404 when email does not exist in database', () => {
+      req.body = {
+        email: 'test@test.edu',
+        oldDepartmentId: 1,
+        newDepartmentId: 2,
+      };
+      stubs['../database'].updateDepartmentAssociations.resolves({ rowCount: 0 });
+
+      return routerActions.updateDepartmentAssociations(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 404);
+      });
+    });
+
+    it('PUT returns 500 when unable to update department association', () => {
+      req.body = {
+        email: 'test@test.edu',
+        oldDepartmentId: 1,
+        newDepartmentId: 2,
+      };
+      stubs['../database'].updateDepartmentAssociations.rejects(
+        new Error('test-database-error')
+      );
+
+      return routerActions.updateDepartmentAssociations(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 500);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          error: 'Unable to complete database transaction',
+        });
+      });
+    });
+
+    it('PUT returns 400 when missing email from request body', () => {
+      req.body = {
+        oldDepartmentId: 1,
+        newDepartmentId: 2,
+      };
+
+      return routerActions.updateDepartmentAssociations(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 400);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          message: '400 Bad Request',
+        });
+      });
+    });
+
+    it('PUT returns 400 when missing oldDepartmentId from request body', () => {
+      req.body = {
+        email: 'test@test.edu',
+        newDepartmentId: 2,
+      };
+
+      return routerActions.updateDepartmentAssociations(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 400);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          message: '400 Bad Request',
+        });
+      });
+    });
+
+    it('PUT returns 400 when missing newDeprtmentId from request body', () => {
+      req.body = {
+        email: 'test@test.edu',
+        oldDepartmentId: 1,
+      };
+
+      return routerActions.updateDepartmentAssociations(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 400);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          message: '400 Bad Request',
+        });
       });
     });
   });
