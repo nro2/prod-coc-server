@@ -88,7 +88,9 @@ router.get('/:date/:email', async (req, res) => {
     .catch(err => {
       if (err.result && err.result.rowCount === 0) {
         console.info('Found no survey data in the database');
-        return res.status(404);
+        return res
+          .status(404)
+          .send({ error: 'Found no survey data in the database' });
       }
       console.error(`Error retrieving survey data: ${err}`);
       return res
