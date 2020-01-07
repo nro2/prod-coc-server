@@ -207,15 +207,15 @@ async function getDepartment(id) {
 /**
  * Gets committee record by its id.
  *
- * @param name      Committee name
+ * @param id     Committee id
  * @returns {Promise} Query response object on success, error on failure
  */
-async function getCommittee(name) {
+async function getCommittee(id) {
   const connection = loadDatabaseConnection();
 
   return connection.one(
-    'SELECT committee_id, name, description, total_slots FROM committee WHERE name=$1',
-    [name]
+    'SELECT committee_id, name, description, total_slots FROM committee WHERE committee_id=$1',
+    [id]
   );
 }
 

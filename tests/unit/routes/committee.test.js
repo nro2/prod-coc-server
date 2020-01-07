@@ -242,7 +242,7 @@ describe('Request routing for /committee', () => {
 
   it('GET Returns 404 when committee is not found', () => {
     stubs['../database'].getCommittee.rejects({ result: { rowCount: 0 } });
-    req.params.name = 'test-committee-name';
+    req.params.id = 1;
 
     return routerActions.getCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
@@ -251,7 +251,7 @@ describe('Request routing for /committee', () => {
 
   it('GET returns 500 when there is a database error', () => {
     stubs['../database'].getCommittee.rejects(new Error('test-database-error'));
-    req.params.name = 'test-committee-name';
+    req.params.id = 1;
 
     return routerActions.getCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
