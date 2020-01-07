@@ -336,7 +336,7 @@ describe('Request routing for /faculty', () => {
     ];
 
     req.params.email = 'wolsborn@pdx.edu';
-    stubs['../../database'].getFaculty.resolves(faculty_member);
+    stubs['../database'].getFaculty.resolves(faculty_member);
 
     return routerActions.getFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
