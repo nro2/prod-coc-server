@@ -232,7 +232,7 @@ describe('Request routing for /committee', () => {
       description: 'test-committee-description',
     };
     stubs['../database'].getCommittee.resolves(expected);
-    req.params.name = 'test-committee-name';
+    req.params.id = 1;
 
     return routerActions.getCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
