@@ -71,6 +71,22 @@ async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   );
 }
 
+async function getFaculty(email) {
+  const connection = loadDatabaseConnection();
+
+  return connection
+    .one(
+      'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty WHERE email=$1',
+      [email]
+    )
+    .then(data => {
+      return data;
+    })
+    .catch(err => {
+      console.log(err.message);
+    });
+}
+
 /**
  * Adds a survey choice to the database.
  *
@@ -279,18 +295,6 @@ function groupDepartmentIdByFaculty(arr) {
 }
 
 /**
- * Gets faculty record by its first name.
- *
- * @param firstName   Faculty first name
- * @returns {Promise} Query response on success, error on failure
- */
-async function getFaculty(firstName) {
-  const connection = loadDatabaseConnection();
-
-  return connection.one('SELECT * FROM users WHERE first_name=$1', [firstName]);
-}
-
-/**
  * Gets all the senate divisions.
  *
  * @returns {Promise}   Query response object on success, error on failure
@@ -480,6 +484,7 @@ module.exports = {
   addFaculty,
   addSurveyChoice,
   addSurveyData,
+  getFaculty,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   getCommitteeSlotsBySenate,
@@ -489,7 +494,6 @@ module.exports = {
   getDepartments,
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
-  getFaculty,
   getSenateDivisions,
   getSenateDivision,
   getSurveyChoice,
