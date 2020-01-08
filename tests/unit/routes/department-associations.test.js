@@ -6,6 +6,7 @@ const mock = require('./mock');
 const underTestFilename = '../../../src/routes/department-associations.js';
 
 const routerGet = sinon.stub();
+const routerPost = sinon.stub();
 const routerPut = sinon.stub();
 const routerActions = {};
 
@@ -13,10 +14,12 @@ const stubs = {
   express: {
     Router: () => ({
       get: routerGet,
+      post: routerPost,
       put: routerPut,
     }),
   },
   '../database': {
+    addDepartmentAssociation: sinon.stub(),
     getDepartmentAssociationsByDepartment: sinon.stub(),
     getDepartmentAssociationsByFaculty: sinon.stub(),
     updateDepartmentAssociations: sinon.stub(),
@@ -30,6 +33,7 @@ describe('Request routing for /department-associations', () => {
 
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
+    routerActions.postDepartmentAssociation = routerPost.firstCall.args[1];
     routerActions.getDepartmentAssociationsByDepartment =
       routerGet.firstCall.args[1];
     routerActions.getDepartmentAssociationsByFaculty = routerGet.secondCall.args[1];
@@ -43,12 +47,13 @@ describe('Request routing for /department-associations', () => {
 
   afterEach(() => {
     routerGet.resetHistory();
+    routerPost.resetHistory();
 
+    stubs['../database'].addDepartmentAssociation.resetHistory();
     stubs['../database'].getDepartmentAssociationsByDepartment.resetHistory();
     stubs['../database'].getDepartmentAssociationsByFaculty.resetHistory();
     stubs['../database'].updateDepartmentAssociations.resetHistory();
   });
-
   describe('Route /department', () => {
     it('GET returns 200 when department associations are retrieved from database', () => {
       const departmentAssociations = [
