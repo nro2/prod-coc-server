@@ -64,7 +64,7 @@ describe('Request routing for /department-associations', () => {
     stubs['../database'].addDepartmentAssociation.resolves();
 
     return routerActions.postDepartmentAssociation(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 200);
+      assert.equal(res.status.firstCall.args[0], 201);
     });
   });
 

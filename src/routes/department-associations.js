@@ -5,6 +5,8 @@ const {
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
   updateDepartmentAssociations,
+  FOREIGN_KEY_VIOLATION,
+  UNIQUENESS_VIOLATION,
 } = require('../database');
 
 router.post('/', async (req, res) => {
@@ -17,9 +19,16 @@ router.post('/', async (req, res) => {
   return addDepartmentAssociation(email, departmentId)
     .then(() => {
       console.info('Successfully added department association to database');
-      return res.status(200).send();
+      return res.status(201).send();
     })
     .catch(err => {
+      if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
+        console.error(
+          `Attempted to add an existing committee association with invalid keys: ${err}`
+        );
+        return res.status(409).send();
+      }
+
       console.error(`Error adding department association: ${err}`);
       return res
         .status(400)
