@@ -85,7 +85,7 @@ describe('Database queries', () => {
         senate_division_short_name: 'stub-senate-short-name',
       };
 
-      stubs.one.resolves({
+      stubs.oneOrNone.resolves({
         email: 'stub-full-email',
         full_name: 'stub-full-name',
         phone_num: 'stub-phone-num',
@@ -100,19 +100,11 @@ describe('Database queries', () => {
 
     it('returns empty array when there are no query results', async () => {
       const email = 'test-full-email';
-      await stubs.one.resolves([]);
+      await stubs.oneOrNone.resolves([]);
 
       const result = await underTest.getFaculty(email);
 
       assert.deepEqual(result, []);
-    });
-
-    it('returns full list of faculty when query is successfull', async () => {
-      await stubs.one.resolves([]);
-
-      const result = await underTest.getFaculty();
-
-      assert.deepEqual(result);
     });
   });
 
