@@ -76,6 +76,24 @@ router.put('/', async (req, res) => {
     });
 });
 
+router.get('/', async (req, res) => {
+  return await getFaculty()
+    .then(data => {
+      if (!data) {
+        console.info('Faculty table is empty');
+        return res.status(404).send();
+      }
+      console.info('Successfully retrieved faculty list from the database');
+      return res.status(200).send(data);
+    })
+    .catch(err => {
+      console.error(`Error retrieving faculty: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
+
 router.get('/:email', async (req, res) => {
   if (!req.params.email) {
     return res.status(400).send({ message: '400 Bad Request' });

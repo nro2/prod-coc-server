@@ -71,20 +71,26 @@ async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   );
 }
 
+/**
+ * Gets a specific faculty record by email.
+ * If email is undefined, then get all faculty records
+ *
+ * @param email               `Optional` Email of the faculty member
+ * @returns {Promise}         Query response object on success, error on failure
+ */
 async function getFaculty(email) {
   const connection = loadDatabaseConnection();
 
-  return connection
-    .one(
+  if (email === undefined) {
+    return connection.any(
+      'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty'
+    );
+  } else {
+    return connection.oneOrNone(
       'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty WHERE email=$1',
       [email]
-    )
-    .then(data => {
-      return data;
-    })
-    .catch(err => {
-      console.log(err.message);
-    });
+    );
+  }
 }
 
 /**

@@ -5,617 +5,641 @@ const sinon = require('sinon');
 const underTestFilename = '../../../src/database/queries.js';
 
 const stubs = {
-    any: sinon.stub(),
-    none: sinon.stub(),
-    one: sinon.stub(),
-    result: sinon.stub(),
-    tx: sinon.stub(),
+  any: sinon.stub(),
+  none: sinon.stub(),
+  one: sinon.stub(),
+  result: sinon.stub(),
+  tx: sinon.stub(),
 };
 
 const connection = () => ({
-    any: stubs.any,
-    none: stubs.none,
-    one: stubs.one,
-    result: stubs.result,
-    tx: stubs.tx,
+  any: stubs.any,
+  none: stubs.none,
+  one: stubs.one,
+  result: stubs.result,
+  tx: stubs.tx,
 });
 
 describe('Database queries', () => {
-    let underTest;
+  let underTest;
 
-    before(() => {
-        // Suppress UnhandledPromiseRejection logging when running these tests
-        process.on('unhandledRejection', () => {});
+  before(() => {
+    // Suppress UnhandledPromiseRejection logging when running these tests
+    process.on('unhandledRejection', () => {});
+  });
+
+  beforeEach(() => {
+    underTest = proxyquire(underTestFilename, {
+      './connection': {
+        loadDatabaseConnection: connection,
+      },
+    });
+    sinon.stub(console, 'log');
+  });
+
+  afterEach(() => {
+    stubs.any.resetHistory();
+    stubs.none.resetHistory();
+    stubs.one.resetHistory();
+    stubs.result.resetHistory();
+    stubs.tx.resetHistory();
+    sinon.restore();
+  });
+
+  describe('addCommittee', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
+
+      const result = await underTest.addCommittee(
+        'test-committee-name',
+        'test-committee-description',
+        3
+      );
+
+      assert.equal(result, undefined);
+    });
+  });
+
+  describe('addCommitteeSlots', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
+
+      const result = await underTest.addCommitteeSlots(
+        1,
+        'test-senate-division',
+        3
+      );
+
+      assert.equal(result, undefined);
+    });
+  });
+
+  describe('getFaculty', () => {
+    it('returns faculty member when query is successful', async () => {
+      const email = 'test-full-email';
+      const expected = {
+        email: 'stub-full-email',
+        full_name: 'stub-full-name',
+        phone_num: 'stub-phone-num',
+        job_title: 'stub-job-title',
+        senate_division_short_name: 'stub-senate-short-name',
+      };
+
+      stubs.one.resolves({
+        email: 'stub-full-email',
+        full_name: 'stub-full-name',
+        phone_num: 'stub-phone-num',
+        job_title: 'stub-job-title',
+        senate_division_short_name: 'stub-senate-short-name',
+      });
+
+      const result = await underTest.getFaculty(email);
+
+      assert.deepEqual(result, expected);
     });
 
+    it('returns empty array when there are no query results', async () => {
+      const email = 'test-full-email';
+      await stubs.one.resolves([]);
+
+      const result = await underTest.getFaculty(email);
+
+      assert.deepEqual(result, []);
+    });
+
+    it('returns full list of faculty when query is successfull', async () => {
+      await stubs.one.resolves([]);
+
+      const result = await underTest.getFaculty();
+
+      assert.deepEqual(result);
+    });
+  });
+
+  describe('getCommittees', () => {
+    it('returns data when query is successful', async () => {
+      const expected = [
+        {
+          name: 'test-committee-name',
+          committee_id: 1,
+        },
+      ];
+      stubs.any.resolves(expected);
+
+      const result = await underTest.getCommittees();
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('returns empty array when there are no query results', async () => {
+      await stubs.any.resolves([]);
+
+      const result = await underTest.getCommittees();
+
+      assert.deepEqual(result, []);
+    });
+  });
+
+  describe('getDepartments', () => {
+    it('returns data when query is successful', async () => {
+      stubs.any.resolves('department-name');
+
+      const result = await underTest.getDepartments();
+
+      assert.equal(result, 'department-name');
+    });
+
+    it('returns empty array when there are no query results', async () => {
+      await stubs.any.resolves([]);
+
+      const result = await underTest.getDepartments();
+
+      assert.deepEqual(result, []);
+    });
+  });
+
+  describe('getDepartmentAssociationsByDepartment', () => {
+    it('returns data when query is successful', async () => {
+      const departmentId = 42;
+      stubs.any.resolves([
+        {
+          email: 'test-email',
+          department_id: departmentId,
+        },
+      ]);
+      const expected = {
+        department_id: 42,
+        emails: ['test-email'],
+      };
+
+      const result = await underTest.getDepartmentAssociationsByDepartment(
+        departmentId
+      );
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('returns empty array when query returns no results', async () => {
+      const departmentId = 42;
+      stubs.any.resolves([]);
+
+      const result = await underTest.getDepartmentAssociationsByDepartment(
+        departmentId
+      );
+
+      assert.equal(result.length, 0);
+    });
+
+    it('returns list of emails grouped by id', async () => {
+      const departmentId = 42;
+      stubs.any.resolves([
+        {
+          email: 'test-email-foo',
+          department_id: departmentId,
+        },
+        {
+          email: 'test-email-bar',
+          department_id: departmentId,
+        },
+      ]);
+      const expected = {
+        department_id: 42,
+        emails: ['test-email-foo', 'test-email-bar'],
+      };
+
+      const result = await underTest.getDepartmentAssociationsByDepartment(
+        departmentId
+      );
+
+      assert.deepEqual(result, expected);
+    });
+  });
+
+  describe('getDepartmentAssociationsByFaculty', () => {
+    it('returns data when query is successful', async () => {
+      stubs.any.resolves([
+        {
+          email: 'test-email',
+          department_id: 1,
+        },
+      ]);
+      const expected = {
+        email: 'test-email',
+        department_ids: [1],
+      };
+
+      const result = await underTest.getDepartmentAssociationsByFaculty();
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('returns empty array when query returns no results', async () => {
+      stubs.any.resolves([]);
+
+      const result = await underTest.getDepartmentAssociationsByFaculty();
+
+      assert.equal(result.length, 0);
+    });
+
+    it('returns list of ids grouped by email', async () => {
+      stubs.any.resolves([
+        {
+          email: 'test-email',
+          department_id: 1,
+        },
+        {
+          email: 'test-email',
+          department_id: 2,
+        },
+      ]);
+      const expected = {
+        email: 'test-email',
+        department_ids: [1, 2],
+      };
+
+      const result = await underTest.getDepartmentAssociationsByFaculty();
+
+      assert.deepEqual(result, expected);
+    });
+  });
+
+  describe('addFaculty', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
+
+      const result = await underTest.addFaculty(
+        'test-full-name',
+        'test-email',
+        'test-job-title',
+        'test-phone-num',
+        'test-senate-division',
+        1
+      );
+
+      assert.equal(result, undefined);
+    });
+  });
+
+  describe('getDepartment', () => {
+    let expected;
     beforeEach(() => {
-        underTest = proxyquire(underTestFilename, {
-            './connection': {
-                loadDatabaseConnection: connection,
-            },
-        });
-        sinon.stub(console, 'log');
+      expected = {
+        department_id: 1,
+        name: 'Computer Science Department',
+        description: 'Computer sci stuff',
+      };
     });
 
-    afterEach(() => {
-        stubs.any.resetHistory();
-        stubs.none.resetHistory();
-        stubs.one.resetHistory();
-        stubs.result.resetHistory();
-        stubs.tx.resetHistory();
-        sinon.restore();
+    it('returns nothing when when query has no parameters', async () => {
+      stubs.one.resolves();
+      const result = await underTest.getDepartment(1);
+      assert.equal(result, undefined);
     });
 
-    describe('addCommittee', () => {
-        it('returns nothing when query is successful', async() => {
-            stubs.none.resolves();
+    it('returns department info when queried with a parameter', async () => {
+      stubs.one.resolves(expected);
 
-            const result = await underTest.addCommittee(
-                'test-committee-name',
-                'test-committee-description',
-                3
-            );
+      const result = await underTest.getDepartment(1);
+      assert.deepEqual(result, expected);
+    });
+  });
 
-            assert.equal(result, undefined);
-        });
+  describe('Get slot requirements by senate division', () => {
+    let expected;
+    beforeEach(() => {
+      expected = [
+        { committee_id: 1, slot_requirements: 2 },
+        { committee_id: 2, slot_requirements: 5 },
+      ];
     });
 
-    describe('addCommitteeSlots', () => {
-        it('returns nothing when query is successful', async() => {
-            stubs.none.resolves();
+    it('returns nothing when query has no parameters', async () => {
+      stubs.any.resolves();
 
-            const result = await underTest.addCommitteeSlots(
-                1,
-                'test-senate-division',
-                3
-            );
+      const result = await underTest.getCommitteeSlotsBySenate();
 
-            assert.equal(result, undefined);
-        });
+      assert.equal(result, undefined);
     });
 
-    describe('getFaculty', () => {
-        it('returns data when query is successful', async() => {
-            const firstName = 'test-first-name';
-            const expected = {
-                firstName: 'stub-first-name',
-                lastName: 'stub-last-name',
-                phoneNum: 'stub-phone-number',
-            };
-            stubs.one.resolves(expected);
+    it('returns data when query is successful', async () => {
+      stubs.any.resolves(expected);
 
-            const result = await underTest.getFaculty(firstName);
+      const result = await underTest.getCommitteeSlotsBySenate('AO');
 
-            assert.deepEqual(result, expected);
-        });
+      assert.deepEqual(result, expected);
+    });
+  });
 
-        it('returns empty array when there are no query results', async() => {
-            const firstName = 'test-first-name';
-            await stubs.one.resolves([]);
-
-            const result = await underTest.getFaculty(firstName);
-
-            assert.deepEqual(result, []);
-        });
+  describe('Get slot requirements by committee id', () => {
+    let expected;
+    beforeEach(() => {
+      expected = [
+        { senate_division_short_name: 'AO', slot_requirements: 2 },
+        { senate_division_short_name: 'BQ', slot_requirements: 5 },
+      ];
     });
 
-    describe('getCommittees', () => {
-        it('returns data when query is successful', async() => {
-            const expected = [{
-                name: 'test-committee-name',
-                committee_id: 1,
-            }, ];
-            stubs.any.resolves(expected);
+    it('returns nothing when query has no parameters', async () => {
+      stubs.any.resolves();
 
-            const result = await underTest.getCommittees();
+      const result = await underTest.getCommitteeSlotsByCommittee();
 
-            assert.deepEqual(result, expected);
-        });
-
-        it('returns empty array when there are no query results', async() => {
-            await stubs.any.resolves([]);
-
-            const result = await underTest.getCommittees();
-
-            assert.deepEqual(result, []);
-        });
+      assert.equal(result, undefined);
     });
 
-    describe('getDepartments', () => {
-        it('returns data when query is successful', async() => {
-            stubs.any.resolves('department-name');
+    it('returns data when query is successful', async () => {
+      stubs.any.resolves(expected);
 
-            const result = await underTest.getDepartments();
+      const result = await underTest.getCommitteeSlotsByCommittee(1);
 
-            assert.equal(result, 'department-name');
-        });
+      assert.deepEqual(result, expected);
+    });
+  });
 
-        it('returns empty array when there are no query results', async() => {
-            await stubs.any.resolves([]);
+  describe('updateCommittee', () => {
+    it('returns object when update succeeds', async () => {
+      const committeeId = 42;
+      const name = 'test-committee-name';
+      const description = 'test-committee-description';
+      const totalSlots = 3;
+      const expected = { rowCount: 1 };
 
-            const result = await underTest.getDepartments();
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
 
-            assert.deepEqual(result, []);
-        });
+      const result = await underTest.updateCommittee(
+        committeeId,
+        name,
+        description,
+        totalSlots
+      );
+
+      assert.deepEqual(result, expected);
     });
 
-    describe('getDepartmentAssociationsByDepartment', () => {
-        it('returns data when query is successful', async() => {
-            const departmentId = 42;
-            stubs.any.resolves([{
-                email: 'test-email',
-                department_id: departmentId,
-            }, ]);
-            const expected = {
-                department_id: 42,
-                emails: ['test-email'],
-            };
+    it('throws exception when result query errors', async () => {
+      const committeeId = 42;
+      const name = 'test-committee-name';
+      const description = 'test-committee-description';
+      const totalSlots = 3;
 
-            const result = await underTest.getDepartmentAssociationsByDepartment(
-                departmentId
-            );
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
 
-            assert.deepEqual(result, expected);
-        });
+      await assert.rejects(
+        underTest
+          .updateCommittee(committeeId, name, description, totalSlots)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
 
-        it('returns empty array when query returns no results', async() => {
-            const departmentId = 42;
-            stubs.any.resolves([]);
+  describe('updateCommitteeAssignment', () => {
+    it('returns object when update succeeds', async () => {
+      const email = 'test-email';
+      const committeeId = 42;
+      const startDate = '1970-01-01';
+      const endDate = '2050-01-01';
+      const expected = { rowCount: 1 };
 
-            const result = await underTest.getDepartmentAssociationsByDepartment(
-                departmentId
-            );
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
 
-            assert.equal(result.length, 0);
-        });
+      const result = await underTest.updateCommitteeAssignment(
+        email,
+        committeeId,
+        startDate,
+        endDate
+      );
 
-        it('returns list of emails grouped by id', async() => {
-            const departmentId = 42;
-            stubs.any.resolves([{
-                    email: 'test-email-foo',
-                    department_id: departmentId,
-                },
-                {
-                    email: 'test-email-bar',
-                    department_id: departmentId,
-                },
-            ]);
-            const expected = {
-                department_id: 42,
-                emails: ['test-email-foo', 'test-email-bar'],
-            };
-
-            const result = await underTest.getDepartmentAssociationsByDepartment(
-                departmentId
-            );
-
-            assert.deepEqual(result, expected);
-        });
+      assert.deepEqual(result, expected);
     });
 
-    describe('getDepartmentAssociationsByFaculty', () => {
-        it('returns data when query is successful', async() => {
-            stubs.any.resolves([{
-                email: 'test-email',
-                department_id: 1,
-            }, ]);
-            const expected = {
-                email: 'test-email',
-                department_ids: [1],
-            };
+    it('throws exception when result query errors', async () => {
+      const email = 'test-email';
+      const committeeId = 42;
+      const startDate = '1970-01-01';
+      const endDate = '2050-01-01';
 
-            const result = await underTest.getDepartmentAssociationsByFaculty();
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
 
-            assert.deepEqual(result, expected);
-        });
+      await assert.rejects(
+        underTest
+          .updateCommitteeAssignment(email, committeeId, startDate, endDate)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
 
-        it('returns empty array when query returns no results', async() => {
-            stubs.any.resolves([]);
+  describe('updateCommitteeSlots', () => {
+    it('returns object when update succeeds', async () => {
+      const id = 1;
+      const name = 'test-senate-division';
+      const slotRequirements = 3;
+      const expected = { rowCount: 1 };
 
-            const result = await underTest.getDepartmentAssociationsByFaculty();
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
 
-            assert.equal(result.length, 0);
-        });
+      const result = await underTest.updateCommitteeSlots(
+        id,
+        name,
+        slotRequirements
+      );
 
-        it('returns list of ids grouped by email', async() => {
-            stubs.any.resolves([{
-                    email: 'test-email',
-                    department_id: 1,
-                },
-                {
-                    email: 'test-email',
-                    department_id: 2,
-                },
-            ]);
-            const expected = {
-                email: 'test-email',
-                department_ids: [1, 2],
-            };
-
-            const result = await underTest.getDepartmentAssociationsByFaculty();
-
-            assert.deepEqual(result, expected);
-        });
+      assert.deepEqual(result, expected);
     });
 
-    describe('addFaculty', () => {
-        it('returns nothing when query is successful', async() => {
-            stubs.none.resolves();
+    it('throws exception when result query errors', async () => {
+      const id = 1;
+      const name = 'test-senate-division';
+      const slotRequirements = 3;
 
-            const result = await underTest.addFaculty(
-                'test-full-name',
-                'test-email',
-                'test-job-title',
-                'test-phone-num',
-                'test-senate-division',
-                1
-            );
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
 
-            assert.equal(result, undefined);
-        });
+      await assert.rejects(
+        underTest
+          .updateCommitteeSlots(id, name, slotRequirements)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
+
+  describe('updateFaculty', () => {
+    it('returns object when update succeeds', async () => {
+      const fullName = 'test-full-name';
+      const email = 'test-email';
+      const jobTitle = 'test-job-title';
+      const phoneNum = '555-55-5555';
+      const senateDivision = 'test-senate-division';
+      const expected = { rowCount: 1 };
+
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
+
+      const result = await underTest.updateFaculty(
+        fullName,
+        email,
+        jobTitle,
+        phoneNum,
+        senateDivision
+      );
+
+      assert.deepEqual(result, expected);
     });
 
-    describe('getDepartment', () => {
-        let expected;
-        beforeEach(() => {
-            expected = {
-                department_id: 1,
-                name: 'Computer Science Department',
-                description: 'Computer sci stuff',
-            };
-        });
+    it('throws exception when result query errors', async () => {
+      const fullName = 'test-full-name';
+      const email = 'test-email';
+      const jobTitle = 'test-job-title';
+      const phoneNum = '555-55-5555';
+      const senateDivision = 'test-senate-division';
 
-        it('returns nothing when when query has no parameters', async() => {
-            stubs.one.resolves();
-            const result = await underTest.getDepartment(1);
-            assert.equal(result, undefined);
-        });
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
 
-        it('returns department info when queried with a parameter', async() => {
-            stubs.one.resolves(expected);
+      await assert.rejects(
+        underTest
+          .updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
 
-            const result = await underTest.getDepartment(1);
-            assert.deepEqual(result, expected);
-        });
+  describe('Get senate division by short name', () => {
+    let expected;
+    beforeEach(() => {
+      expected = { senate_division_short_name: 'AO', name: 'All Other Faculty' };
     });
 
-    describe('Get slot requirements by senate division', () => {
-        let expected;
-        beforeEach(() => {
-            expected = [
-                { committee_id: 1, slot_requirements: 2 },
-                { committee_id: 2, slot_requirements: 5 },
-            ];
-        });
+    it('returns nothing when query has no parameters', async () => {
+      stubs.one.resolves();
 
-        it('returns nothing when query has no parameters', async() => {
-            stubs.any.resolves();
+      const result = await underTest.getSenateDivision();
 
-            const result = await underTest.getCommitteeSlotsBySenate();
-
-            assert.equal(result, undefined);
-        });
-
-        it('returns data when query is successful', async() => {
-            stubs.any.resolves(expected);
-
-            const result = await underTest.getCommitteeSlotsBySenate('AO');
-
-            assert.deepEqual(result, expected);
-        });
+      assert.equal(result, undefined);
     });
 
-    describe('Get slot requirements by committee id', () => {
-        let expected;
-        beforeEach(() => {
-            expected = [
-                { senate_division_short_name: 'AO', slot_requirements: 2 },
-                { senate_division_short_name: 'BQ', slot_requirements: 5 },
-            ];
-        });
+    it('returns data when query is successful', async () => {
+      stubs.one.resolves(expected);
 
-        it('returns nothing when query has no parameters', async() => {
-            stubs.any.resolves();
+      const result = await underTest.getSenateDivision('AO');
 
-            const result = await underTest.getCommitteeSlotsByCommittee();
+      assert.equal(result, expected);
+    });
+  });
 
-            assert.equal(result, undefined);
-        });
+  describe('Post survey data', () => {
+    it('returns nothing when query is successful', async () => {
+      stubs.none.resolves();
 
-        it('returns data when query is successful', async() => {
-            stubs.any.resolves(expected);
+      const result = await underTest.addSurveyData(
+        2019,
+        'faculty@pdx.edu',
+        true,
+        'Im a faculty member'
+      );
 
-            const result = await underTest.getCommitteeSlotsByCommittee(1);
+      assert.equal(result, undefined);
+    });
+  });
 
-            assert.deepEqual(result, expected);
-        });
+  describe('Update survey data', () => {
+    it('returns object when update succeeds', async () => {
+      const surveyData = 2019;
+      const email = 'faculty@pdx.edu';
+      const interested = true;
+      const expertise = 'Im a faculty member';
+      const expected = { rowCount: 1 };
+
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
+
+      const result = await underTest.updateSurveyData(
+        surveyData,
+        email,
+        interested,
+        expertise
+      );
+
+      assert.deepEqual(result, expected);
     });
 
-    describe('updateCommittee', () => {
-        it('returns object when update succeeds', async() => {
-            const committeeId = 42;
-            const name = 'test-committee-name';
-            const description = 'test-committee-description';
-            const totalSlots = 3;
-            const expected = { rowCount: 1 };
+    it('throws exception when result query errors', async () => {
+      const surveyData = 2019;
+      const email = 'faculty@pdx.edu';
+      const interested = true;
+      const expertise = 'Im a faculty member';
 
-            stubs.tx.yields();
-            stubs.result.resolves(expected);
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
 
-            const result = await underTest.updateCommittee(
-                committeeId,
-                name,
-                description,
-                totalSlots
-            );
+      await assert.rejects(
+        underTest
+          .updateSurveyData(surveyData, email, interested, expertise)
+          .catch(() => assert.fail('Should not have failed'))
+      );
+    });
+  });
 
-            assert.deepEqual(result, expected);
-        });
-
-        it('throws exception when result query errors', async() => {
-            const committeeId = 42;
-            const name = 'test-committee-name';
-            const description = 'test-committee-description';
-            const totalSlots = 3;
-
-            stubs.tx.yields();
-            await stubs.result.rejects(new Error('test-error'));
-
-            await assert.rejects(
-                underTest
-                .updateCommittee(committeeId, name, description, totalSlots)
-                .catch(() => assert.fail('Should not have failed'))
-            );
-        });
+  describe('Get survey data', () => {
+    let expected;
+    beforeEach(() => {
+      expected = {
+        survey_date: 'stub-survey-date',
+        email: 'stub-email',
+        is_interested: true,
+        expertise: 'stub-expertise',
+      };
     });
 
-    describe('updateCommitteeAssignment', () => {
-        it('returns object when update succeeds', async() => {
-            const email = 'test-email';
-            const committeeId = 42;
-            const startDate = '1970-01-01';
-            const endDate = '2050-01-01';
-            const expected = { rowCount: 1 };
-
-            stubs.tx.yields();
-            stubs.result.resolves(expected);
-
-            const result = await underTest.updateCommitteeAssignment(
-                email,
-                committeeId,
-                startDate,
-                endDate
-            );
-
-            assert.deepEqual(result, expected);
-        });
-
-        it('throws exception when result query errors', async() => {
-            const email = 'test-email';
-            const committeeId = 42;
-            const startDate = '1970-01-01';
-            const endDate = '2050-01-01';
-
-            stubs.tx.yields();
-            await stubs.result.rejects(new Error('test-error'));
-
-            await assert.rejects(
-                underTest
-                .updateCommitteeAssignment(email, committeeId, startDate, endDate)
-                .catch(() => assert.fail('Should not have failed'))
-            );
-        });
+    it('returns nothing when when query has no parameters', async () => {
+      stubs.one.resolves();
+      const result = await underTest.getSurveyData();
+      assert.equal(result, undefined);
     });
 
-    describe('updateCommitteeSlots', () => {
-        it('returns object when update succeeds', async() => {
-            const id = 1;
-            const name = 'test-senate-division';
-            const slotRequirements = 3;
-            const expected = { rowCount: 1 };
+    it('returns data when query is successful', async () => {
+      stubs.one.resolves(expected);
+      const result = await underTest.getSurveyData(2019, 'boat@gmail.com');
+      assert.equal(result, expected);
+    });
+  });
 
-            stubs.tx.yields();
-            stubs.result.resolves(expected);
+  describe('Update department association', () => {
+    it('Returns object when update succeeds', async () => {
+      const email = 'test@test.edu';
+      const oldDepartmentId = 1;
+      const newDepartmentId = 2;
+      const expected = { rowCount: 1 };
 
-            const result = await underTest.updateCommitteeSlots(
-                id,
-                name,
-                slotRequirements
-            );
+      stubs.tx.yields();
+      stubs.result.resolves(expected);
 
-            assert.deepEqual(result, expected);
-        });
+      const result = await underTest.updateDepartmentAssociations(
+        email,
+        oldDepartmentId,
+        newDepartmentId
+      );
 
-        it('throws exception when result query errors', async() => {
-            const id = 1;
-            const name = 'test-senate-division';
-            const slotRequirements = 3;
-
-            stubs.tx.yields();
-            await stubs.result.rejects(new Error('test-error'));
-
-            await assert.rejects(
-                underTest
-                .updateCommitteeSlots(id, name, slotRequirements)
-                .catch(() => assert.fail('Should not have failed'))
-            );
-        });
+      assert.deepEqual(result, expected);
     });
 
-    describe('updateFaculty', () => {
-        it('returns object when update succeeds', async() => {
-            const fullName = 'test-full-name';
-            const email = 'test-email';
-            const jobTitle = 'test-job-title';
-            const phoneNum = '555-55-5555';
-            const senateDivision = 'test-senate-division';
-            const expected = { rowCount: 1 };
+    it('throws exception when query errors', async () => {
+      const email = 'test@test.edu';
+      const oldDepartmentId = 1;
+      const newDepartmentId = 2;
 
-            stubs.tx.yields();
-            stubs.result.resolves(expected);
+      stubs.tx.yields();
+      await stubs.result.rejects(new Error('test-error'));
 
-            const result = await underTest.updateFaculty(
-                fullName,
-                email,
-                jobTitle,
-                phoneNum,
-                senateDivision
-            );
-
-            assert.deepEqual(result, expected);
-        });
-
-        it('throws exception when result query errors', async() => {
-            const fullName = 'test-full-name';
-            const email = 'test-email';
-            const jobTitle = 'test-job-title';
-            const phoneNum = '555-55-5555';
-            const senateDivision = 'test-senate-division';
-
-            stubs.tx.yields();
-            await stubs.result.rejects(new Error('test-error'));
-
-            await assert.rejects(
-                underTest
-                .updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
-                .catch(() => assert.fail('Should not have failed'))
-            );
-        });
+      await assert.rejects(
+        underTest
+          .updateDepartmentAssociations(email, oldDepartmentId, newDepartmentId)
+          .catch(() => assert.fail('Should not have failed'))
+      );
     });
-
-    describe('Get senate division by short name', () => {
-        let expected;
-        beforeEach(() => {
-            expected = { senate_division_short_name: 'AO', name: 'All Other Faculty' };
-        });
-
-        it('returns nothing when query has no parameters', async() => {
-            stubs.one.resolves();
-
-            const result = await underTest.getSenateDivision();
-
-            assert.equal(result, undefined);
-        });
-
-        it('returns data when query is successful', async() => {
-            stubs.one.resolves(expected);
-
-            const result = await underTest.getSenateDivision('AO');
-
-            assert.equal(result, expected);
-        });
-    });
-
-    describe('Post survey data', () => {
-        it('returns nothing when query is successful', async() => {
-            stubs.none.resolves();
-
-            const result = await underTest.addSurveyData(
-                2019,
-                'faculty@pdx.edu',
-                true,
-                'Im a faculty member'
-            );
-
-            assert.equal(result, undefined);
-        });
-    });
-
-    describe('Update survey data', () => {
-        it('returns object when update succeeds', async() => {
-            const surveyData = 2019;
-            const email = 'faculty@pdx.edu';
-            const interested = true;
-            const expertise = 'Im a faculty member';
-            const expected = { rowCount: 1 };
-
-            stubs.tx.yields();
-            stubs.result.resolves(expected);
-
-            const result = await underTest.updateSurveyData(
-                surveyData,
-                email,
-                interested,
-                expertise
-            );
-
-            assert.deepEqual(result, expected);
-        });
-
-        it('throws exception when result query errors', async() => {
-            const surveyData = 2019;
-            const email = 'faculty@pdx.edu';
-            const interested = true;
-            const expertise = 'Im a faculty member';
-
-            stubs.tx.yields();
-            await stubs.result.rejects(new Error('test-error'));
-
-            await assert.rejects(
-                underTest
-                .updateSurveyData(surveyData, email, interested, expertise)
-                .catch(() => assert.fail('Should not have failed'))
-            );
-        });
-    });
-
-
-    describe('Get survey data', () => {
-        let expected;
-        beforeEach(() => {
-            expected = {
-                survey_date: 'stub-survey-date',
-                email: 'stub-email',
-                is_interested: true,
-                expertise: 'stub-expertise',
-            };
-        });
-
-        it('returns nothing when when query has no parameters', async() => {
-            stubs.one.resolves();
-            const result = await underTest.getSurveyData();
-            assert.equal(result, undefined);
-        });
-
-        it('returns data when query is successful', async() => {
-            stubs.one.resolves(expected);
-            const result = await underTest.getSurveyData(2019, 'boat@gmail.com');
-            assert.equal(result, expected);
-        });
-    });
-
-    describe('Update department association', () => {
-        it('Returns object when update succeeds', async() => {
-            const email = 'test@test.edu';
-            const oldDepartmentId = 1;
-            const newDepartmentId = 2;
-            const expected = { rowCount: 1 };
-
-            stubs.tx.yields();
-            stubs.result.resolves(expected);
-
-            const result = await underTest.updateDepartmentAssociations(
-                email,
-                oldDepartmentId,
-                newDepartmentId
-            );
-
-            assert.deepEqual(result, expected);
-        });
-
-        it('throws exception when query errors', async() => {
-            const email = 'test@test.edu';
-            const oldDepartmentId = 1;
-            const newDepartmentId = 2;
-
-            stubs.tx.yields();
-            await stubs.result.rejects(new Error('test-error'));
-
-            await assert.rejects(
-                underTest
-                .updateDepartmentAssociations(email, oldDepartmentId, newDepartmentId)
-                .catch(() => assert.fail('Should not have failed'))
-            );
-        });
-    });
+  });
 });
