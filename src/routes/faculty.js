@@ -79,7 +79,7 @@ router.put('/', async (req, res) => {
 router.get('/', async (req, res) => {
   return await getFaculty()
     .then(data => {
-      if (!data) {
+      if (data.length === 0) {
         console.info('Faculty table is empty');
         return res.status(404).send();
       }

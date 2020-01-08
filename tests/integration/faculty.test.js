@@ -107,11 +107,7 @@ describe('Request routing for /faculty', () => {
   it('GET returns 200 and faculty record by email', done => {
     request(app)
       .get('/faculty/wolsborn@pdx.edu')
-      .expect(200)
-      .then(response => {
-        assert.equal(response.body.length, data.faculty.length);
-        done();
-      });
+      .expect(200, done);
   });
 
   it('GET returns 404 when record does not exist for specified email', done => {
@@ -120,16 +116,22 @@ describe('Request routing for /faculty', () => {
       .expect(404, done);
   });
 
-  //Cant really test this unless the database is emptied first...
-  //it('GET returns 404 when no records exist in the faculty table', done => {
-  //  request(app)
-  //    .get('/faculty')
-  //    .expect(404, done);
-  //});
-
   it('GET returns 200 when records exist in the database', done => {
     request(app)
       .get('/faculty')
-      .expect(200, done);
+      .expect(200)
+      .then(response => {
+        assert.equal(response.body.length, data.faculty.length);
+        done();
+      });
+  });
+
+  it('GET returns 404 when no records exist in the database', async () => {
+    await knex.migrate.rollback();
+    await knex.migrate.latest().then(() => {
+      request(app)
+        .get('/faculty')
+        .expect(404);
+    });
   });
 });
