@@ -1,10 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const {
+  addDepartmentAssociation,
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
   updateDepartmentAssociations,
 } = require('../database');
+
+router.post('/', async (req, res) => {
+  if (!req.body || !req.body.email || !req.body.department_id) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+
+  const { email, department_id } = req.body;
+
+  return addDepartmentAssociation(email, department_id)
+    .then(() => {
+      console.info('Successfully added department association to database');
+      return res.status(201).send();
+    })
+    .catch(err => {
+      console.error(`Error adding department association: ${err}`);
+      return res
+        .status(400)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
 
 router.get('/department/:id', async (req, res) => {
   if (!req.params.id) {
