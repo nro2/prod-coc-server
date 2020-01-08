@@ -8,16 +8,16 @@ const {
 } = require('../database');
 
 router.post('/', async (req, res) => {
-  if (!req.body || !req.body.email || !req.body.department_id) {
+  if (!req.body || !req.body.email || !req.body.departmentId) {
     return res.status(400).send({ message: '400 Bad Request' });
   }
 
-  const { email, department_id } = req.body;
+  const { email, departmentId } = req.body;
 
-  return addDepartmentAssociation(email, department_id)
+  return addDepartmentAssociation(email, departmentId)
     .then(() => {
       console.info('Successfully added department association to database');
-      return res.status(201).send();
+      return res.status(200).send();
     })
     .catch(err => {
       console.error(`Error adding department association: ${err}`);
