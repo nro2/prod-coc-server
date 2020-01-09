@@ -324,16 +324,14 @@ describe('Request routing for /faculty', () => {
     });
   });
 
-  it('GET returns 200 when faculty is returned from the database', () => {
-    const faculty_member = [
-      {
-        email: 'test@email.com',
-        full_name: 'Test McBenson',
-        phone_num: '111-111-1111',
-        job_title: 'Test Job Title',
-        senate_division_short_name: 'AO',
-      },
-    ];
+  it('GET returns 200 when a specific faculty is returned from the database', () => {
+    const faculty_member = {
+      email: 'test@email.com',
+      full_name: 'Test McBenson',
+      phone_num: '111-111-1111',
+      job_title: 'Test Job Title',
+      senate_division_short_name: 'AO',
+    };
 
     req.params.email = 'wolsborn@pdx.edu';
     stubs['../database'].getFaculty.resolves(faculty_member);

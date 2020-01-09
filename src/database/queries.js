@@ -81,16 +81,10 @@ async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
 async function getFaculty(email) {
   const connection = loadDatabaseConnection();
 
-  if (email === undefined) {
-    return connection.any(
-      'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty'
-    );
-  } else {
-    return connection.oneOrNone(
-      'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty WHERE email=$1',
-      [email]
-    );
-  }
+  return connection.oneOrNone(
+    'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty WHERE email=$1',
+    [email]
+  );
 }
 
 /**
@@ -120,7 +114,6 @@ async function addSurveyChoice(choiceId, surveyDate, email, committeeId) {
  * @param expertise     Description of expertise
  * @returns {Promise}   Query response on success, error on failure
  */
-
 async function addSurveyData(surveyDate, email, interested, expertise) {
   const connection = loadDatabaseConnection();
 
@@ -425,7 +418,6 @@ async function updateCommitteeSlots(committeeId, senateDivision, slotRequirement
  * @returns {Promise<any>}    Response object with rowCount on success
  * @throws {Error}            Connection problem or exception
  */
-
 async function updateDepartmentAssociations(
   email,
   oldDepartmentId,
