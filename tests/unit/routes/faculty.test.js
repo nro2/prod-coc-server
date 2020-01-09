@@ -344,7 +344,7 @@ describe('Request routing for /faculty', () => {
 
   it('GET returns 404 when faculty is not found in the database', () => {
     req.params.email = 'jwolsborn@pdx.edu';
-    stubs['../database'].getFaculty.resolves([]);
+    stubs['../database'].getFaculty.resolves();
 
     return routerActions.getFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
