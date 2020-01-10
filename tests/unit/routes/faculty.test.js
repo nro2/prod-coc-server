@@ -7,6 +7,7 @@ const underTestFilename = '../../../src/routes/faculty.js';
 
 const routerPut = sinon.stub();
 const routerPost = sinon.stub();
+const routerGet = sinon.stub();
 const routerActions = {};
 
 const stubs = {
@@ -14,12 +15,14 @@ const stubs = {
     Router: () => ({
       put: routerPut,
       post: routerPost,
+      get: routerGet,
     }),
   },
   '../database': {
     addFaculty: sinon.stub(),
     updateFaculty: sinon.stub(),
     FOREIGN_KEY_VIOLATION: '23503',
+    getFaculty: sinon.stub(),
     UNIQUENESS_VIOLATION: '23505',
   },
 };
@@ -33,6 +36,7 @@ describe('Request routing for /faculty', () => {
     underTest = proxyquire(underTestFilename, stubs);
     routerActions.putFaculty = routerPut.firstCall.args[1];
     routerActions.postFaculty = routerPost.firstCall.args[1];
+    routerActions.getFaculty = routerGet.firstCall.args[1];
   });
 
   beforeEach(() => {
@@ -43,9 +47,10 @@ describe('Request routing for /faculty', () => {
   afterEach(() => {
     routerPut.resetHistory();
     routerPost.resetHistory();
-
     stubs['../database'].addFaculty.resetHistory();
     stubs['../database'].updateFaculty.resetHistory();
+    routerGet.resetHistory();
+    stubs['../database'].getFaculty.resetHistory();
   });
 
   it('PUT returns 200 when faculty is updated in the database', () => {
@@ -316,6 +321,33 @@ describe('Request routing for /faculty', () => {
       assert.deepEqual(res.send.firstCall.args[0], {
         error: 'Unable to complete database transaction',
       });
+    });
+  });
+
+  it('GET returns 200 when a specific faculty is returned from the database', () => {
+    const faculty_member = {
+      email: 'test@email.com',
+      full_name: 'Test McBenson',
+      phone_num: '111-111-1111',
+      job_title: 'Test Job Title',
+      senate_division_short_name: 'AO',
+    };
+
+    req.params.email = 'wolsborn@pdx.edu';
+    stubs['../database'].getFaculty.resolves(faculty_member);
+
+    return routerActions.getFaculty(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 200);
+      assert.equal(res.send.firstCall.args[0], faculty_member);
+    });
+  });
+
+  it('GET returns 404 when faculty is not found in the database', () => {
+    req.params.email = 'jwolsborn@pdx.edu';
+    stubs['../database'].getFaculty.resolves();
+
+    return routerActions.getFaculty(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 404);
     });
   });
 });

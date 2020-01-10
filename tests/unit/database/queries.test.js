@@ -8,6 +8,7 @@ const stubs = {
   any: sinon.stub(),
   none: sinon.stub(),
   one: sinon.stub(),
+  oneOrNone: sinon.stub(),
   result: sinon.stub(),
   tx: sinon.stub(),
 };
@@ -16,6 +17,7 @@ const connection = () => ({
   any: stubs.any,
   none: stubs.none,
   one: stubs.one,
+  oneOrNone: stubs.oneOrNone,
   result: stubs.result,
   tx: stubs.tx,
 });
@@ -41,6 +43,7 @@ describe('Database queries', () => {
     stubs.any.resetHistory();
     stubs.none.resetHistory();
     stubs.one.resetHistory();
+    stubs.oneOrNone.resetHistory();
     stubs.result.resetHistory();
     stubs.tx.resetHistory();
     sinon.restore();
@@ -75,25 +78,34 @@ describe('Database queries', () => {
   });
 
   describe('getFaculty', () => {
-    it('returns data when query is successful', async () => {
-      const firstName = 'test-first-name';
+    it('returns faculty member when query is successful', async () => {
+      const email = 'test-full-email';
       const expected = {
-        firstName: 'stub-first-name',
-        lastName: 'stub-last-name',
-        phoneNum: 'stub-phone-number',
+        email: 'stub-full-email',
+        full_name: 'stub-full-name',
+        phone_num: 'stub-phone-num',
+        job_title: 'stub-job-title',
+        senate_division_short_name: 'stub-senate-short-name',
       };
-      stubs.one.resolves(expected);
 
-      const result = await underTest.getFaculty(firstName);
+      stubs.oneOrNone.resolves({
+        email: 'stub-full-email',
+        full_name: 'stub-full-name',
+        phone_num: 'stub-phone-num',
+        job_title: 'stub-job-title',
+        senate_division_short_name: 'stub-senate-short-name',
+      });
+
+      const result = await underTest.getFaculty(email);
 
       assert.deepEqual(result, expected);
     });
 
     it('returns empty array when there are no query results', async () => {
-      const firstName = 'test-first-name';
-      await stubs.one.resolves([]);
+      const email = 'test-full-email';
+      await stubs.oneOrNone.resolves([]);
 
-      const result = await underTest.getFaculty(firstName);
+      const result = await underTest.getFaculty(email);
 
       assert.deepEqual(result, []);
     });

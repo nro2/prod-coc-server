@@ -100,4 +100,16 @@ describe('Request routing for /faculty', () => {
       .send(payload)
       .expect(404, done);
   });
+
+  it('GET returns 200 and faculty record by email', done => {
+    request(app)
+      .get('/faculty/wolsborn@pdx.edu')
+      .expect(200, done);
+  });
+
+  it('GET returns 404 when record does not exist for specified email', done => {
+    request(app)
+      .get('/faculty/bobross@happytrees.com')
+      .expect(404, done);
+  });
 });
