@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { addCommittee, updateCommittee } = require('../database');
+const { addCommittee, updateCommittee, getCommittee } = require('../database');
 
 router.post('/', async (req, res) => {
   if (
@@ -60,4 +60,25 @@ router.put('/', async (req, res) => {
     });
 });
 
+router.get('/:id', async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+  return await getCommittee(req.params.id)
+    .then(data => {
+      console.info('Successfully retrieved committee from database');
+      return res.status(200).send(data);
+    })
+    .catch(err => {
+      if (err.result && err.result.rowCount === 0) {
+        console.info(`Found no committee in the database with id ${req.params.id}`);
+        return res.status(404).send();
+      }
+
+      console.error(`Error retrieving committee: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
 module.exports = router;
