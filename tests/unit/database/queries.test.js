@@ -299,6 +299,29 @@ describe('Database queries', () => {
     });
   });
 
+  describe('getCommittee', () => {
+    let expected;
+    beforeEach(() => {
+      expected = {
+        committee_id: 1,
+        name: 'Committee on Space Exploration',
+        description: 'exploring space stuff',
+      };
+    });
+
+    it('returns nothing when query has no parameters', async () => {
+      stubs.one.resolves();
+      const result = await underTest.getCommittee(1);
+      assert.equal(result, undefined);
+    });
+
+    it('returns committee info when queried with a parameter', async () => {
+      stubs.one.resolves(expected);
+      const result = await underTest.getCommittee(1);
+      assert.deepEqual(result, expected);
+    });
+  });
+
   describe('Get slot requirements by senate division', () => {
     let expected;
     beforeEach(() => {
