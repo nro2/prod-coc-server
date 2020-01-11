@@ -1,12 +1,20 @@
+const {
+  DATABASE_HOST,
+  DATABASE_PORT,
+  DATABASE_NAME,
+  DATABASE_USER,
+  DATABASE_PASSWORD,
+} = require('../src/config');
+
 module.exports = {
   test: {
     client: 'pg',
     connection: {
-      host: process.env.DATABASE_HOST || 'localhost',
-      port: process.env.DATABASE_PORT || '54320',
-      user: process.env.DATABASE_USER || 'coc',
-      password: process.env.DATABASE_PASSWORD || 'pwd123',
-      database: process.env.DATABASE_NAME || 'coc',
+      host: DATABASE_HOST,
+      port: DATABASE_PORT,
+      user: DATABASE_USER,
+      password: DATABASE_PASSWORD,
+      database: DATABASE_NAME,
     },
     migrations: {
       directory: __dirname + '/migrations',
