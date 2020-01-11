@@ -65,6 +65,7 @@ describe('Request routing for /committee', () => {
     stubs['../database'].addCommittee.resolves(committeeId);
 
     return routerActions.postCommittee(req, res).then(() => {
+      assert(res.set.called);
       assert.equal(res.status.firstCall.args[0], 201);
     });
   });

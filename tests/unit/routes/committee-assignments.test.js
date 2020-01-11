@@ -59,6 +59,7 @@ describe('Request routing for /committee-assignment', () => {
     stubs['../database'].addCommitteeAssignment.resolves(email);
 
     return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert(res.set.called);
       assert.equal(res.status.firstCall.args[0], 201);
     });
   });

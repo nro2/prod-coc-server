@@ -119,6 +119,7 @@ describe('Request routing for /committee-slots', () => {
     stubs['../database'].addCommitteeSlots.resolves(committeeId);
 
     return routerActions.postCommitteeSlots(req, res).then(() => {
+      assert(res.set.called);
       assert.equal(res.status.firstCall.args[0], 201);
     });
   });
