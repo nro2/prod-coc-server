@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { SERVER_URL } = require('../config');
 const {
   addCommitteeAssignment,
   getCommitteeAssignmentByCommittee,
@@ -69,9 +70,13 @@ router.post('/', async (req, res) => {
   const { email, committeeId, startDate, endDate } = req.body;
 
   return addCommitteeAssignment(email, committeeId, startDate, endDate)
-    .then(() => {
+    .then(result => {
       console.info('Successfully added committee assignment to database');
-      return res.status(201).send();
+      const { email } = result;
+      return res
+        .set('Location', `${SERVER_URL}/committee-assignment/faculty/${email}`)
+        .status(201)
+        .send();
     })
     .catch(err => {
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {

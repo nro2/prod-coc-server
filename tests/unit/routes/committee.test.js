@@ -56,12 +56,13 @@ describe('Request routing for /committee', () => {
   });
 
   it('POST returns 201 when committee is added to the database', () => {
+    const committeeId = 42;
     req.body = {
       name: 'test-committee-name',
       description: 'test-committee-description',
       totalSlots: 42,
     };
-    stubs['../database'].addCommittee.resolves();
+    stubs['../database'].addCommittee.resolves(committeeId);
 
     return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 201);

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { SERVER_URL } = require('../config');
 const {
   addCommitteeSlots,
   getCommitteeSlotsBySenate,
@@ -104,9 +105,13 @@ router.post('/', async (req, res) => {
   const { committeeId, senateDivision, slotRequirements } = req.body;
 
   return addCommitteeSlots(committeeId, senateDivision, slotRequirements)
-    .then(() => {
+    .then(result => {
       console.info('Successfully added committee slots to database');
-      return res.status(201).send();
+      const { committeeId } = result;
+      return res
+        .set('Location', `${SERVER_URL}/committee-slots/committee/${committeeId}`)
+        .status(201)
+        .send();
     })
     .catch(err => {
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {

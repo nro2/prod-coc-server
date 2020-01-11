@@ -216,6 +216,7 @@ describe('Request routing for /survey-data', () => {
     stubs['../database'].addSurveyData.resolves(true);
 
     return routerActions.postSurveyData(req, res).then(() => {
+      // assert.equal(res.set.firstCall.args[0], 201);
       assert.equal(res.status.firstCall.args[0], 201);
     });
   });

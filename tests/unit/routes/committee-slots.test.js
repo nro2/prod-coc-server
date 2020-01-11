@@ -110,12 +110,13 @@ describe('Request routing for /committee-slots', () => {
   });
 
   it('POST returns 201 when committee slots are added to the database', () => {
+    const committeeId = 1;
     req.body = {
-      committeeId: 1,
+      committeeId,
       senateDivision: 'test-senate-division',
       slotRequirements: 3,
     };
-    stubs['../database'].addCommitteeSlots.resolves();
+    stubs['../database'].addCommitteeSlots.resolves(committeeId);
 
     return routerActions.postCommitteeSlots(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 201);

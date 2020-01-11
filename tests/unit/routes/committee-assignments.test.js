@@ -49,13 +49,14 @@ describe('Request routing for /committee-assignment', () => {
   });
 
   it('POST returns 201 when committee assignment is added to the database', () => {
+    const email = 'test-email';
     req.body = {
-      email: 'test-email',
+      email: email,
       committeeId: 42,
       startDate: '1970-01-01',
       endDate: '2050-01-01',
     };
-    stubs['../database'].addCommitteeAssignment.resolves();
+    stubs['../database'].addCommitteeAssignment.resolves(email);
 
     return routerActions.postCommitteeAssignment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 201);

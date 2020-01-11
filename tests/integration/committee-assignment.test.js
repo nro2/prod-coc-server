@@ -32,6 +32,10 @@ describe('Request routing for /committee-assignment', () => {
       request(app)
         .post('/committee-assignment')
         .send(payload)
+        .expect(
+          'Location',
+          'http://localhost:8080/committee-assignment/faculty/wolsborn@pdx.edu'
+        )
         .expect(201, done);
     });
 

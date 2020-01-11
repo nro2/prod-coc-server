@@ -49,6 +49,10 @@ describe('Request routing for /survey-choice', () => {
     request(app)
       .post('/survey-choice')
       .send(payload)
+      .expect(
+        'Location',
+        'http://localhost:8080/survey-choice/2019/betty@oregon.gov'
+      )
       .expect(201, done);
   });
 

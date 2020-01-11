@@ -49,6 +49,7 @@ describe('Request routing for /survey-data', () => {
     request(app)
       .post('/survey-data')
       .send(payload)
+      .expect('Location', 'http://localhost:8080/survey-data/2018/wolsborn@pdx.edu')
       .expect(201, done);
   });
 
