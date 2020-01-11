@@ -6,6 +6,7 @@ const underTestFilename = '../../../src/database/queries.js';
 
 const stubs = {
   any: sinon.stub(),
+  many: sinon.stub(),
   none: sinon.stub(),
   one: sinon.stub(),
   oneOrNone: sinon.stub(),
@@ -15,6 +16,7 @@ const stubs = {
 
 const connection = () => ({
   any: stubs.any,
+  many: stubs.many,
   none: stubs.none,
   one: stubs.one,
   oneOrNone: stubs.oneOrNone,
@@ -41,6 +43,7 @@ describe('Database queries', () => {
 
   afterEach(() => {
     stubs.any.resetHistory();
+    stubs.many.resetHistory();
     stubs.none.resetHistory();
     stubs.one.resetHistory();
     stubs.oneOrNone.resetHistory();
@@ -369,6 +372,34 @@ describe('Database queries', () => {
       stubs.any.resolves(expected);
 
       const result = await underTest.getCommitteeSlotsByCommittee(1);
+
+      assert.deepEqual(result, expected);
+    });
+  });
+
+  describe('getSurveyChoice', () => {
+    it('returns nothing when query has no parameters', async () => {
+      stubs.many.resolves();
+
+      const result = await underTest.getSurveyChoice();
+
+      assert.equal(result, undefined);
+    });
+
+    it('returns data when query is successful', async () => {
+      const date = '2050';
+      const email = 'test-email';
+      const expected = [
+        {
+          choice_id: 1,
+          survey_date: '2050-01-01T08:00:00.000Z',
+          email: 'test-email',
+          committee_id: 1,
+        },
+      ];
+      stubs.many.resolves(expected);
+
+      const result = await underTest.getSurveyChoice(date, email);
 
       assert.deepEqual(result, expected);
     });
