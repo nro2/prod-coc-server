@@ -1,8 +1,8 @@
 const decache = require('decache');
 const knex = require('../../db/knex');
 const request = require('supertest');
-const assert = require('assert');
-const data = require('../../db/seeds/development/data');
+//const assert = require('assert');
+//const data = require('../../db/seeds/development/data');
 
 describe('Request routing for /faculty', () => {
   let app;
@@ -103,7 +103,7 @@ describe('Request routing for /faculty', () => {
       .expect(404, done);
   });
 
-  it('GET returns 200 and faculty record by email', done => {
+  /*it('GET returns 200 and faculty record by email', done => {
     request(app)
       .get('/faculty/wolsborn@pdx.edu')
       .expect(200, done);
@@ -132,5 +132,5 @@ describe('Request routing for /faculty', () => {
         .get('/faculty')
         .expect(404);
     });
-  });
+  });*/
 });
