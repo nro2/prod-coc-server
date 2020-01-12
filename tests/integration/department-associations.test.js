@@ -19,11 +19,11 @@ describe('Request routing for /department-associations', () => {
       app.close(done);
     });
   });
- // describe('/department-associations', () => {
+  describe('/department-associations', () => {
     it('POST returns 201 when insertion succeeds', done => {
       const payload = {
         email: 'wolsborn@pdx.edu',
-        departmentId: 42,
+        departmentId: 2,
       };
 
       request(app)
@@ -34,8 +34,8 @@ describe('Request routing for /department-associations', () => {
 
     it('POST returns 409 when the payload email violates foreign key constraint', done => {
       const payload = {
-        email: 'test-email-does-not-exist',
-        departmentId: 42,
+        email: 'name@pdx.edu',
+        departmentId: 22,
       };
 
       request(app)
@@ -46,8 +46,8 @@ describe('Request routing for /department-associations', () => {
 
     it('POST returns 409 when the record already exists', done => {
       const payload = {
-        email: 'test-email',
-        departmentId: 42,
+        email: 'wolsborn@pdx.edu',
+        departmentId: 1,
       };
 
       request(app)
@@ -61,7 +61,7 @@ describe('Request routing for /department-associations', () => {
             .expect(409, done);
         });
     });
-//  });
+  });
 
   describe('/department/:id', () => {
     it('GET returns 200 when record exists', done => {
