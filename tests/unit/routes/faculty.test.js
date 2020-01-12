@@ -38,7 +38,7 @@ describe('Request routing for /faculty', () => {
     routerActions.putFaculty = routerPut.firstCall.args[1];
     routerActions.postFaculty = routerPost.firstCall.args[1];
     routerActions.getFaculty = routerGet.firstCall.args[1];
-    routerActions.getAllFaculty = routerGet.firstCall.args[1];
+    routerActions.getAllFaculty = routerGet.secondCall.args[1];
   });
 
   beforeEach(() => {
