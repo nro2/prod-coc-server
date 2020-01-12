@@ -56,7 +56,7 @@ describe('Request routing for /department-associations', () => {
     stubs['../database'].updateDepartmentAssociations.resetHistory();
   });
 
-  it('POST returns 200 when committee assignment is added to the database', () => {
+  it('POST returns 201 when committee assignment is added to the database', () => {
     req.body = {
       email: 'test-email',
       departmentId: 42,

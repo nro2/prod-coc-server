@@ -19,48 +19,49 @@ describe('Request routing for /department-associations', () => {
       app.close(done);
     });
   });
+ // describe('/department-associations', () => {
+    it('POST returns 201 when insertion succeeds', done => {
+      const payload = {
+        email: 'wolsborn@pdx.edu',
+        departmentId: 42,
+      };
 
-  it('POST returns 201 when insertion succeeds', done => {
-    const payload = {
-      email: 'test-email',
-      DepartmentId: 42,
-    };
+      request(app)
+        .post('/department-associations')
+        .send(payload)
+        .expect(201, done);
+    });
 
-    request(app)
-      .post('/department-associations')
-      .send(payload)
-      .expect(201, done);
-  });
+    it('POST returns 409 when the payload email violates foreign key constraint', done => {
+      const payload = {
+        email: 'test-email-does-not-exist',
+        departmentId: 42,
+      };
 
-  it('POST returns 409 when the payload email violates foreign key constraint', done => {
-    const payload = {
-      email: 'test-email-does-not-exist',
-      cdepartmentId: 42,
-    };
+      request(app)
+        .post('/department-associations')
+        .send(payload)
+        .expect(409, done);
+    });
 
-    request(app)
-      .post('/department-associations')
-      .send(payload)
-      .expect(409, done);
-  });
+    it('POST returns 409 when the record already exists', done => {
+      const payload = {
+        email: 'test-email',
+        departmentId: 42,
+      };
 
-  it('POST returns 409 when the record already exists', done => {
-    const payload = {
-      email: 'test-email',
-      departmentId: 42,
-    };
-
-    request(app)
-      .post('/department-associations')
-      .send(payload)
-      .expect(201)
-      .then(() => {
-        request(app)
-          .post('/department-associations')
-          .send(payload)
-          .expect(409, done);
-      });
-  });
+      request(app)
+        .post('/department-associations')
+        .send(payload)
+        .expect(201)
+        .then(() => {
+          request(app)
+            .post('/department-associations')
+            .send(payload)
+            .expect(409, done);
+        });
+    });
+//  });
 
   describe('/department/:id', () => {
     it('GET returns 200 when record exists', done => {
