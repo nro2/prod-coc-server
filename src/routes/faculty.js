@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const { SERVER_URL } = require('../config');
 const {
   addFaculty,
   updateFaculty,
   FOREIGN_KEY_VIOLATION,
+  getFaculty,
   UNIQUENESS_VIOLATION,
 } = require('../database');
 
@@ -22,9 +24,13 @@ router.post('/', async (req, res) => {
   const { fullName, email, jobTitle, phoneNum, senateDivision } = req.body;
 
   return await addFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
-    .then(() => {
+    .then(result => {
       console.info('Added faculty member to database');
-      return res.status(201).send();
+      const { email } = result;
+      return res
+        .set('Location', `${SERVER_URL}/faculty/${email}`)
+        .status(201)
+        .send();
     })
     .catch(err => {
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
@@ -69,6 +75,28 @@ router.put('/', async (req, res) => {
     })
     .catch(err => {
       console.error(`Error updating faculty member in database: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
+
+router.get('/:email', async (req, res) => {
+  if (!req.params.email) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+  return await getFaculty(req.params.email)
+    .then(data => {
+      if (!data) {
+        console.info(`No faculty found for email ${req.params.email}`);
+        return res.status(404).send();
+      }
+
+      console.info('Successfully retrieved faculty from database');
+      return res.status(200).send(data);
+    })
+    .catch(err => {
+      console.error(`Error retrieving faculty: ${err}`);
       return res
         .status(500)
         .send({ error: 'Unable to complete database transaction' });

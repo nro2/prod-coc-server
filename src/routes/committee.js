@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { addCommittee, updateCommittee } = require('../database');
+const { SERVER_URL } = require('../config');
+const { addCommittee, updateCommittee, getCommittee } = require('../database');
 
 router.post('/', async (req, res) => {
   if (
@@ -15,9 +16,13 @@ router.post('/', async (req, res) => {
   const { name, description, totalSlots } = req.body;
 
   return addCommittee(name, description, totalSlots)
-    .then(() => {
+    .then(result => {
       console.info('Successfully added committee to database');
-      return res.status(201).send();
+      const { committeeId } = result;
+      return res
+        .set('Location', `${SERVER_URL}/committee/${committeeId}`)
+        .status(201)
+        .send();
     })
     .catch(err => {
       console.error(`Error adding committee: ${err}`);
@@ -60,4 +65,25 @@ router.put('/', async (req, res) => {
     });
 });
 
+router.get('/:id', async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+  return await getCommittee(req.params.id)
+    .then(data => {
+      console.info('Successfully retrieved committee from database');
+      return res.status(200).send(data);
+    })
+    .catch(err => {
+      if (err.result && err.result.rowCount === 0) {
+        console.info(`Found no committee in the database with id ${req.params.id}`);
+        return res.status(404).send();
+      }
+
+      console.error(`Error retrieving committee: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
 module.exports = router;

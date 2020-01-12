@@ -7,6 +7,7 @@ const underTestFilename = '../../../src/routes/committee.js';
 
 const routerPost = sinon.stub();
 const routerPut = sinon.stub();
+const routerGet = sinon.stub();
 const routerActions = {};
 
 const stubs = {
@@ -14,11 +15,13 @@ const stubs = {
     Router: () => ({
       post: routerPost,
       put: routerPut,
+      get: routerGet,
     }),
   },
   '../database': {
     addCommittee: sinon.stub(),
     updateCommittee: sinon.stub(),
+    getCommittee: sinon.stub(),
   },
 };
 
@@ -31,6 +34,7 @@ describe('Request routing for /committee', () => {
     underTest = proxyquire(underTestFilename, stubs);
     routerActions.postCommittee = routerPost.firstCall.args[1];
     routerActions.putCommittee = routerPut.firstCall.args[1];
+    routerActions.getCommittee = routerGet.firstCall.args[1];
 
     sinon.stub(console, 'info');
     sinon.stub(console, 'error');
@@ -44,20 +48,24 @@ describe('Request routing for /committee', () => {
   afterEach(() => {
     routerPost.resetHistory();
     routerPut.resetHistory();
+    routerGet.resetHistory();
 
     stubs['../database'].addCommittee.resetHistory();
     stubs['../database'].updateCommittee.resetHistory();
+    stubs['../database'].getCommittee.resetHistory();
   });
 
   it('POST returns 201 when committee is added to the database', () => {
+    const committeeId = 42;
     req.body = {
       name: 'test-committee-name',
       description: 'test-committee-description',
       totalSlots: 42,
     };
-    stubs['../database'].addCommittee.resolves();
+    stubs['../database'].addCommittee.resolves(committeeId);
 
     return routerActions.postCommittee(req, res).then(() => {
+      assert(res.set.called);
       assert.equal(res.status.firstCall.args[0], 201);
     });
   });
@@ -212,6 +220,42 @@ describe('Request routing for /committee', () => {
     stubs['../database'].updateCommittee.rejects(new Error('test-database-error'));
 
     return routerActions.putCommittee(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 500);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        error: 'Unable to complete database transaction',
+      });
+    });
+  });
+
+  it('GET returns 200 when committee is retrieved from database', () => {
+    const expected = {
+      committee_id: 1,
+      name: 'test-committee',
+      description: 'test-committee-description',
+    };
+    stubs['../database'].getCommittee.resolves(expected);
+    req.params.id = 1;
+
+    return routerActions.getCommittee(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 200);
+      assert.deepEqual(res.send.firstCall.args[0], expected);
+    });
+  });
+
+  it('GET Returns 404 when committee is not found', () => {
+    stubs['../database'].getCommittee.rejects({ result: { rowCount: 0 } });
+    req.params.id = 1;
+
+    return routerActions.getCommittee(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 404);
+    });
+  });
+
+  it('GET returns 500 when there is a database error', () => {
+    stubs['../database'].getCommittee.rejects(new Error('test-database-error'));
+    req.params.id = 1;
+
+    return routerActions.getCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
         error: 'Unable to complete database transaction',

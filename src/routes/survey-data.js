@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { SERVER_URL } = require('../config');
 const {
   addSurveyData,
   updateSurveyData,
@@ -22,9 +23,13 @@ router.post('/', async (req, res) => {
   const { surveyDate, email, isInterested, expertise } = req.body;
 
   return addSurveyData(surveyDate, email, isInterested, expertise)
-    .then(() => {
+    .then(result => {
       console.info('Successfully added survey data to database');
-      return res.status(201).send();
+      const { year, email } = result;
+      return res
+        .set('Location', `${SERVER_URL}/survey-data/${year}/${email}`)
+        .status(201)
+        .send();
     })
     .catch(err => {
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {

@@ -45,6 +45,7 @@ describe('Request routing for /committee', () => {
     request(app)
       .post('/committee')
       .send(payload)
+      .expect('Location', 'http://localhost:8080/committee/11')
       .expect(201, '', done);
   });
 
@@ -73,6 +74,18 @@ describe('Request routing for /committee', () => {
     request(app)
       .put('/committee')
       .send(payload)
+      .expect(404, done);
+  });
+
+  it('GET returns 200 when record exists', done => {
+    request(app)
+      .get('/committee/1')
+      .expect(200, done);
+  });
+
+  it('GET returns 404 when record does not exist', done => {
+    request(app)
+      .get('/committee/10000')
       .expect(404, done);
   });
 });

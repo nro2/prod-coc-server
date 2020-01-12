@@ -32,6 +32,7 @@ describe('Request routing for /faculty', () => {
     request(app)
       .post('/faculty')
       .send(payload)
+      .expect('Location', 'http://localhost:8080/faculty/test-email')
       .expect(201, done);
   });
 
@@ -98,6 +99,18 @@ describe('Request routing for /faculty', () => {
     request(app)
       .put('/faculty')
       .send(payload)
+      .expect(404, done);
+  });
+
+  it('GET returns 200 and faculty record by email', done => {
+    request(app)
+      .get('/faculty/wolsborn@pdx.edu')
+      .expect(200, done);
+  });
+
+  it('GET returns 404 when record does not exist for specified email', done => {
+    request(app)
+      .get('/faculty/bobross@happytrees.com')
       .expect(404, done);
   });
 });
