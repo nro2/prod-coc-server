@@ -1,11 +1,18 @@
+const {
+  DATABASE_HOST,
+  DATABASE_PORT,
+  DATABASE_NAME,
+  DATABASE_USER,
+  DATABASE_PASSWORD,
+} = require('../../src/config');
 const pgp = require('pg-promise')({ noLocking: true });
 
 const config = {
-  host: process.env.DATABASE_HOST || 'localhost',
-  port: process.env.DATABASE_PORT || 54320,
-  database: process.env.DATABASE_NAME || 'coc',
-  user: process.env.DATABASE_USER || 'coc',
-  password: process.env.DATABASE_PASSWORD || 'pwd123',
+  host: DATABASE_HOST,
+  port: DATABASE_PORT,
+  database: DATABASE_NAME,
+  user: DATABASE_USER,
+  password: DATABASE_PASSWORD,
 };
 
 let connection;

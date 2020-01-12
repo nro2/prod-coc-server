@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { SERVER_URL } = require('../config');
 const {
   addFaculty,
   updateFaculty,
@@ -23,9 +24,13 @@ router.post('/', async (req, res) => {
   const { fullName, email, jobTitle, phoneNum, senateDivision } = req.body;
 
   return await addFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
-    .then(() => {
+    .then(result => {
       console.info('Added faculty member to database');
-      return res.status(201).send();
+      const { email } = result;
+      return res
+        .set('Location', `${SERVER_URL}/faculty/${email}`)
+        .status(201)
+        .send();
     })
     .catch(err => {
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {

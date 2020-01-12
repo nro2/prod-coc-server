@@ -50,8 +50,9 @@ describe('Database queries', () => {
   });
 
   describe('addCommittee', () => {
-    it('returns nothing when query is successful', async () => {
-      stubs.none.resolves();
+    it('returns committeeId when query is successful', async () => {
+      const committeeId = 42;
+      stubs.one.resolves(committeeId);
 
       const result = await underTest.addCommittee(
         'test-committee-name',
@@ -59,13 +60,30 @@ describe('Database queries', () => {
         3
       );
 
-      assert.equal(result, undefined);
+      assert.equal(result, committeeId);
+    });
+  });
+
+  describe('addCommitteeAssignment', () => {
+    it('returns email when query is successful', async () => {
+      const email = 'test-email';
+      stubs.one.resolves(email);
+
+      const result = await underTest.addCommitteeAssignment(
+        email,
+        42,
+        '2030-01-01',
+        '2050-01-01'
+      );
+
+      assert.equal(result, email);
     });
   });
 
   describe('addCommitteeSlots', () => {
-    it('returns nothing when query is successful', async () => {
-      stubs.none.resolves();
+    it('returns committeeId when query is successful', async () => {
+      const committeeId = 42;
+      stubs.one.resolves(committeeId);
 
       const result = await underTest.addCommitteeSlots(
         1,
@@ -73,7 +91,7 @@ describe('Database queries', () => {
         3
       );
 
-      assert.equal(result, undefined);
+      assert.equal(result, committeeId);
     });
   });
 
@@ -259,8 +277,9 @@ describe('Database queries', () => {
   });
 
   describe('addFaculty', () => {
-    it('returns nothing when query is successful', async () => {
-      stubs.none.resolves();
+    it('returns email when query is successful', async () => {
+      const email = 'test-email';
+      stubs.one.resolves('test-email');
 
       const result = await underTest.addFaculty(
         'test-full-name',
@@ -271,7 +290,7 @@ describe('Database queries', () => {
         1
       );
 
-      assert.equal(result, undefined);
+      assert.equal(result, email);
     });
   });
 
@@ -551,16 +570,20 @@ describe('Database queries', () => {
 
   describe('Post survey data', () => {
     it('returns nothing when query is successful', async () => {
-      stubs.none.resolves();
+      const expected = {
+        year: 2019,
+        email: 'faculty@pdx.edu',
+      };
+      stubs.one.resolves(expected);
 
       const result = await underTest.addSurveyData(
-        2019,
-        'faculty@pdx.edu',
+        '2019-01-01',
+        expected.email,
         true,
         'Im a faculty member'
       );
 
-      assert.equal(result, undefined);
+      assert.deepEqual(result, expected);
     });
   });
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { SERVER_URL } = require('../config');
 const { addCommittee, updateCommittee, getCommittee } = require('../database');
 
 router.post('/', async (req, res) => {
@@ -15,9 +16,13 @@ router.post('/', async (req, res) => {
   const { name, description, totalSlots } = req.body;
 
   return addCommittee(name, description, totalSlots)
-    .then(() => {
+    .then(result => {
       console.info('Successfully added committee to database');
-      return res.status(201).send();
+      const { committeeId } = result;
+      return res
+        .set('Location', `${SERVER_URL}/committee/${committeeId}`)
+        .status(201)
+        .send();
     })
     .catch(err => {
       console.error(`Error adding committee: ${err}`);

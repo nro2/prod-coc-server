@@ -11,8 +11,8 @@ const { loadDatabaseConnection } = require('./connection');
 async function addCommittee(name, description, slots) {
   const connection = loadDatabaseConnection();
 
-  return connection.none(
-    'INSERT INTO committee(name, description, total_slots) values($1, $2, $3)',
+  return connection.one(
+    'INSERT INTO committee(name, description, total_slots) VALUES($1, $2, $3) RETURNING committee_id as "committeeId"',
     [name, description, slots]
   );
 }
@@ -28,8 +28,8 @@ async function addCommittee(name, description, slots) {
 async function addCommitteeSlots(committeeId, senateDivision, slotRequirements) {
   const connection = loadDatabaseConnection();
 
-  return connection.none(
-    'INSERT INTO committee_slots(committee_id, senate_division_short_name, slot_requirements) values($1, $2, $3)',
+  return connection.one(
+    'INSERT INTO committee_slots(committee_id, senate_division_short_name, slot_requirements) VALUES($1, $2, $3) RETURNING committee_id as "committeeId"',
     [committeeId, senateDivision, slotRequirements]
   );
 }
@@ -46,8 +46,8 @@ async function addCommitteeSlots(committeeId, senateDivision, slotRequirements) 
 async function addCommitteeAssignment(email, committeeId, startDate, endDate) {
   const connection = loadDatabaseConnection();
 
-  return connection.none(
-    'INSERT INTO committee_assignment(email, committee_id, start_date, end_date) values($1, $2, $3, $4)',
+  return connection.one(
+    'INSERT INTO committee_assignment(email, committee_id, start_date, end_date) VALUES($1, $2, $3, $4) RETURNING email',
     [email, committeeId, startDate, endDate]
   );
 }
@@ -65,8 +65,8 @@ async function addCommitteeAssignment(email, committeeId, startDate, endDate) {
 async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
   const connection = loadDatabaseConnection();
 
-  return connection.none(
-    'INSERT INTO faculty(full_name, email, job_title, phone_num, senate_division_short_name) values($1, $2, $3, $4, $5)',
+  return connection.one(
+    'INSERT INTO faculty(full_name, email, job_title, phone_num, senate_division_short_name) VALUES($1, $2, $3, $4, $5) RETURNING email',
     [fullName, email, jobTitle, phoneNum, senateDivision]
   );
 }
@@ -99,8 +99,8 @@ async function getFaculty(email) {
 async function addSurveyChoice(choiceId, surveyDate, email, committeeId) {
   const connection = loadDatabaseConnection();
 
-  return connection.none(
-    'INSERT INTO survey_choice(choice_id, survey_date, email, committee_id) values($1, $2, $3, $4)',
+  return connection.one(
+    'INSERT INTO survey_choice(choice_id, survey_date, email, committee_id) VALUES($1, $2, $3, $4) RETURNING EXTRACT(year FROM "survey_date") as year, email',
     [choiceId, surveyDate, email, committeeId]
   );
 }
@@ -117,8 +117,8 @@ async function addSurveyChoice(choiceId, surveyDate, email, committeeId) {
 async function addSurveyData(surveyDate, email, interested, expertise) {
   const connection = loadDatabaseConnection();
 
-  return connection.none(
-    'INSERT INTO survey_data(survey_date, email, is_interested, expertise) values($1, $2, $3, $4)',
+  return connection.one(
+    'INSERT INTO survey_data(survey_date, email, is_interested, expertise) VALUES($1, $2, $3, $4) RETURNING EXTRACT(year FROM "survey_date") as year, email',
     [surveyDate, email, interested, expertise]
   );
 }

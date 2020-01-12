@@ -32,6 +32,7 @@ describe('Request routing for /faculty', () => {
     request(app)
       .post('/faculty')
       .send(payload)
+      .expect('Location', 'http://localhost:8080/faculty/test-email')
       .expect(201, done);
   });
 

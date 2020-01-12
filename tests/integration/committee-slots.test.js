@@ -52,6 +52,7 @@ describe('Request routing for /committee-slots', () => {
     request(app)
       .post('/committee-slots')
       .send(payload)
+      .expect('Location', 'http://localhost:8080/committee-slots/committee/1')
       .expect(201, done);
   });
 

@@ -7,6 +7,7 @@ const request = () => {
 const response = () => {
   const res = {};
   res.send = sinon.stub().returns(res);
+  res.set = sinon.stub().returns(res);
   res.status = sinon.stub().returns(res);
 
   return res;
