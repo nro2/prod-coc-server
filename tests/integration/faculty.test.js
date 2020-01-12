@@ -112,4 +112,23 @@ describe('Request routing for /faculty', () => {
       .get('/faculty/bobross@happytrees.com')
       .expect(404, done);
   });
+
+  /*it('GET returns 200 when records exist in the database', done => {
+    request(app)
+      .get('/faculty')
+      .expect(200)
+      .then(response => {
+        assert.equal(response.body.length, data.faculty.length);
+        done();
+      });
+  });
+
+  it('GET returns 404 when no records exist in the database', async () => {
+    await knex.migrate.rollback();
+    await knex.migrate.latest().then(() => {
+      request(app)
+        .get('/faculty')
+        .expect(404);
+    });
+  });*/
 });
