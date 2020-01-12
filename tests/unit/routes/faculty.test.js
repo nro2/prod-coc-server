@@ -23,6 +23,7 @@ const stubs = {
     updateFaculty: sinon.stub(),
     FOREIGN_KEY_VIOLATION: '23503',
     getFaculty: sinon.stub(),
+    getAllFaculty: sinon.stub(),
     UNIQUENESS_VIOLATION: '23505',
   },
 };
@@ -37,6 +38,7 @@ describe('Request routing for /faculty', () => {
     routerActions.putFaculty = routerPut.firstCall.args[1];
     routerActions.postFaculty = routerPost.firstCall.args[1];
     routerActions.getFaculty = routerGet.firstCall.args[1];
+    routerActions.getAllFaculty = routerGet.firstCall.args[1];
   });
 
   beforeEach(() => {
@@ -51,6 +53,7 @@ describe('Request routing for /faculty', () => {
     stubs['../database'].updateFaculty.resetHistory();
     routerGet.resetHistory();
     stubs['../database'].getFaculty.resetHistory();
+    stubs['../database'].getAllFaculty.resetHistory();
   });
 
   it('PUT returns 200 when faculty is updated in the database', () => {
@@ -350,4 +353,38 @@ describe('Request routing for /faculty', () => {
       assert.equal(res.status.firstCall.args[0], 404);
     });
   });
+
+  /*it('GET returns 200 when faculty are retrieved from database', () => {
+    const faculty = [
+      {
+        name: 'test-full-name',
+        email: 'test-email',
+      },
+    ];
+    stubs['../database'].getAllFaculty.resolves(faculty);
+
+    return routerActions.getAllFaculty(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 200);
+      assert.equal(res.send.firstCall.args[0], faculty);
+    });
+  });
+
+  it('GET returns 404 when there are no faculty in the database', () => {
+    stubs['../database'].getAllFaculty.resolves([]);
+
+    return routerActions.getAllFaculty(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 404);
+    });
+  });
+
+  it('GET returns 500 when there is a database error', () => {
+    stubs['../database'].getAllFaculty.rejects(new Error('test-error'));
+
+    return routerActions.getAllFaculty(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 500);
+      assert.deepEqual(res.send.firstCall.args[0], {
+        error: 'Unable to complete database transaction',
+      });
+    });
+  });*/
 });
