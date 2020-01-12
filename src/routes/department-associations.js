@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
 
       console.error(`Error adding department association: ${err}`);
       return res
-        .status(400)
+        .status(500)
         .send({ error: 'Unable to complete database transaction' });
     });
 });
