@@ -714,4 +714,26 @@ describe('Database queries', () => {
       );
     });
   });
+
+  describe('getAllFaculty', () => {
+    it('returns data when query is successful', async () => {
+      const expected = {
+        full_name: 'test-full-name',
+        email: 'test-email',
+      };
+
+      stubs.any.resolves(expected);
+      const result = await underTest.getAllFaculty();
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('returns empty array when there are no query results', async () => {
+      await stubs.any.resolves([]);
+
+      const result = await underTest.getAllFaculty();
+
+      assert.deepEqual(result, []);
+    });
+  });
 });

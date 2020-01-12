@@ -6,6 +6,7 @@ const {
   updateFaculty,
   FOREIGN_KEY_VIOLATION,
   getFaculty,
+  getAllFaculty,
   UNIQUENESS_VIOLATION,
 } = require('../database');
 
@@ -93,6 +94,25 @@ router.get('/:email', async (req, res) => {
       }
 
       console.info('Successfully retrieved faculty from database');
+      return res.status(200).send(data);
+    })
+    .catch(err => {
+      console.error(`Error retrieving faculty: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
+
+router.get('/', async (req, res) => {
+  return await getAllFaculty()
+    .then(data => {
+      if (data.length === 0) {
+        console.info('Faculty table is empty');
+        return res.status(404).send();
+      }
+
+      console.info('Successfully retrieved faculty list from the database');
       return res.status(200).send(data);
     })
     .catch(err => {

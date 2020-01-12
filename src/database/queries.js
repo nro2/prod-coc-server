@@ -489,6 +489,15 @@ async function updateSurveyData(surveyDate, email, interested, expertise) {
   });
 }
 
+/**
+ * Gets all faculty members.
+ * @returns {Promise} Query response on success, error on failure
+ */
+async function getAllFaculty() {
+  const connection = loadDatabaseConnection();
+  return connection.any('SELECT full_name, email FROM Faculty');
+}
+
 module.exports = {
   addCommittee,
   addCommitteeAssignment,
@@ -517,4 +526,5 @@ module.exports = {
   updateDepartmentAssociations,
   updateFaculty,
   updateSurveyData,
+  getAllFaculty,
 };
