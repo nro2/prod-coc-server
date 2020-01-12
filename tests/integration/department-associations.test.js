@@ -47,7 +47,7 @@ describe('Request routing for /department-associations', () => {
     it('POST returns 409 when the record already exists', done => {
       const payload = {
         email: 'wolsborn@pdx.edu',
-        departmentId: 1,
+        departmentId: 2,
       };
 
       request(app)
