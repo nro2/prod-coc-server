@@ -354,7 +354,7 @@ describe('Request routing for /faculty', () => {
     });
   });
 
-  /*it('GET returns 200 when faculty are retrieved from database', () => {
+  it('GET returns 200 when faculty are retrieved from database', () => {
     const faculty = [
       {
         name: 'test-full-name',
@@ -386,5 +386,5 @@ describe('Request routing for /faculty', () => {
         error: 'Unable to complete database transaction',
       });
     });
-  });*/
+  });
 });
