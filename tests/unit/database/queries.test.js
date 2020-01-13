@@ -83,7 +83,7 @@ describe('Database queries', () => {
     });
   });
 
-  /*  describe('addDepartmentAssociation', () => {
+  describe('addDepartmentAssociation', () => {
     it('returns email when query is successful', async () => {
       const email = 'test-email';
       stubs.one.resolves(email);
@@ -92,7 +92,7 @@ describe('Database queries', () => {
 
       assert.equal(result, email);
     });
-  });*/
+  });
 
   describe('addCommitteeSlots', () => {
     it('returns committeeId when query is successful', async () => {

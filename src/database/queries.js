@@ -62,7 +62,7 @@ async function addCommitteeAssignment(email, committeeId, startDate, endDate) {
 async function addDepartmentAssociation(email, departmentId) {
   const connection = loadDatabaseConnection();
 
-  return connection.none(
+  return connection.one(
     'INSERT INTO department_associations(email, department_id) VALUES($1, $2) RETURNING email',
     [email, departmentId]
   );
