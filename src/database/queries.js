@@ -127,7 +127,7 @@ async function getFaculty(email) {
 async function getFacultyInfo(email) {
   const connection = loadDatabaseConnection();
   const QueryFile = connection.pgp.QueryFile;
-  const query = new QueryFile('../sql/faculty/getFacultyInfo.sql', {
+  const query = new QueryFile('./sql/faculty/getFacultyInfo.sql', {
     minify: true,
   });
 
