@@ -53,6 +53,22 @@ async function addCommitteeAssignment(email, committeeId, startDate, endDate) {
 }
 
 /**
+ * Adds a department association to the database.
+ *
+ * @param email               Email of committee member
+ * @param department_id         Id of the department
+ * @returns {Promise}         Query response on success, error on failure
+ */
+async function addDepartmentAssociation(email, departmentId) {
+  const connection = loadDatabaseConnection();
+
+  return connection.one(
+    'INSERT INTO department_associations(email, department_id) VALUES($1, $2) RETURNING email',
+    [email, departmentId]
+  );
+}
+
+/**
  * Adds a faculty member to the database.
  *
  * @param fullName            Name of the faculty member
@@ -505,6 +521,7 @@ module.exports = {
   addFaculty,
   addSurveyChoice,
   addSurveyData,
+  addDepartmentAssociation,
   getFaculty,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
@@ -514,6 +531,7 @@ module.exports = {
   getCommittee,
   getDepartment,
   getDepartments,
+
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
   getSenateDivisions,
