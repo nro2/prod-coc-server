@@ -6,6 +6,7 @@ const mock = require('./mock');
 const underTestFilename = '../../../src/routes/department-associations.js';
 
 const routerGet = sinon.stub();
+const routerPost = sinon.stub();
 const routerPut = sinon.stub();
 const routerActions = {};
 
@@ -13,10 +14,12 @@ const stubs = {
   express: {
     Router: () => ({
       get: routerGet,
+      post: routerPost,
       put: routerPut,
     }),
   },
   '../database': {
+    addDepartmentAssociation: sinon.stub(),
     getDepartmentAssociationsByDepartment: sinon.stub(),
     getDepartmentAssociationsByFaculty: sinon.stub(),
     updateDepartmentAssociations: sinon.stub(),
@@ -30,6 +33,7 @@ describe('Request routing for /department-associations', () => {
 
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
+    routerActions.postDepartmentAssociation = routerPost.firstCall.args[1];
     routerActions.getDepartmentAssociationsByDepartment =
       routerGet.firstCall.args[1];
     routerActions.getDepartmentAssociationsByFaculty = routerGet.secondCall.args[1];
@@ -43,10 +47,47 @@ describe('Request routing for /department-associations', () => {
 
   afterEach(() => {
     routerGet.resetHistory();
+    routerPost.resetHistory();
+    routerPut.resetHistory();
 
+    stubs['../database'].addDepartmentAssociation.resetHistory();
     stubs['../database'].getDepartmentAssociationsByDepartment.resetHistory();
     stubs['../database'].getDepartmentAssociationsByFaculty.resetHistory();
     stubs['../database'].updateDepartmentAssociations.resetHistory();
+  });
+
+  it('POST returns 201 when committee assignment is added to the database', () => {
+    req.body = {
+      email: 'test-email',
+      departmentId: 42,
+    };
+    stubs['../database'].addDepartmentAssociation.resolves();
+
+    return routerActions.postDepartmentAssociation(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 201);
+    });
+  });
+
+  it('POST returns 400 when missing email in request body', () => {
+    req.body = {
+      departmentId: 42,
+    };
+
+    return routerActions.postDepartmentAssociation(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+    });
+  });
+
+  it('POST returns 400 when missing departmentId in request body', () => {
+    req.body = {
+      email: 'test-email',
+    };
+
+    return routerActions.postDepartmentAssociation(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+    });
   });
 
   describe('Route /department', () => {
