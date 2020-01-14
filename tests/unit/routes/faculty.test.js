@@ -37,8 +37,8 @@ describe('Request routing for /faculty', () => {
     underTest = proxyquire(underTestFilename, stubs);
     routerActions.putFaculty = routerPut.firstCall.args[1];
     routerActions.postFaculty = routerPost.firstCall.args[1];
-    routerActions.getFaculty = routerGet.firstCall.args[1];
-    routerActions.getAllFaculty = routerGet.secondCall.args[1];
+    routerActions.getAllFaculty = routerGet.firstCall.args[1];
+    routerActions.getFaculty = routerGet.secondCall.args[1];
   });
 
   beforeEach(() => {
@@ -49,11 +49,11 @@ describe('Request routing for /faculty', () => {
   afterEach(() => {
     routerPut.resetHistory();
     routerPost.resetHistory();
+    routerGet.resetHistory();
     stubs['../database'].addFaculty.resetHistory();
     stubs['../database'].updateFaculty.resetHistory();
-    routerGet.resetHistory();
-    stubs['../database'].getFaculty.resetHistory();
     stubs['../database'].getAllFaculty.resetHistory();
+    stubs['../database'].getFaculty.resetHistory();
   });
 
   it('PUT returns 200 when faculty is updated in the database', () => {
