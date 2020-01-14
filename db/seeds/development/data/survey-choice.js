@@ -119,4 +119,10 @@ module.exports = [
     choice_id: 4,
     committee_id: 5,
   },
+  {
+    survey_date: '2018-01-01',
+    email: 'wolsborn@pdx.edu',
+    choice_id: 1,
+    committee_id: 5,
+  },
 ];

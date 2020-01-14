@@ -22,7 +22,6 @@ describe('Request routing for /faculty', () => {
     });
   });
 
-
   describe('POST Integration Tests', () => {
     it('POST returns 201 when insertion succeeds', done => {
       const payload = {
@@ -145,8 +144,7 @@ describe('Request routing for /faculty', () => {
       });
     });
 
-    describe.only('getFacultyInfo', () => {
-
+    describe('getFacultyInfo', () => {
       it('GET returns 200 and faculty info record by email', done => {
         request(app)
           .get('/faculty/info/wolsborn@pdx.edu')
@@ -156,10 +154,8 @@ describe('Request routing for /faculty', () => {
       it('GET returns 404 when record does not exist for specified email', done => {
         request(app)
           .get('/faculty/info/bobross@happytrees.com')
-          .expect(404, done)
+          .expect(404, done);
       });
-    })
+    });
   });
-
-
 });

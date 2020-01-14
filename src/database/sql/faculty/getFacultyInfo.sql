@@ -32,8 +32,7 @@ SELECT json_build_object(
 		WHERE f.email = ca.email
 	)
 	,'surveys', (
-		SELECT json_agg(
-			json_build_object(
+		SELECT json_build_object(
 				'survey_date', sd.survey_date
 				,'is_interested', sd.is_interested
 				,'expertise', sd.expertise
@@ -48,8 +47,9 @@ SELECT json_build_object(
 						)
 					) FROM survey_choice sc NATURAL JOIN committee scc WHERE sd.survey_date = sc.survey_date AND sc.email = sd.email
 				)
-			)
-		) FROM survey_data sd
+		) FROM survey_data sd INNER JOIN (
+			SELECT max(survey_date) as RecentDate, email FROM survey_data GROUP BY email
+		) MostRecentSurvey on sd.survey_date = MostRecentSurvey.RecentDate AND sd.email = MostRecentSurvey.email
 		WHERE f.email = sd.email
 	)
 ) FROM faculty f WHERE f.email = $1
