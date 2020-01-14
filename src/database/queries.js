@@ -1,4 +1,4 @@
-const { loadDatabaseConnection } = require('./connection');
+const { loadDatabaseConnection, loadQueryFile } = require('./connection');
 
 /**
  * Adds a committee to the database.
@@ -126,11 +126,7 @@ async function getFaculty(email) {
  */
 async function getFacultyInfo(email) {
   const connection = loadDatabaseConnection();
-  const pgp = connection.$config.pgp;
-  const QueryFile = pgp.QueryFile;
-  const query = new QueryFile('./database/sql/faculty/getFacultyInfo.sql', {
-    minify: true,
-  });
+  const query = loadQueryFile('./database/sql/faculty/getFacultyInfo.sql');
 
   return connection.oneOrNone(query, [email]);
 }
