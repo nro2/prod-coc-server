@@ -18,4 +18,38 @@ SELECT json_build_object(
 		) FROM department_associations da NATURAL JOIN Department d
 		WHERE f.email = da.email
 	)
+	,'committees', (
+		SELECT json_agg(
+			json_build_object(
+				'committee_id', ca.committee_id
+				,'start_date', ca.start_date
+				,'end_date', ca.end_date
+				,'name', c.name
+				,'description', c.description
+				,'total_slots', c.total_slots
+			)
+		) FROM committee_assignment ca NATURAL JOIN committee c
+		WHERE f.email = ca.email
+	)
+	,'surveys', (
+		SELECT json_agg(
+			json_build_object(
+				'survey_date', sd.survey_date
+				,'is_interested', sd.is_interested
+				,'expertise', sd.expertise
+				,'choices', (
+					SELECT json_agg(
+						json_build_object(
+							'choice_id', sc.choice_id
+							,'committee_id', sc.committee_id
+							,'name', scc.name
+							,'description', scc.description
+							,'total_slots', scc.total_slots
+						)
+					) FROM survey_choice sc NATURAL JOIN committee scc WHERE sd.survey_date = sc.survey_date AND sc.email = sd.email
+				)
+			)
+		) FROM survey_data sd
+		WHERE f.email = sd.email
+	)
 ) FROM faculty f WHERE f.email = $1
