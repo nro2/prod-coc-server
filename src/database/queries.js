@@ -126,7 +126,7 @@ async function getFaculty(email) {
  */
 async function getFacultyInfo(email) {
   const connection = loadDatabaseConnection();
-  const query = loadQueryFile('./database/sql/faculty/getFacultyInfo.sql');
+  const query = loadQueryFile(__dirname + '/sql/faculty/getFacultyInfo.sql');
 
   return connection.oneOrNone(query, [email]);
 }
