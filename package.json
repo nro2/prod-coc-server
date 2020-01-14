@@ -14,7 +14,8 @@
     "migrate:up": "knex --knexfile=./db/knexfile.js migrate:latest --env",
     "migrate:down": "knex --knexfile=./db/knexfile.js migrate:down --env",
     "seed": "knex --knexfile=./db/knexfile.js seed:run --env development",
-    "database": "npm run migrate:up development && npm run seed"
+    "database": "npm run migrate:up development && npm run seed",
+    "dbrun": "docker-compose -f docker-compose.yml up --build"
   },
   "repository": {
     "type": "git",
