@@ -5,25 +5,26 @@ const mock = require('./mock');
 
 const underTestFilename = '../../../src/routes/faculty.js';
 
-const routerPut = sinon.stub();
 const routerPost = sinon.stub();
+const routerPut = sinon.stub();
 const routerGet = sinon.stub();
 const routerActions = {};
 
 const stubs = {
   express: {
     Router: () => ({
-      put: routerPut,
       post: routerPost,
+      put: routerPut,
       get: routerGet,
     }),
   },
   '../database': {
     addFaculty: sinon.stub(),
     updateFaculty: sinon.stub(),
-    FOREIGN_KEY_VIOLATION: '23503',
-    getFaculty: sinon.stub(),
     getAllFaculty: sinon.stub(),
+    getFaculty: sinon.stub(),
+    getFacultyInfo: sinon.stub(),
+    FOREIGN_KEY_VIOLATION: '23503',
     UNIQUENESS_VIOLATION: '23505',
   },
 };
@@ -35,10 +36,11 @@ describe('Request routing for /faculty', () => {
 
   before(() => {
     underTest = proxyquire(underTestFilename, stubs);
-    routerActions.putFaculty = routerPut.firstCall.args[1];
     routerActions.postFaculty = routerPost.firstCall.args[1];
+    routerActions.putFaculty = routerPut.firstCall.args[1];
     routerActions.getAllFaculty = routerGet.firstCall.args[1];
     routerActions.getFaculty = routerGet.secondCall.args[1];
+    routerActions.getFacultyInfo = routerGet.thirdCall.args[1];
   });
 
   beforeEach(() => {
@@ -47,13 +49,14 @@ describe('Request routing for /faculty', () => {
   });
 
   afterEach(() => {
-    routerPut.resetHistory();
     routerPost.resetHistory();
+    routerPut.resetHistory();
     routerGet.resetHistory();
     stubs['../database'].addFaculty.resetHistory();
     stubs['../database'].updateFaculty.resetHistory();
     stubs['../database'].getAllFaculty.resetHistory();
     stubs['../database'].getFaculty.resetHistory();
+    stubs['../database'].getFacultyInfo.resetHistory();
   });
 
   describe('Insert Tests (POST)', () => {
@@ -332,64 +335,121 @@ describe('Request routing for /faculty', () => {
   });
 
   describe('Select Tests (GET)', () => {
-    it('GET returns 200 when faculty are retrieved from database', () => {
-      const faculty = [
-        {
-          name: 'test-full-name',
-          email: 'test-email',
-        },
-      ];
-      stubs['../database'].getAllFaculty.resolves(faculty);
+    describe('getAllFaculty', () => {
+      it('GET returns 200 when faculty are retrieved from database', () => {
+        const faculty = [
+          {
+            name: 'test-full-name',
+            email: 'test-email',
+          },
+        ];
+        stubs['../database'].getAllFaculty.resolves(faculty);
 
-      return routerActions.getAllFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 200);
-        assert.equal(res.send.firstCall.args[0], faculty);
+        return routerActions.getAllFaculty(req, res).then(() => {
+          assert.equal(res.status.firstCall.args[0], 200);
+          assert.equal(res.send.firstCall.args[0], faculty);
+        });
       });
-    });
 
-    it('GET returns 404 when there are no faculty in the database', () => {
-      stubs['../database'].getAllFaculty.resolves([]);
+      it('GET returns 404 when there are no faculty in the database', () => {
+        stubs['../database'].getAllFaculty.resolves([]);
 
-      return routerActions.getAllFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 404);
+        return routerActions.getAllFaculty(req, res).then(() => {
+          assert.equal(res.status.firstCall.args[0], 404);
+        });
       });
-    });
 
-    it('GET returns 500 when there is a database error', () => {
-      stubs['../database'].getAllFaculty.rejects(new Error('test-error'));
+      it('GET returns 500 when there is a database error', () => {
+        stubs['../database'].getAllFaculty.rejects(new Error('test-error'));
 
-      return routerActions.getAllFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 500);
-        assert.deepEqual(res.send.firstCall.args[0], {
-          error: 'Unable to complete database transaction',
+        return routerActions.getAllFaculty(req, res).then(() => {
+          assert.equal(res.status.firstCall.args[0], 500);
+          assert.deepEqual(res.send.firstCall.args[0], {
+            error: 'Unable to complete database transaction',
+          });
         });
       });
     });
 
-    it('GET returns 200 when a specific faculty is returned from the database', () => {
-      const faculty_member = {
-        email: 'test@email.com',
-        full_name: 'Test McBenson',
-        phone_num: '111-111-1111',
-        job_title: 'Test Job Title',
-        senate_division_short_name: 'AO',
-      };
+    describe('getFaculty', () => {
+      it('GET returns 200 when a specific faculty is returned from the database', () => {
+        const faculty_member = {
+          email: 'test@email.com',
+          full_name: 'Test McBenson',
+          phone_num: '111-111-1111',
+          job_title: 'Test Job Title',
+          senate_division_short_name: 'AO',
+        };
 
-      req.params.email = 'wolsborn@pdx.edu';
-      stubs['../database'].getFaculty.resolves(faculty_member);
+        req.params.email = 'wolsborn@pdx.edu';
+        stubs['../database'].getFaculty.resolves(faculty_member);
 
-      return routerActions.getFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 200);
-        assert.equal(res.send.firstCall.args[0], faculty_member);
+        return routerActions.getFaculty(req, res).then(() => {
+          assert.equal(res.status.firstCall.args[0], 200);
+          assert.equal(res.send.firstCall.args[0], faculty_member);
+        });
+      });
+
+      it('GET returns 404 when faculty is not found in the database', () => {
+        req.params.email = 'jwolsborn@pdx.edu';
+        stubs['../database'].getFaculty.resolves();
+
+        return routerActions.getFaculty(req, res).then(() => {
+          assert.equal(res.status.firstCall.args[0], 404);
+        });
+      });
+
+      it('GET returns 500 when there is a database error', () => {
+        req.params.email = 'wolsborn@pdx.edu';
+        stubs['../database'].getFaculty.rejects(new Error('test-error'));
+
+        return routerActions.getFaculty(req, res).then(() => {
+          assert.equal(res.status.firstCall.args[0], 500);
+          assert.deepEqual(res.send.firstCall.args[0], {
+            error: 'Unable to complete database transaction',
+          });
+        });
       });
     });
 
-    it('GET returns 404 when faculty is not found in the database', () => {
-      req.params.email = 'jwolsborn@pdx.edu';
-      stubs['../database'].getFaculty.resolves();
+    describe('getFacultyInfo', () => {
+      it('GET returns 200 when a specific faculty info is returned from the database', () => {
+        const faculty_member = {
+          email: 'test@email.com',
+          full_name: 'Test McBenson',
+          phone_num: '111-111-1111',
+          job_title: 'Test Job Title',
+          senate_division_short_name: 'AO',
+        };
 
-      return routerActions.getFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 404);
+        req.params.email = 'wolsborn@pdx.edu';
+        stubs['../database'].getFacultyInfo.resolves(faculty_member);
+
+        return routerActions.getFacultyInfo(req, res).then(() => {
+          assert.equal(res.status.firstCall.args[0], 200);
+          assert.equal(res.send.firstCall.args[0], faculty_member);
+        });
+      });
+
+      it('GET returns 404 when faculty is not found in the database', () => {
+        req.params.email = 'jwolsborn@pdx.edu';
+        stubs['../database'].getFacultyInfo.resolves();
+
+        return routerActions.getFacultyInfo(req, res).then(() => {
+          assert.equal(res.status.firstCall.args[0], 404);
+        });
+      });
+
+      it('GET returns 500 when there is a database error', () => {
+        req.params.email = 'wolsborn@pdx.edu';
+        stubs['../database'].getFacultyInfo.rejects(new Error('test-error'));
+
+        return routerActions.getFacultyInfo(req, res).then(() => {
+          assert.equal(res.status.firstCall.args[0], 500);
+          assert.deepEqual(res.send.firstCall.args[0], {
+            error: 'Unable to complete database transaction',
+          });
+        });
       });
     });
   });
