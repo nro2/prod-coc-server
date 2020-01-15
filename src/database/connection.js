@@ -16,6 +16,7 @@ const config = {
 };
 
 let connection;
+let query;
 
 function loadDatabaseConnection() {
   if (!connection) {
@@ -25,6 +26,17 @@ function loadDatabaseConnection() {
   return connection;
 }
 
+function loadQueryFile(filePath) {
+  if (!query) {
+    query = new pgp.QueryFile(filePath, {
+      minify: true,
+    });
+  }
+
+  return query;
+}
+
 module.exports = {
   loadDatabaseConnection,
+  loadQueryFile,
 };

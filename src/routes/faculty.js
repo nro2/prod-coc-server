@@ -5,8 +5,9 @@ const {
   addFaculty,
   updateFaculty,
   FOREIGN_KEY_VIOLATION,
-  getFaculty,
   getAllFaculty,
+  getFaculty,
+  getFacultyInfo,
   UNIQUENESS_VIOLATION,
 } = require('../database');
 
@@ -82,6 +83,25 @@ router.put('/', async (req, res) => {
     });
 });
 
+router.get('/', async (req, res) => {
+  return await getAllFaculty()
+    .then(data => {
+      if (data.length === 0) {
+        console.info('Faculty table is empty');
+        return res.status(404).send();
+      }
+
+      console.info('Successfully retrieved faculty list from the database');
+      return res.status(200).send(data);
+    })
+    .catch(err => {
+      console.error(`Error retrieving faculty: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
+
 router.get('/:email', async (req, res) => {
   if (!req.params.email) {
     return res.status(400).send({ message: '400 Bad Request' });
@@ -104,19 +124,22 @@ router.get('/:email', async (req, res) => {
     });
 });
 
-router.get('/', async (req, res) => {
-  return await getAllFaculty()
+router.get('/info/:email', async (req, res) => {
+  if (!req.params.email) {
+    return res.status(400).send({ message: '400 Bad Request' });
+  }
+  return await getFacultyInfo(req.params.email)
     .then(data => {
-      if (data.length === 0) {
-        console.info('Faculty table is empty');
+      if (!data) {
+        console.info(`No faculty found for email ${req.params.email}`);
         return res.status(404).send();
       }
 
-      console.info('Successfully retrieved faculty list from the database');
+      console.info('Successfully retrieved faculty from database');
       return res.status(200).send(data);
     })
     .catch(err => {
-      console.error(`Error retrieving faculty: ${err}`);
+      console.error(`Error retrieving faculty info: ${err}`);
       return res
         .status(500)
         .send({ error: 'Unable to complete database transaction' });

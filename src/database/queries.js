@@ -1,4 +1,4 @@
-const { loadDatabaseConnection } = require('./connection');
+const { loadDatabaseConnection, loadQueryFile } = require('./connection');
 
 /**
  * Adds a committee to the database.
@@ -88,11 +88,40 @@ async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
 }
 
 /**
- * Gets a specific faculty record by email.
- * If email is undefined, then get all faculty records
+ * Updates a faculty member in the database.
  *
- * @param email               `Optional` Email of the faculty member
- * @returns {Promise}         Query response object on success, error on failure
+ * @param fullName            Name of the faculty member
+ * @param email               Email of the faculty member
+ * @param jobTitle            Job title of the faculty member
+ * @param phoneNum            Phone number of faculty member
+ * @param senateDivision      Senate division the faculty member belongs to
+ * @returns {Promise}         Resolves object with rowCount or rejects
+ */
+async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection.result(
+      'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+      [fullName, jobTitle, phoneNum, senateDivision, email]
+    );
+  });
+}
+
+/**
+ * Gets all faculty members.
+ * @returns {Promise} Query response on success, error on failure
+ */
+async function getAllFaculty() {
+  const connection = loadDatabaseConnection();
+  return connection.any('SELECT full_name, email FROM Faculty');
+}
+
+/**
+ * Gets a specific faculty record by email.
+ *
+ * @param email          Email of the faculty member
+ * @returns {Promise}    Query response object on success, error on failure
  */
 async function getFaculty(email) {
   const connection = loadDatabaseConnection();
@@ -101,6 +130,21 @@ async function getFaculty(email) {
     'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty WHERE email=$1',
     [email]
   );
+}
+
+/**
+ * Gets a faculty member and all associated information to be displayed on the front end faculty component.
+ * Tables involved in this query are:
+ *    faculty,department__associations,department,survey_data,survey_choice,committee,committee_assignment
+ *
+ * @param email          Email of the faculty member
+ * @returns {Promise}    Query response on success, error on failure
+ */
+async function getFacultyInfo(email) {
+  const connection = loadDatabaseConnection();
+  const query = loadQueryFile(__dirname + '/sql/faculty/getFacultyInfo.sql');
+
+  return connection.oneOrNone(query, [email]);
 }
 
 /**
@@ -464,27 +508,6 @@ async function updateDepartmentAssociations(
 }
 
 /**
- * Updates a faculty member in the database.
- *
- * @param fullName            Name of the faculty member
- * @param email               Email of the faculty member
- * @param jobTitle            Job title of the faculty member
- * @param phoneNum            Phone number of faculty member
- * @param senateDivision      Senate division the faculty member belongs to
- * @returns {Promise}         Resolves object with rowCount or rejects
- */
-async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
-  const connection = loadDatabaseConnection();
-
-  return connection.tx(() => {
-    return connection.result(
-      'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
-      [fullName, jobTitle, phoneNum, senateDivision, email]
-    );
-  });
-}
-
-/**
  * Updates survey data in the database
  *
  * @param surveyDate    Date of Survey
@@ -505,24 +528,18 @@ async function updateSurveyData(surveyDate, email, interested, expertise) {
   });
 }
 
-/**
- * Gets all faculty members.
- * @returns {Promise} Query response on success, error on failure
- */
-async function getAllFaculty() {
-  const connection = loadDatabaseConnection();
-  return connection.any('SELECT full_name, email FROM Faculty');
-}
-
 module.exports = {
   addCommittee,
   addCommitteeAssignment,
   addCommitteeSlots,
   addFaculty,
+  updateFaculty,
+  getAllFaculty,
+  getFaculty,
+  getFacultyInfo,
   addSurveyChoice,
   addSurveyData,
   addDepartmentAssociation,
-  getFaculty,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   getCommitteeSlotsBySenate,
@@ -542,7 +559,5 @@ module.exports = {
   updateCommitteeAssignment,
   updateCommitteeSlots,
   updateDepartmentAssociations,
-  updateFaculty,
   updateSurveyData,
-  getAllFaculty,
 };
