@@ -29,6 +29,10 @@ describe('Request routing for /department-associations', () => {
       request(app)
         .post('/department-associations')
         .send(payload)
+        .expect(
+          'Location',
+          'http://localhost:8080/department-associations/wolsborn@pdx.edu'
+        )
         .expect(201, done);
     });
 
