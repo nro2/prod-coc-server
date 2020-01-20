@@ -22,6 +22,7 @@ const stubs = {
     addCommittee: sinon.stub(),
     updateCommittee: sinon.stub(),
     getCommittee: sinon.stub(),
+    getCommitteeInfo: sinon.stub(),
   },
 };
 
@@ -35,7 +36,7 @@ describe('Request routing for /committee', () => {
     routerActions.postCommittee = routerPost.firstCall.args[1];
     routerActions.putCommittee = routerPut.firstCall.args[1];
     routerActions.getCommittee = routerGet.firstCall.args[1];
-
+    routerActions.getCommitteeInfo = routerGet.firstCall.args[1];
     sinon.stub(console, 'info');
     sinon.stub(console, 'error');
   });
@@ -53,6 +54,7 @@ describe('Request routing for /committee', () => {
     stubs['../database'].addCommittee.resetHistory();
     stubs['../database'].updateCommittee.resetHistory();
     stubs['../database'].getCommittee.resetHistory();
+    stubs['../database'].getCommitteeInfo.resetHistory();
   });
 
   it('POST returns 201 when committee is added to the database', () => {
@@ -262,4 +264,44 @@ describe('Request routing for /committee', () => {
       });
     });
   });
+
+  /* describe('getCommitteeInfo', () => {
+    it('GET returns 200 when a specific Committee info is returned from the database', () => {
+      const committee = {
+        name: 'Test committee',
+        id: '1',
+        description: 'Test description',
+        totalSlots: '10',
+      };
+
+      req.params.id = '1';
+      stubs['../database'].getCommitteeInfo.resolves(committee);
+
+      return routerActions.getCommitteeInfo(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 200);
+        assert.equal(res.send.firstCall.args[0], committee);
+      });
+    });
+
+    it('GET returns 404 when committee is not found in the database', () => {
+      req.params.id = '2';
+      stubs['../database'].getCommitteeInfo.resolves();
+
+      return routerActions.getCommitteeInfo(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 404);
+      });
+    });
+
+    it('GET returns 500 when there is a database error', () => {
+      req.params.id = '1';
+      stubs['../database'].getCommitteeInfo.rejects(new Error('test-error'));
+
+      return routerActions.getCommitteeInfo(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 500);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          error: 'Unable to complete database transaction',
+        });
+      });
+    });
+  });*/
 });
