@@ -36,7 +36,7 @@ describe('Request routing for /committee', () => {
     routerActions.postCommittee = routerPost.firstCall.args[1];
     routerActions.putCommittee = routerPut.firstCall.args[1];
     routerActions.getCommittee = routerGet.firstCall.args[1];
-    routerActions.getCommitteeInfo = routerGet.firstCall.args[1];
+    routerActions.getCommitteeInfo = routerGet.secondCall.args[1];
     sinon.stub(console, 'info');
     sinon.stub(console, 'error');
   });
@@ -265,7 +265,7 @@ describe('Request routing for /committee', () => {
     });
   });
 
-  /* describe('getCommitteeInfo', () => {
+  describe('getCommitteeInfo', () => {
     it('GET returns 200 when a specific Committee info is returned from the database', () => {
       const committee = {
         name: 'Test committee',
@@ -303,5 +303,5 @@ describe('Request routing for /committee', () => {
         });
       });
     });
-  });*/
+  });
 });
