@@ -2,7 +2,7 @@ const decache = require('decache');
 const knex = require('../../db/knex');
 const request = require('supertest');
 
-describe('Request routing for /committee-assignment', () => {
+describe('Request routing for /api/committee-assignment', () => {
   let app;
 
   beforeEach(async () => {
@@ -20,7 +20,7 @@ describe('Request routing for /committee-assignment', () => {
     });
   });
 
-  describe('/committee-assignment', () => {
+  describe('/api/committee-assignment', () => {
     it('POST returns 201 when insertion succeeds', done => {
       const payload = {
         email: 'wolsborn@pdx.edu',
@@ -30,11 +30,11 @@ describe('Request routing for /committee-assignment', () => {
       };
 
       request(app)
-        .post('/committee-assignment')
+        .post('/api/committee-assignment')
         .send(payload)
         .expect(
           'Location',
-          'http://localhost:8080/committee-assignment/faculty/wolsborn@pdx.edu'
+          'http://localhost:8080/api/committee-assignment/faculty/wolsborn@pdx.edu'
         )
         .expect(201, done);
     });
@@ -48,7 +48,7 @@ describe('Request routing for /committee-assignment', () => {
       };
 
       request(app)
-        .post('/committee-assignment')
+        .post('/api/committee-assignment')
         .send(payload)
         .expect(409, done);
     });
@@ -62,12 +62,12 @@ describe('Request routing for /committee-assignment', () => {
       };
 
       request(app)
-        .post('/committee-assignment')
+        .post('/api/committee-assignment')
         .send(payload)
         .expect(201)
         .then(() => {
           request(app)
-            .post('/committee-assignment')
+            .post('/api/committee-assignment')
             .send(payload)
             .expect(409, done);
         });
@@ -76,13 +76,13 @@ describe('Request routing for /committee-assignment', () => {
     describe('/committee/:id', () => {
       it('GET returns 200 when record exists', done => {
         request(app)
-          .get('/committee-assignment/committee/1')
+          .get('/api/committee-assignment/committee/1')
           .expect(200, done);
       });
 
       it('GET returns 404 when record does not exist', done => {
         request(app)
-          .get('/committee-assignment/committee/10000')
+          .get('/api/committee-assignment/committee/10000')
           .expect(404, done);
       });
     });
@@ -90,13 +90,13 @@ describe('Request routing for /committee-assignment', () => {
     describe('/faculty/:email', () => {
       it('GET returns 200 when record exists', done => {
         request(app)
-          .get('/committee-assignment/faculty/wolsborn@pdx.edu')
+          .get('/api/committee-assignment/faculty/wolsborn@pdx.edu')
           .expect(200, done);
       });
 
       it('GET returns 404 when record does not exist', done => {
         request(app)
-          .get('/committee-assignment/faculty/fake@mail.com')
+          .get('/api/committee-assignment/faculty/fake@mail.com')
           .expect(404, done);
       });
     });

@@ -2,7 +2,7 @@ const decache = require('decache');
 const knex = require('../../db/knex');
 const request = require('supertest');
 
-describe('Request routing for /survey-choice', () => {
+describe('Request routing for /api/survey-choice', () => {
   let app;
 
   beforeEach(async () => {
@@ -22,19 +22,19 @@ describe('Request routing for /survey-choice', () => {
 
   it('GET returns 200 when record exists', done => {
     request(app)
-      .get('/survey-choice/2019/wolsborn@pdx.edu')
+      .get('/api/survey-choice/2019/wolsborn@pdx.edu')
       .expect(200, done);
   });
 
   it('GET returns 404 when date does not exist', done => {
     request(app)
-      .get('/survey-choice/3010/wolsborn@pdx.edu')
+      .get('/api/survey-choice/3010/wolsborn@pdx.edu')
       .expect(404, done);
   });
 
   it('GET returns 404 when email does not exist', done => {
     request(app)
-      .get('/survey-choice/2019/does-not-exist')
+      .get('/api/survey-choice/2019/does-not-exist')
       .expect(404, done);
   });
 
@@ -47,11 +47,11 @@ describe('Request routing for /survey-choice', () => {
     };
 
     request(app)
-      .post('/survey-choice')
+      .post('/api/survey-choice')
       .send(payload)
       .expect(
         'Location',
-        'http://localhost:8080/survey-choice/2019/betty@oregon.gov'
+        'http://localhost:8080/api/survey-choice/2019/betty@oregon.gov'
       )
       .expect(201, done);
   });
@@ -65,7 +65,7 @@ describe('Request routing for /survey-choice', () => {
     };
 
     request(app)
-      .post('/survey-choice')
+      .post('/api/survey-choice')
       .send(payload)
       .expect(409, done);
   });
@@ -79,12 +79,12 @@ describe('Request routing for /survey-choice', () => {
     };
 
     request(app)
-      .post('/survey-choice')
+      .post('/api/survey-choice')
       .send(payload)
       .expect(201)
       .then(() => {
         request(app)
-          .post('/survey-choice')
+          .post('/api/survey-choice')
           .send(payload)
           .expect(409, done);
       });

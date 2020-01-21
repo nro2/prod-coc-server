@@ -2,7 +2,7 @@ const decache = require('decache');
 const knex = require('../../db/knex');
 const request = require('supertest');
 
-describe('Request routing for /department-associations', () => {
+describe('Request routing for /api/department-associations', () => {
   let app;
 
   beforeEach(async () => {
@@ -19,7 +19,7 @@ describe('Request routing for /department-associations', () => {
       app.close(done);
     });
   });
-  describe('/department-associations', () => {
+  describe('/api/department-associations', () => {
     it('POST returns 201 when insertion succeeds', done => {
       const payload = {
         email: 'wolsborn@pdx.edu',
@@ -27,11 +27,11 @@ describe('Request routing for /department-associations', () => {
       };
 
       request(app)
-        .post('/department-associations')
+        .post('/api/department-associations')
         .send(payload)
         .expect(
           'Location',
-          'http://localhost:8080/department-associations/faculty/wolsborn@pdx.edu'
+          'http://localhost:8080/api/department-associations/faculty/wolsborn@pdx.edu'
         )
         .expect(201, done);
     });
@@ -43,7 +43,7 @@ describe('Request routing for /department-associations', () => {
       };
 
       request(app)
-        .post('/department-associations')
+        .post('/api/department-associations')
         .send(payload)
         .expect(409, done);
     });
@@ -55,12 +55,12 @@ describe('Request routing for /department-associations', () => {
       };
 
       request(app)
-        .post('/department-associations')
+        .post('/api/department-associations')
         .send(payload)
         .expect(201)
         .then(() => {
           request(app)
-            .post('/department-associations')
+            .post('/api/department-associations')
             .send(payload)
             .expect(409, done);
         });
@@ -70,13 +70,13 @@ describe('Request routing for /department-associations', () => {
   describe('/department/:id', () => {
     it('GET returns 200 when record exists', done => {
       request(app)
-        .get('/department-associations/department/1')
+        .get('/api/department-associations/department/1')
         .expect(200, done);
     });
 
     it('GET returns 404 when record does not exist', done => {
       request(app)
-        .get('/department-associations/department/10000')
+        .get('/api/department-associations/department/10000')
         .expect(404, done);
     });
   });
@@ -84,13 +84,13 @@ describe('Request routing for /department-associations', () => {
   describe('/faculty/:email', () => {
     it('GET returns 200 when record exists', done => {
       request(app)
-        .get('/department-associations/faculty/wolsborn@pdx.edu')
+        .get('/api/department-associations/faculty/wolsborn@pdx.edu')
         .expect(200, done);
     });
 
     it('GET returns 404 when record does not exist', done => {
       request(app)
-        .get('/department-associations/faculty/does-not-exist@mail.com')
+        .get('/api/department-associations/faculty/does-not-exist@mail.com')
         .expect(404, done);
     });
   });
@@ -104,7 +104,7 @@ describe('Request routing for /department-associations', () => {
       };
 
       request(app)
-        .put('/department-associations')
+        .put('/api/department-associations')
         .send(payload)
         .expect(200, done);
     });
@@ -117,7 +117,7 @@ describe('Request routing for /department-associations', () => {
       };
 
       request(app)
-        .put('/department-associations')
+        .put('/api/department-associations')
         .send(payload)
         .expect(404, done);
     });

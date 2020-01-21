@@ -5,7 +5,7 @@ const request = require('supertest');
 
 const data = require('../../db/seeds/development/data');
 
-describe('Request routing for /departments', () => {
+describe('Request routing for /api/departments', () => {
   let app;
 
   beforeEach(async () => {
@@ -25,7 +25,7 @@ describe('Request routing for /departments', () => {
 
   it('GET returns 200 and department records', done => {
     request(app)
-      .get('/departments')
+      .get('/api/departments')
       .expect(200)
       .then(response => {
         assert.equal(response.body.length, data.department.length);
@@ -35,7 +35,7 @@ describe('Request routing for /departments', () => {
 
   it('GET returns 404 when record does not exist', done => {
     request(app)
-      .get('/department-associations/department/10000')
+      .get('/api/department-associations/department/10000')
       .expect(404, done);
   });
 });
