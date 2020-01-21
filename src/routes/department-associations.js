@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { SERVER_URL } = require('../config');
 const {
   addDepartmentAssociation,
   getDepartmentAssociationsByDepartment,
@@ -17,9 +18,13 @@ router.post('/', async (req, res) => {
   const { email, departmentId } = req.body;
 
   return addDepartmentAssociation(email, departmentId)
-    .then(() => {
+    .then(result => {
       console.info('Successfully added department association to database');
-      return res.status(201).send();
+      const { email } = result;
+      return res
+        .set('Location', `${SERVER_URL}/department-associations/faculty/${email}`)
+        .status(201)
+        .send();
     })
     .catch(err => {
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
