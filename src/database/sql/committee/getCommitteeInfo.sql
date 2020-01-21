@@ -11,7 +11,7 @@ SELECT json_build_object(
 		SELECT json_agg(
 			json_build_object(
 				'senateShortname', cs.senate_division_short_name
-				,'slotRequirements', cs.slot_requirements
+				,'slotRequiements', cs.slot_requirements
 			)
 		) FROM committee_slots cs
 		WHERE c.committee_id = cs.committee_id

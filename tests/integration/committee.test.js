@@ -98,7 +98,7 @@ describe('Request routing for /committee', () => {
 
     it('GET returns 404 when record does not exist for specified id', done => {
       request(app)
-        .get('/committee/info/6')
+        .get('/committee/info/99')
         .expect(404, done);
     });
   });
