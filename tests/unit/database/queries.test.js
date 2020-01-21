@@ -783,4 +783,64 @@ describe('Database queries', () => {
       );
     });
   });
+
+  /*describe('getCommitteeInfo', () => {
+    it('returns committee when query is successful', async () => {
+      const id = 900;
+      const expected = {
+      json_build_object: {
+        name: 'stub-committee-name',
+        id: '900',
+        description: 'stub-committee-description',
+        totalSlots: '10',
+        committeeSlots: [
+          {
+             senateShortname: 'stub-test-senate-short-name',
+             slotRequiements: '10',
+          },
+        ],
+        committeeAssignment: [
+          {
+            facultyName: 'stub-faculty-name',
+            facultyEmail: 'stub-faculty-email',
+            startDate:'2019-1-15',
+            endDate: '2020-10-15',
+            senateDivsion: 'stub-test-senate-division',
+          },
+        ],
+       }
+      }
+     });
+    stubs.oneOrNone.resolves({
+      json_build_object: {
+        name: 'stub-committee-name',
+        id: '900',
+        description: 'stub-committee-description',
+        totalSlots: '10',
+        committeeSlots: [
+          {
+            senateShortname: 'stub-test-senate-short-name',
+            slotRequiements: '10',
+          },
+        ],
+        committeeAssignment: [
+          {
+            facultyName: 'stub-faculty-name',
+            facultyEmail: 'stub-faculty-email',
+            startDate:'2019-1-15',
+            endDate: '2020-10-15',
+            senateDivsion: 'stub-test-senate-division',
+          },
+        ],
+      }
+    });
+    const result = await underTest.getCommitteeInfo(id);
+    assert.deepEqual(result, expected);
+    it('returns empty array when there are no query results', async () => {
+      const id = '900';
+      stubs.oneOrNone.resolves([]);
+      const result = await underTest.getCommitteeInfo(id);
+      assert.deepEqual(result, []);
+    });
+  });*/
 });

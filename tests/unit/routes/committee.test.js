@@ -272,6 +272,18 @@ describe('Request routing for /committee', () => {
         id: '1',
         description: 'Test description',
         totalSlots: '10',
+        committeeSlots: [
+          { senateShortname: 'Test senate short name ', slotRequiements: '2' },
+        ],
+        committeeAssignment: [
+          {
+            facultyName: 'Test faculty name',
+            facultyEmail: 'Testfaculty@pdx.edu',
+            startDate: '2020-1-10',
+            endDate: '2020-12-10',
+            senateDivsion: 'AO',
+          },
+        ],
       };
 
       req.params.id = '1';

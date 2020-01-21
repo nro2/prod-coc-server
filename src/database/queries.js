@@ -421,11 +421,11 @@ function getSurveyData(year, email) {
 }
 
 /**
- * Gets a faculty member and all associated information to be displayed on the front end faculty component.
+ * Gets a committee and all associated information to be displayed on the front end committee component.
  * Tables involved in this query are:
- *    faculty,department__associations,department,survey_data,survey_choice,committee,committee_assignment
+ *    faculty,department__associations,committee,committee_assignment
  *
- * @param email          Email of the faculty member
+ * @param id          Id of the committee
  * @returns {Promise}    Query response on success, error on failure
  */
 async function getCommitteeInfo(id) {
