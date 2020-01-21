@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', routes);
+app.use('/api', routes);
 
 module.exports = app.listen(PORT, () => {
   console.log(`Express running at http://localhost:${PORT}`);
