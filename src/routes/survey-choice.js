@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
       console.info('Successfully added survey choice to database');
       const { year, email } = result;
       return res
-        .set('Location', `${SERVER_URL}/survey-choice/${year}/${email}`)
+        .set('Location', `${SERVER_URL}/api/survey-choice/${year}/${email}`)
         .status(201)
         .send();
     })

@@ -109,7 +109,10 @@ router.post('/', async (req, res) => {
       console.info('Successfully added committee slots to database');
       const { committeeId } = result;
       return res
-        .set('Location', `${SERVER_URL}/committee-slots/committee/${committeeId}`)
+        .set(
+          'Location',
+          `${SERVER_URL}/api/committee-slots/committee/${committeeId}`
+        )
         .status(201)
         .send();
     })

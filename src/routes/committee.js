@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
       console.info('Successfully added committee to database');
       const { committeeId } = result;
       return res
-        .set('Location', `${SERVER_URL}/committee/${committeeId}`)
+        .set('Location', `${SERVER_URL}/api/committee/${committeeId}`)
         .status(201)
         .send();
     })
