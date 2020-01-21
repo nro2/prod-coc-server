@@ -33,9 +33,12 @@ describe('Request routing for /api/departments', () => {
       });
   });
 
-  it('GET returns 404 when record does not exist', done => {
-    request(app)
-      .get('/api/department-associations/department/10000')
-      .expect(404, done);
+  it('GET returns 404 when no records exist in the database', async () => {
+    await knex.migrate.rollback();
+    await knex.migrate.latest().then(() => {
+      request(app)
+        .get('/api/departments')
+        .expect(404);
+    });
   });
 });
