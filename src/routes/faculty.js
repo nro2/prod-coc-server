@@ -23,12 +23,34 @@ router.post('/', async (req, res) => {
     return res.status(400).send({ message: '400 Bad Request' });
   }
 
-  const { fullName, email, jobTitle, phoneNum, senateDivision } = req.body;
+  const {
+    fullName,
+    email,
+    jobTitle,
+    phoneNum,
+    senateDivision,
+    departmentAssociations,
+  } = req.body;
 
-  return await addFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
+  return await addFaculty(
+    fullName,
+    email,
+    jobTitle,
+    phoneNum,
+    senateDivision,
+    departmentAssociations
+  )
     .then(result => {
       console.info('Added faculty member to database');
-      const { email } = result;
+
+      let e = {};
+
+      if (Array.isArray(result) && result.length) {
+        e.email = result[0];
+      } else {
+        e.email = result;
+      }
+
       return res
         .set('Location', `${SERVER_URL}/faculty/${email}`)
         .status(201)

@@ -23,13 +23,34 @@ describe('Request routing for /faculty', () => {
   });
 
   describe('POST Integration Tests', () => {
-    it('POST returns 201 when insertion succeeds', done => {
+    it('POST returns 201 when insertion without department succeeds', done => {
       const payload = {
         fullName: 'test-full-name',
         email: 'test-email',
         jobTitle: 'test-job-title',
         phoneNum: '555-55-5555',
         senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect('Location', 'http://localhost:8080/faculty/test-email')
+        .expect(201, done);
+    });
+
+    it('POST returns 201 when insertion with department succeeds', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+        departmentAssociations: [
+          {
+            department_id: 1,
+          },
+        ],
       };
 
       request(app)

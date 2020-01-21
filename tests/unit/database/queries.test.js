@@ -12,7 +12,14 @@ const stubs = {
   oneOrNone: sinon.stub(),
   result: sinon.stub(),
   tx: sinon.stub(),
+  pgp: sinon.stub(),
 };
+
+const pgp = () => ({
+  helpers: {
+    insert: stubs.pgp,
+  },
+});
 
 const connection = () => ({
   any: stubs.any,
@@ -22,6 +29,9 @@ const connection = () => ({
   oneOrNone: stubs.oneOrNone,
   result: stubs.result,
   tx: stubs.tx,
+  $config: {
+    pgp: pgp.helpers,
+  },
 });
 
 describe('Database queries', () => {
@@ -258,8 +268,27 @@ describe('Database queries', () => {
 
   describe('Faculty Query Tests', () => {
     describe('addFaculty', () => {
-      it('returns email when query is successful', async () => {
+      it('returns email when query is successful without dept', async () => {
         const email = 'test-email';
+
+        stubs.tx.yields();
+        stubs.one.resolves('test-email');
+
+        const result = await underTest.addFaculty(
+          'test-full-name',
+          'test-email',
+          'test-job-title',
+          'test-phone-num',
+          'test-senate-division'
+        );
+
+        assert.equal(result, email);
+      });
+
+      it('returns email when query is successful with dept', async () => {
+        const email = 'test-email';
+
+        stubs.tx.yields();
         stubs.one.resolves('test-email');
 
         const result = await underTest.addFaculty(
@@ -268,7 +297,7 @@ describe('Database queries', () => {
           'test-job-title',
           'test-phone-num',
           'test-senate-division',
-          1
+          'test-department-associations'
         );
 
         assert.equal(result, email);

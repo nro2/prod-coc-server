@@ -60,13 +60,33 @@ describe('Request routing for /faculty', () => {
   });
 
   describe('Insert Tests (POST)', () => {
-    it('POST returns 201 when faculty is added to database', () => {
+    it('POST returns 201 when faculty is added to database without dept associations', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-email',
         jobTitle: 'test-job-title',
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
+      };
+      stubs['../database'].addFaculty.resolves(true);
+
+      return routerActions.postFaculty(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 201);
+      });
+    });
+
+    it('POST returns 201 when faculty is added to database WITH dept associations', () => {
+      req.body = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
+        senateDivision: 'test-senate-division',
+        departmentAssociations: [
+          {
+            department_id: '11',
+          },
+        ],
       };
       stubs['../database'].addFaculty.resolves(true);
 
