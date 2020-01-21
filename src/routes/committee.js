@@ -99,7 +99,7 @@ router.get('/info/:id', async (req, res) => {
   return await getCommitteeInfo(req.params.id)
     .then(data => {
       if (!data) {
-        console.info(`No committe found for id ${req.params.id}`);
+        console.info(`No committee found for id ${req.params.id}`);
         return res.status(404).send();
       }
       console.info('Successfully retrieved committee from database');

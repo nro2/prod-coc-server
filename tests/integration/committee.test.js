@@ -89,16 +89,16 @@ describe('Request routing for /committee', () => {
       .expect(404, done);
   });
 
-  describe('getCommitteInfo', () => {
-    it('GET returns 200 and committe info record by id', done => {
+  describe('getCommitteeInfo', () => {
+    it('GET returns 200 and committee einfo record by id', done => {
       request(app)
-        .get('/committe/info/1')
+        .get('/committee/info/1')
         .expect(200, done);
     });
 
     it('GET returns 404 when record does not exist for specified id', done => {
       request(app)
-        .get('/committee/info/6')
+        .get('/committee/info/99')
         .expect(404, done);
     });
   });

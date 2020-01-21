@@ -430,7 +430,7 @@ function getSurveyData(year, email) {
  */
 async function getCommitteeInfo(id) {
   const connection = loadDatabaseConnection();
-  const query = loadQueryFile(__dirname + '/sql/committe/getCommitteInfo.sql');
+  const query = loadQueryFile(__dirname + '/sql/committee/getCommitteeInfo.sql');
   return connection.oneOrNone(query, [id]);
 }
 
