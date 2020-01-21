@@ -86,7 +86,13 @@ router.post('/', async (req, res) => {
         return res.status(409).send();
       }
 
+      if (err.message == 'The slots for this senate division are full.') {
+        console.error(err.message);
+        return res.status(409).send();
+      }
+
       console.error(`Error adding committee assignment: ${err}`);
+      console.log(err.message);
       return res
         .status(500)
         .send({ error: 'Unable to complete database transaction' });
