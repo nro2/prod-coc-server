@@ -421,6 +421,20 @@ function getSurveyData(year, email) {
 }
 
 /**
+ * Gets a committee and all associated information to be displayed on the front end committee component.
+ * Tables involved in this query are:
+ *    faculty,department__associations,committee,committee_assignment
+ *
+ * @param id          Id of the committee
+ * @returns {Promise}    Query response on success, error on failure
+ */
+async function getCommitteeInfo(id) {
+  const connection = loadDatabaseConnection();
+  const query = loadQueryFile(__dirname + '/sql/committee/getCommitteeInfo.sql');
+  return connection.oneOrNone(query, [id]);
+}
+
+/**
  * Updates a committee in the database.
  *
  * Allows for a committee's properties to be changed, except a committee's name.
@@ -548,7 +562,7 @@ module.exports = {
   getCommittee,
   getDepartment,
   getDepartments,
-
+  getCommitteeInfo,
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
   getSenateDivisions,
