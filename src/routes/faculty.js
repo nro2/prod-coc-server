@@ -46,13 +46,14 @@ router.post('/', async (req, res) => {
       let e = {};
 
       if (Array.isArray(result) && result.length) {
-        e.email = result[0];
+        e = { return: result[0].email };
       } else {
-        e.email = result;
+        e = { return: result.email };
       }
 
+      console.log(e.return);
       return res
-        .set('Location', `${SERVER_URL}/faculty/${email}`)
+        .set('Location', `${SERVER_URL}/faculty/${e.return}`)
         .status(201)
         .send();
     })

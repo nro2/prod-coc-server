@@ -175,7 +175,7 @@ describe('Request routing for /faculty', () => {
       });
     });
 
-    it('POST returns 409 when primary key already exists in the database', () => {
+    it('POST returns 409 when primary email key already exists in the database', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-existing-email',
@@ -190,7 +190,7 @@ describe('Request routing for /faculty', () => {
       });
     });
 
-    it('POST returns 409 when foreign key does not exist in the database', () => {
+    it('POST returns 409 when faculty foreign key does not exist in the database', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-existing-email',
@@ -212,6 +212,61 @@ describe('Request routing for /faculty', () => {
         jobTitle: 'test-job-title',
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
+      };
+      stubs['../database'].addFaculty.rejects(new Error('test-database-error'));
+
+      return routerActions.postFaculty(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 500);
+        assert.deepEqual(res.send.firstCall.args[0], {
+          error: 'Unable to complete database transaction',
+        });
+      });
+    });
+
+    it('POST returns 409 when primary key already exists in the database', () => {
+      req.body = {
+        fullName: 'test-full-name',
+        email: 'test-existing-email',
+        jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
+        senateDivision: 'test-senate-division',
+        departmentAssociations: [
+          {
+            department_id: 'test-dept-id',
+          },
+        ],
+      };
+      stubs['../database'].addFaculty.rejects({ code: '23505' });
+
+      return routerActions.postFaculty(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 409);
+      });
+    });
+
+    it('POST returns 409 when foreign key does not exist in the database', () => {
+      req.body = {
+        fullName: 'test-full-name',
+        email: 'test-existing-email',
+        jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
+        senateDivision: 'test-senate-division',
+        departmentAssociations: 'test-department-associations',
+      };
+      stubs['../database'].addFaculty.rejects({ code: '23503' });
+
+      return routerActions.postFaculty(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 409);
+      });
+    });
+
+    it('POST returns 500 when unable to add faculty to database', () => {
+      req.body = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
+        senateDivision: 'test-senate-division',
+        departmentAssociations: 'test-department-associations',
       };
       stubs['../database'].addFaculty.rejects(new Error('test-database-error'));
 
