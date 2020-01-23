@@ -96,7 +96,7 @@ async function addFaculty(
 
   if (Array.isArray(departmentAssociations) && departmentAssociations.length) {
     const departmentAssociationsWithEmail = departmentAssociations.map(e => {
-      return e.value == undefined ? { ...e, email: email } : e;
+      return e.value === undefined ? { ...e, email: email } : e;
     });
     return connection.tx(t => {
       return t.batch([
