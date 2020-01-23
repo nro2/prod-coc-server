@@ -5,7 +5,7 @@ const request = require('supertest');
 
 const data = require('../../db/seeds/development/data');
 
-describe('Request routing for /committees', () => {
+describe('Request routing for /api/committees', () => {
   let app;
 
   beforeEach(async () => {
@@ -25,7 +25,7 @@ describe('Request routing for /committees', () => {
 
   it('GET returns 200 and committee records', done => {
     request(app)
-      .get('/committees')
+      .get('/api/committees')
       .expect(200)
       .then(response => {
         assert.equal(response.body.length, data.committee.length);

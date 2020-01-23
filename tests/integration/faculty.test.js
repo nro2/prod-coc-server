@@ -4,7 +4,7 @@ const request = require('supertest');
 const assert = require('assert');
 const data = require('../../db/seeds/development/data');
 
-describe('Request routing for /faculty', () => {
+describe('Request routing for /api/faculty', () => {
   let app;
 
   beforeEach(async () => {
@@ -33,9 +33,9 @@ describe('Request routing for /faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
-        .expect('Location', 'http://localhost:8080/faculty/test-email')
+        .expect('Location', 'http://localhost:8080/api/faculty/test-email')
         .expect(201, done);
     });
 
@@ -49,7 +49,7 @@ describe('Request routing for /faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(409, done);
     });
@@ -64,12 +64,12 @@ describe('Request routing for /faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(201)
         .then(() => {
           request(app)
-            .post('/faculty')
+            .post('/api/faculty')
             .send(payload)
             .expect(409, done);
         });
@@ -87,7 +87,7 @@ describe('Request routing for /faculty', () => {
       };
 
       request(app)
-        .put('/faculty')
+        .put('/api/faculty')
         .send(payload)
         .expect(200, done);
     });
@@ -102,7 +102,7 @@ describe('Request routing for /faculty', () => {
       };
 
       request(app)
-        .put('/faculty')
+        .put('/api/faculty')
         .send(payload)
         .expect(404, done);
     });
@@ -112,7 +112,7 @@ describe('Request routing for /faculty', () => {
     describe('getAllFaculty', () => {
       it('GET returns 200 when records exist in the database', done => {
         request(app)
-          .get('/faculty')
+          .get('/api/faculty')
           .expect(200)
           .then(response => {
             assert.equal(response.body.length, data.faculty.length);
@@ -124,7 +124,7 @@ describe('Request routing for /faculty', () => {
         await knex.migrate.rollback();
         await knex.migrate.latest().then(() => {
           request(app)
-            .get('/faculty')
+            .get('/api/faculty')
             .expect(404);
         });
       });
@@ -133,13 +133,13 @@ describe('Request routing for /faculty', () => {
     describe('getFaculty', () => {
       it('GET returns 200 and faculty record by email', done => {
         request(app)
-          .get('/faculty/wolsborn@pdx.edu')
+          .get('/api/faculty/wolsborn@pdx.edu')
           .expect(200, done);
       });
 
       it('GET returns 404 when record does not exist for specified email', done => {
         request(app)
-          .get('/faculty/bobross@happytrees.com')
+          .get('/api/faculty/bobross@happytrees.com')
           .expect(404, done);
       });
     });
@@ -147,13 +147,13 @@ describe('Request routing for /faculty', () => {
     describe('getFacultyInfo', () => {
       it('GET returns 200 and faculty info record by email', done => {
         request(app)
-          .get('/faculty/info/wolsborn@pdx.edu')
+          .get('/api/faculty/info/wolsborn@pdx.edu')
           .expect(200, done);
       });
 
       it('GET returns 404 when record does not exist for specified email', done => {
         request(app)
-          .get('/faculty/info/bobross@happytrees.com')
+          .get('/api/faculty/info/bobross@happytrees.com')
           .expect(404, done);
       });
     });

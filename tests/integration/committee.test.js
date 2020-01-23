@@ -16,7 +16,7 @@ function suppressLogging() {
   sinon.stub(console, 'log');
 }
 
-describe('Request routing for /committee', () => {
+describe('Request routing for /api/committee', () => {
   let app;
   suppressLogging();
 
@@ -43,9 +43,9 @@ describe('Request routing for /committee', () => {
     };
 
     request(app)
-      .post('/committee')
+      .post('/api/committee')
       .send(payload)
-      .expect('Location', 'http://localhost:8080/committee/11')
+      .expect('Location', 'http://localhost:8080/api/committee/11')
       .expect(201, '', done);
   });
 
@@ -58,7 +58,7 @@ describe('Request routing for /committee', () => {
     };
 
     request(app)
-      .put('/committee')
+      .put('/api/committee')
       .send(payload)
       .expect(200, done);
   });
@@ -72,33 +72,33 @@ describe('Request routing for /committee', () => {
     };
 
     request(app)
-      .put('/committee')
+      .put('/api/committee')
       .send(payload)
       .expect(404, done);
   });
 
   it('GET returns 200 when record exists', done => {
     request(app)
-      .get('/committee/1')
+      .get('/api/committee/1')
       .expect(200, done);
   });
 
   it('GET returns 404 when record does not exist', done => {
     request(app)
-      .get('/committee/10000')
+      .get('/api/committee/10000')
       .expect(404, done);
   });
 
   describe('getCommitteeInfo', () => {
     it('GET returns 200 and committee info record by id', done => {
       request(app)
-        .get('/committee/info/1')
+        .get('/api/committee/info/1')
         .expect(200, done);
     });
 
     it('GET returns 404 when record does not exist for specified id', done => {
       request(app)
-        .get('/committee/info/99')
+        .get('/api/committee/info/99')
         .expect(404, done);
     });
   });

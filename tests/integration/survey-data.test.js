@@ -2,7 +2,7 @@ const decache = require('decache');
 const knex = require('../../db/knex');
 const request = require('supertest');
 
-describe('Request routing for /survey-data', () => {
+describe('Request routing for /api/survey-data', () => {
   let app;
 
   beforeEach(async () => {
@@ -22,19 +22,19 @@ describe('Request routing for /survey-data', () => {
 
   it('GET returns 200 when record exists', done => {
     request(app)
-      .get('/survey-data/2019/wolsborn@pdx.edu')
+      .get('/api/survey-data/2019/wolsborn@pdx.edu')
       .expect(200, done);
   });
 
   it('GET returns 404 when date does not exist', done => {
     request(app)
-      .get('/survey-data/3010/wolsborn@pdx.edu')
+      .get('/api/survey-data/3010/wolsborn@pdx.edu')
       .expect(404, done);
   });
 
   it('GET returns 404 when email does not exist', done => {
     request(app)
-      .get('/survey-data/2019/does-not-exist')
+      .get('/api/survey-data/2019/does-not-exist')
       .expect(404, done);
   });
 
@@ -47,9 +47,12 @@ describe('Request routing for /survey-data', () => {
     };
 
     request(app)
-      .post('/survey-data')
+      .post('/api/survey-data')
       .send(payload)
-      .expect('Location', 'http://localhost:8080/survey-data/2018/wolsborn@pdx.edu')
+      .expect(
+        'Location',
+        'http://localhost:8080/api/survey-data/2018/wolsborn@pdx.edu'
+      )
       .expect(201, done);
   });
 
@@ -62,7 +65,7 @@ describe('Request routing for /survey-data', () => {
     };
 
     request(app)
-      .post('/survey-data')
+      .post('/api/survey-data')
       .send(payload)
       .expect(409, done);
   });
@@ -76,12 +79,12 @@ describe('Request routing for /survey-data', () => {
     };
 
     request(app)
-      .post('/survey-data')
+      .post('/api/survey-data')
       .send(payload)
       .expect(201)
       .then(() => {
         request(app)
-          .post('/survey-data')
+          .post('/api/survey-data')
           .send(payload)
           .expect(409, done);
       });
@@ -96,7 +99,7 @@ describe('Request routing for /survey-data', () => {
     };
 
     request(app)
-      .put('/survey-data')
+      .put('/api/survey-data')
       .send(payload)
       .expect(200, done);
   });
@@ -110,7 +113,7 @@ describe('Request routing for /survey-data', () => {
     };
 
     request(app)
-      .put('/survey-data')
+      .put('/api/survey-data')
       .send(payload)
       .expect(404, done);
   });

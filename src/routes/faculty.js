@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
       console.info('Added faculty member to database');
       const { email } = result;
       return res
-        .set('Location', `${SERVER_URL}/faculty/${email}`)
+        .set('Location', `${SERVER_URL}/api/faculty/${email}`)
         .status(201)
         .send();
     })

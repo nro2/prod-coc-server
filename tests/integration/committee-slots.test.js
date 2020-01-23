@@ -2,7 +2,7 @@ const decache = require('decache');
 const knex = require('../../db/knex');
 const request = require('supertest');
 
-describe('Request routing for /committee-slots', () => {
+describe('Request routing for /api/committee-slots', () => {
   let app;
 
   beforeEach(async () => {
@@ -26,7 +26,7 @@ describe('Request routing for /committee-slots', () => {
     };
 
     request(app)
-      .put('/committee-slots/1/AO')
+      .put('/api/committee-slots/1/AO')
       .send(payload)
       .expect(200, done);
   });
@@ -37,7 +37,7 @@ describe('Request routing for /committee-slots', () => {
     };
 
     request(app)
-      .put('/committee-slots/1000/FF')
+      .put('/api/committee-slots/1000/FF')
       .send(payload)
       .expect(404, done);
   });
@@ -50,9 +50,9 @@ describe('Request routing for /committee-slots', () => {
     };
 
     request(app)
-      .post('/committee-slots')
+      .post('/api/committee-slots')
       .send(payload)
-      .expect('Location', 'http://localhost:8080/committee-slots/committee/1')
+      .expect('Location', 'http://localhost:8080/api/committee-slots/committee/1')
       .expect(201, done);
   });
 
@@ -64,7 +64,7 @@ describe('Request routing for /committee-slots', () => {
     };
 
     request(app)
-      .post('/committee-slots')
+      .post('/api/committee-slots')
       .send(payload)
       .expect(409, done);
   });
@@ -77,7 +77,7 @@ describe('Request routing for /committee-slots', () => {
     };
 
     request(app)
-      .post('/committee-slots')
+      .post('/api/committee-slots')
       .send(payload)
       .expect(409, done);
   });
@@ -90,12 +90,12 @@ describe('Request routing for /committee-slots', () => {
     };
 
     request(app)
-      .post('/committee-slots')
+      .post('/api/committee-slots')
       .send(payload)
       .expect(201)
       .then(() => {
         request(app)
-          .post('/committee-slots')
+          .post('/api/committee-slots')
           .send(payload)
           .expect(409, done);
       });
@@ -104,13 +104,13 @@ describe('Request routing for /committee-slots', () => {
   describe('/committee/:id', () => {
     it('GET returns 200 when record exists', done => {
       request(app)
-        .get('/committee-slots/committee/1')
+        .get('/api/committee-slots/committee/1')
         .expect(200, done);
     });
 
     it('GET returns 404 when record does not exist', done => {
       request(app)
-        .get('/committee-slots/committee/1000')
+        .get('/api/committee-slots/committee/1000')
         .expect(404, done);
     });
   });
@@ -118,13 +118,13 @@ describe('Request routing for /committee-slots', () => {
   describe('/senate-division/:shortname', () => {
     it('GET returns 200 when record exists', done => {
       request(app)
-        .get('/committee-slots/senate-division/AO')
+        .get('/api/committee-slots/senate-division/AO')
         .expect(200, done);
     });
 
     it('GET returns 404 when record does not exist', done => {
       request(app)
-        .get('/committee-slots/senate-division/XX')
+        .get('/api/committee-slots/senate-division/XX')
         .expect(404, done);
     });
   });

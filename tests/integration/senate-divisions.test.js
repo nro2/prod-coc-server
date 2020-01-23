@@ -2,7 +2,7 @@ const decache = require('decache');
 const knex = require('../../db/knex');
 const request = require('supertest');
 
-describe('Request routing for /senate-divisions', () => {
+describe('Request routing for /api/senate-divisions', () => {
   let app;
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('Request routing for /senate-divisions', () => {
 
   it('GET returns 200 when a records exist', done => {
     request(app)
-      .get('/senate-divisions')
+      .get('/api/senate-divisions')
       .expect(200, done);
   });
 
@@ -31,7 +31,7 @@ describe('Request routing for /senate-divisions', () => {
     await knex.migrate.latest();
 
     await request(app)
-      .get('/senate-divisions')
+      .get('/api/senate-divisions')
       .expect(404);
   });
 });
