@@ -142,7 +142,6 @@ describe('Request routing for /faculty', () => {
         });
       });
     });
-
     it('POST returns 400 when missing jobTitle in request body', () => {
       req.body = {
         fullName: 'test-full-name',
@@ -205,7 +204,27 @@ describe('Request routing for /faculty', () => {
       });
     });
 
-    it('POST returns 500 when unable to add faculty to database', () => {
+    it('POST returns 409 when department foreign key does not exist in the database', () => {
+      req.body = {
+        fullName: 'test-full-name',
+        email: 'test-existing-email',
+        jobTitle: 'test-job-title',
+        phoneNum: 'test-phone-num',
+        senateDivision: 'test-senate-division',
+        departmentAssociations: [
+          {
+            department_id: 500,
+          },
+        ],
+      };
+      stubs['../database'].addFaculty.rejects({ code: '23503' });
+
+      return routerActions.postFaculty(req, res).then(() => {
+        assert.equal(res.status.firstCall.args[0], 409);
+      });
+    });
+
+    it('POST returns 500 when unable to add faculty to database without departments', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-email',
@@ -219,6 +238,7 @@ describe('Request routing for /faculty', () => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
           error: 'Unable to complete database transaction',
+          msg: 'test-database-error',
         });
       });
     });
@@ -259,7 +279,7 @@ describe('Request routing for /faculty', () => {
       });
     });
 
-    it('POST returns 500 when unable to add faculty to database', () => {
+    it('POST returns 500 when unable to add faculty to database with departments', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-email',
@@ -274,6 +294,7 @@ describe('Request routing for /faculty', () => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
           error: 'Unable to complete database transaction',
+          msg: 'test-database-error',
         });
       });
     });

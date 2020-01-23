@@ -58,17 +58,31 @@ router.post('/', async (req, res) => {
         .send();
     })
     .catch(err => {
-      if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
+      let code;
+      let message;
+      let detail;
+
+      if (!err.stat) {
+        code = err.code;
+        message = err.message;
+        detail = err.detail;
+      } else {
+        code = err.first.code;
+        message = err.first.message;
+        detail = err.first.detail;
+      }
+
+      if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(code)) {
         console.error(
-          `Attempted to add an existing faculty with invalid keys: ${err}`
+          `Attempted to add faculty with invalid keys:\n ${message} \n ${detail}`
         );
-        return res.status(409).send();
+        return res.status(409).send({ message: message, error: detail });
       }
 
       console.error(`Error adding faculty member to database: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ error: 'Unable to complete database transaction', msg: message });
     });
 });
 
