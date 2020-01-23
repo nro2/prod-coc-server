@@ -142,6 +142,7 @@ describe('Request routing for /faculty', () => {
         });
       });
     });
+
     it('POST returns 400 when missing jobTitle in request body', () => {
       req.body = {
         fullName: 'test-full-name',
@@ -189,13 +190,13 @@ describe('Request routing for /faculty', () => {
       });
     });
 
-    it('POST returns 409 when faculty foreign key does not exist in the database', () => {
+    it('POST returns 409 when faculty senate division foreign key does not exist in the database', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-existing-email',
         jobTitle: 'test-job-title',
         phoneNum: 'test-phone-num',
-        senateDivision: 'test-senate-division',
+        senateDivision: 'test-senate-division-doesnt-exist',
       };
       stubs['../database'].addFaculty.rejects({ code: '23503' });
 
@@ -213,7 +214,7 @@ describe('Request routing for /faculty', () => {
         senateDivision: 'test-senate-division',
         departmentAssociations: [
           {
-            department_id: 500,
+            department_id: 0,
           },
         ],
       };
@@ -237,45 +238,9 @@ describe('Request routing for /faculty', () => {
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          error: 'Unable to complete database transaction',
-          msg: 'test-database-error',
+          msg: 'Unable to complete database transaction',
+          error: 'test-database-error',
         });
-      });
-    });
-
-    it('POST returns 409 when primary key already exists in the database', () => {
-      req.body = {
-        fullName: 'test-full-name',
-        email: 'test-existing-email',
-        jobTitle: 'test-job-title',
-        phoneNum: 'test-phone-num',
-        senateDivision: 'test-senate-division',
-        departmentAssociations: [
-          {
-            department_id: 'test-dept-id',
-          },
-        ],
-      };
-      stubs['../database'].addFaculty.rejects({ code: '23505' });
-
-      return routerActions.postFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 409);
-      });
-    });
-
-    it('POST returns 409 when foreign key does not exist in the database', () => {
-      req.body = {
-        fullName: 'test-full-name',
-        email: 'test-existing-email',
-        jobTitle: 'test-job-title',
-        phoneNum: 'test-phone-num',
-        senateDivision: 'test-senate-division',
-        departmentAssociations: 'test-department-associations',
-      };
-      stubs['../database'].addFaculty.rejects({ code: '23503' });
-
-      return routerActions.postFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 409);
       });
     });
 
@@ -293,8 +258,8 @@ describe('Request routing for /faculty', () => {
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          error: 'Unable to complete database transaction',
-          msg: 'test-database-error',
+          msg: 'Unable to complete database transaction',
+          error: 'test-database-error',
         });
       });
     });

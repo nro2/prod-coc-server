@@ -95,12 +95,6 @@ async function addFaculty(
   const pgp = connection.$config.pgp;
 
   if (Array.isArray(departmentAssociations) && departmentAssociations.length) {
-    departmentAssociations.forEach(d => {
-      if (Object.entries(d).length === 0 && d.constructor === Object) {
-        throw 'JSON includes deaprtmentAssocitions object, but department_id is undefined/missing';
-      }
-    });
-
     const departmentAssociationsWithEmail = departmentAssociations.map(e => {
       return e.value == undefined ? { ...e, email: email } : e;
     });

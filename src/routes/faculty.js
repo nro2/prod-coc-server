@@ -4,10 +4,10 @@ const { SERVER_URL } = require('../config');
 const {
   addFaculty,
   updateFaculty,
-  FOREIGN_KEY_VIOLATION,
   getAllFaculty,
   getFaculty,
   getFacultyInfo,
+  FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
 } = require('../database');
 
@@ -32,6 +32,18 @@ router.post('/', async (req, res) => {
     departmentAssociations,
   } = req.body;
 
+  if (Array.isArray(departmentAssociations) && departmentAssociations.length) {
+    departmentAssociations.forEach(d => {
+      if (Object.entries(d).length === 0 && d.constructor === Object) {
+        return res.status(400).send({
+          message: '400 Bad Request',
+          error:
+            'JSON includes deaprtmentAssocitions object, but department_id is undefined/missing',
+        });
+      }
+    });
+  }
+
   return await addFaculty(
     fullName,
     email,
@@ -51,7 +63,6 @@ router.post('/', async (req, res) => {
         e = { return: result.email };
       }
 
-      console.log(e.return);
       return res
         .set('Location', `${SERVER_URL}/faculty/${e.return}`)
         .status(201)
@@ -76,13 +87,16 @@ router.post('/', async (req, res) => {
         console.error(
           `Attempted to add faculty with invalid keys:\n ${message} \n ${detail}`
         );
-        return res.status(409).send({ message: message, error: detail });
+        return res.status(409).send({ msg: message, error: detail });
       }
 
-      console.error(`Error adding faculty member to database: ${err}`);
+      console.error(`Error adding faculty member to database:\n ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction', msg: message });
+        .send({
+          msg: 'Unable to complete database transaction',
+          error: err.message,
+        });
     });
 });
 

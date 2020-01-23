@@ -60,13 +60,108 @@ describe('Request routing for /faculty', () => {
         .expect(201, done);
     });
 
-    it('POST returns 409 when the payload email violates foreign key constraint', done => {
+    it('POST returns 400 when body empty', done => {
+      const payload = {};
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when fullName empty', done => {
+      const payload = {
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when email empty', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when jobTitle empty', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when phoneNum empty', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when senateDivision empty', done => {
       const payload = {
         fullName: 'test-full-name',
         email: 'test-email',
         jobTitle: 'test-job-title',
         phoneNum: '555-55-5555',
-        senateDivision: 'test-senate-division-does-not-exist',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when the department associations array contains missing keys', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+        departmentAssociations: [{}],
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 409 when the payload senateDivision violates foreign key constraint', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'zzzzzzzzz',
       };
 
       request(app)
@@ -75,7 +170,7 @@ describe('Request routing for /faculty', () => {
         .expect(409, done);
     });
 
-    it('POST returns 409 when the record already exists', done => {
+    it('POST returns 409 when the faculty (email) record already exists', done => {
       const payload = {
         fullName: 'test-full-name',
         email: 'test-email',
@@ -94,6 +189,26 @@ describe('Request routing for /faculty', () => {
             .send(payload)
             .expect(409, done);
         });
+    });
+
+    it('POST returns 409 when the department associations (department_id) violates foreign key constraint', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+        departmentAssociations: [
+          {
+            department_id: 0,
+          },
+        ],
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(409, done);
     });
   });
 
