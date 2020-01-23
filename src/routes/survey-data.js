@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
       console.info('Successfully added survey data to database');
       const { year, email } = result;
       return res
-        .set('Location', `${SERVER_URL}/survey-data/${year}/${email}`)
+        .set('Location', `${SERVER_URL}/api/survey-data/${year}/${email}`)
         .status(201)
         .send();
     })

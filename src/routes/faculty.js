@@ -64,7 +64,7 @@ router.post('/', async (req, res) => {
       }
 
       return res
-        .set('Location', `${SERVER_URL}/faculty/${e.return}`)
+        .set('Location', `${SERVER_URL}/api/faculty/${e.return}`)
         .status(201)
         .send();
     })
@@ -91,12 +91,10 @@ router.post('/', async (req, res) => {
       }
 
       console.error(`Error adding faculty member to database:\n ${err}`);
-      return res
-        .status(500)
-        .send({
-          msg: 'Unable to complete database transaction',
-          error: err.message,
-        });
+      return res.status(500).send({
+        msg: 'Unable to complete database transaction',
+        error: err.message,
+      });
     });
 });
 
