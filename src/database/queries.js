@@ -69,22 +69,58 @@ async function addDepartmentAssociation(email, departmentId) {
 }
 
 /**
- * Adds a faculty member to the database.
+ * Adds a faculty member to the database. The json can include department associations or not.
+ * If the department associations is not an array or is empty, a transaction is run for just the
+ * faculty member. If the array does exist, a transaction is made to the both the faculty and
+ * department associations tables. pgp.helpers.insert it used to basically concatenate the array
+ * of department ids into a single insert statment.
  *
- * @param fullName            Name of the faculty member
- * @param email               Email of the faculty member
- * @param jobTitle            Job title of the faculty member
- * @param phoneNum            Phone number of faculty member
- * @param senateDivision      Senate division the faculty member belongs to
- * @returns {Promise}         Query response on success, error on failure
+ * @param fullName                Name of the faculty member
+ * @param email                   Email of the faculty member
+ * @param jobTitle                Job title of the faculty member
+ * @param phoneNum                Phone number of faculty member
+ * @param senateDivision          Senate division the faculty member belongs to
+ * @param departmentAssociations  Array of department ids to associate the faculty member to
+ * @returns {Promise}             Query response on success, error on failure
  */
-async function addFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
+async function addFaculty(
+  fullName,
+  email,
+  jobTitle,
+  phoneNum,
+  senateDivision,
+  departmentAssociations
+) {
   const connection = loadDatabaseConnection();
+  const pgp = connection.$config.pgp;
 
-  return connection.one(
-    'INSERT INTO faculty(full_name, email, job_title, phone_num, senate_division_short_name) VALUES($1, $2, $3, $4, $5) RETURNING email',
-    [fullName, email, jobTitle, phoneNum, senateDivision]
-  );
+  if (Array.isArray(departmentAssociations) && departmentAssociations.length) {
+    const departmentAssociationsWithEmail = departmentAssociations.map(e => {
+      return e.value === undefined ? { ...e, email: email } : e;
+    });
+    return connection.tx(t => {
+      return t.batch([
+        t.one(
+          'INSERT INTO faculty(full_name, email, job_title, phone_num, senate_division_short_name) VALUES($1, $2, $3, $4, $5) RETURNING email',
+          [fullName, email, jobTitle, phoneNum, senateDivision]
+        ),
+        t.any(
+          pgp.helpers.insert(
+            departmentAssociationsWithEmail,
+            ['email', 'department_id'],
+            'department_associations'
+          )
+        ),
+      ]);
+    });
+  } else {
+    return connection.tx(() => {
+      return connection.one(
+        'INSERT INTO faculty(full_name, email, job_title, phone_num, senate_division_short_name) VALUES($1, $2, $3, $4, $5) RETURNING email',
+        [fullName, email, jobTitle, phoneNum, senateDivision]
+      );
+    });
+  }
 }
 
 /**
