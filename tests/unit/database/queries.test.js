@@ -12,7 +12,14 @@ const stubs = {
   oneOrNone: sinon.stub(),
   result: sinon.stub(),
   tx: sinon.stub(),
+  pgp: sinon.stub(),
 };
+
+const pgp = () => ({
+  helpers: {
+    insert: stubs.pgp,
+  },
+});
 
 const connection = () => ({
   any: stubs.any,
@@ -22,6 +29,9 @@ const connection = () => ({
   oneOrNone: stubs.oneOrNone,
   result: stubs.result,
   tx: stubs.tx,
+  $config: {
+    pgp: pgp.helpers,
+  },
 });
 
 describe('Database queries', () => {
@@ -258,8 +268,27 @@ describe('Database queries', () => {
 
   describe('Faculty Query Tests', () => {
     describe('addFaculty', () => {
-      it('returns email when query is successful', async () => {
+      it('returns email when query is successful without dept', async () => {
         const email = 'test-email';
+
+        stubs.tx.yields();
+        stubs.one.resolves('test-email');
+
+        const result = await underTest.addFaculty(
+          'test-full-name',
+          'test-email',
+          'test-job-title',
+          'test-phone-num',
+          'test-senate-division'
+        );
+
+        assert.equal(result, email);
+      });
+
+      it('returns email when query is successful with dept', async () => {
+        const email = 'test-email';
+
+        stubs.tx.yields();
         stubs.one.resolves('test-email');
 
         const result = await underTest.addFaculty(
@@ -268,7 +297,7 @@ describe('Database queries', () => {
           'test-job-title',
           'test-phone-num',
           'test-senate-division',
-          1
+          'test-department-associations'
         );
 
         assert.equal(result, email);
@@ -781,6 +810,66 @@ describe('Database queries', () => {
           .updateDepartmentAssociations(email, oldDepartmentId, newDepartmentId)
           .catch(() => assert.fail('Should not have failed'))
       );
+    });
+  });
+
+  describe('getCommitteeInfo', () => {
+    it('returns committee when query is successful', async () => {
+      const id = 900;
+      const expected = {
+        json_build_object: {
+          name: 'stub-committee-name',
+          id: '900',
+          description: 'stub-committee-description',
+          totalSlots: '10',
+          committeeSlots: [
+            {
+              senateShortname: 'stub-test-senate-short-name',
+              slotRequiements: '10',
+            },
+          ],
+          committeeAssignment: [
+            {
+              facultyName: 'stub-faculty-name',
+              facultyEmail: 'stub-faculty-email',
+              startDate: '2019-1-15',
+              endDate: '2020-10-15',
+              senateDivsion: 'stub-test-senate-division',
+            },
+          ],
+        },
+      };
+      stubs.oneOrNone.resolves({
+        json_build_object: {
+          name: 'stub-committee-name',
+          id: '900',
+          description: 'stub-committee-description',
+          totalSlots: '10',
+          committeeSlots: [
+            {
+              senateShortname: 'stub-test-senate-short-name',
+              slotRequiements: '10',
+            },
+          ],
+          committeeAssignment: [
+            {
+              facultyName: 'stub-faculty-name',
+              facultyEmail: 'stub-faculty-email',
+              startDate: '2019-1-15',
+              endDate: '2020-10-15',
+              senateDivsion: 'stub-test-senate-division',
+            },
+          ],
+        },
+      });
+      const result = await underTest.getCommitteeInfo(id);
+      assert.deepEqual(result, expected);
+    });
+    it('returns empty array when there are no query results', async () => {
+      const id = '900';
+      stubs.oneOrNone.resolves([]);
+      const result = await underTest.getCommitteeInfo(id);
+      assert.deepEqual(result, []);
     });
   });
 });

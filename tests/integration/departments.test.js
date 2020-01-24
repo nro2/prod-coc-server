@@ -5,7 +5,7 @@ const request = require('supertest');
 
 const data = require('../../db/seeds/development/data');
 
-describe('Request routing for /departments', () => {
+describe('Request routing for /api/departments', () => {
   let app;
 
   beforeEach(async () => {
@@ -25,7 +25,7 @@ describe('Request routing for /departments', () => {
 
   it('GET returns 200 and department records', done => {
     request(app)
-      .get('/departments')
+      .get('/api/departments')
       .expect(200)
       .then(response => {
         assert.equal(response.body.length, data.department.length);
@@ -33,9 +33,12 @@ describe('Request routing for /departments', () => {
       });
   });
 
-  it('GET returns 404 when record does not exist', done => {
-    request(app)
-      .get('/department-associations/department/10000')
-      .expect(404, done);
+  it('GET returns 404 when no records exist in the database', async () => {
+    await knex.migrate.rollback();
+    await knex.migrate.latest().then(() => {
+      request(app)
+        .get('/api/departments')
+        .expect(404);
+    });
   });
 });

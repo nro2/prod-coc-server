@@ -22,7 +22,10 @@ router.post('/', async (req, res) => {
       console.info('Successfully added department association to database');
       const { email } = result;
       return res
-        .set('Location', `${SERVER_URL}/department-associations/faculty/${email}`)
+        .set(
+          'Location',
+          `${SERVER_URL}/api/department-associations/faculty/${email}`
+        )
         .status(201)
         .send();
     })

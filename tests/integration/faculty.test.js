@@ -4,7 +4,7 @@ const request = require('supertest');
 const assert = require('assert');
 const data = require('../../db/seeds/development/data');
 
-describe('Request routing for /faculty', () => {
+describe('Request routing for /api/faculty', () => {
   let app;
 
   beforeEach(async () => {
@@ -23,13 +23,34 @@ describe('Request routing for /faculty', () => {
   });
 
   describe('POST Integration Tests', () => {
-    it('POST returns 201 when insertion succeeds', done => {
+    it('POST returns 201 when insertion without department succeeds', done => {
       const payload = {
         fullName: 'test-full-name',
         email: 'test-email',
         jobTitle: 'test-job-title',
         phoneNum: '555-55-5555',
         senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/api/faculty')
+        .send(payload)
+        .expect('Location', 'http://localhost:8080/api/faculty/test-email')
+        .expect(201, done);
+    });
+
+    it('POST returns 201 when insertion with department succeeds', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+        departmentAssociations: [
+          {
+            department_id: 1,
+          },
+        ],
       };
 
       request(app)
@@ -39,24 +60,17 @@ describe('Request routing for /faculty', () => {
         .expect(201, done);
     });
 
-    it('POST returns 409 when the payload email violates foreign key constraint', done => {
-      const payload = {
-        fullName: 'test-full-name',
-        email: 'test-email',
-        jobTitle: 'test-job-title',
-        phoneNum: '555-55-5555',
-        senateDivision: 'test-senate-division-does-not-exist',
-      };
+    it('POST returns 400 when body empty', done => {
+      const payload = {};
 
       request(app)
         .post('/faculty')
         .send(payload)
-        .expect(409, done);
+        .expect(400, done);
     });
 
-    it('POST returns 409 when the record already exists', done => {
+    it('POST returns 400 when fullName empty', done => {
       const payload = {
-        fullName: 'test-full-name',
         email: 'test-email',
         jobTitle: 'test-job-title',
         phoneNum: '555-55-5555',
@@ -66,13 +80,135 @@ describe('Request routing for /faculty', () => {
       request(app)
         .post('/faculty')
         .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when email empty', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when jobTitle empty', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when phoneNum empty', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when senateDivision empty', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 400 when the department associations array contains missing keys', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+        departmentAssociations: [{}],
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(400, done);
+    });
+
+    it('POST returns 409 when the payload senateDivision violates foreign key constraint', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'zzzzzzzzz',
+      };
+
+      request(app)
+        .post('/api/faculty')
+        .send(payload)
+        .expect(409, done);
+    });
+
+    it('POST returns 409 when the faculty (email) record already exists', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+      };
+
+      request(app)
+        .post('/api/faculty')
+        .send(payload)
         .expect(201)
         .then(() => {
           request(app)
-            .post('/faculty')
+            .post('/api/faculty')
             .send(payload)
             .expect(409, done);
         });
+    });
+
+    it('POST returns 409 when the department associations (department_id) violates foreign key constraint', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+        departmentAssociations: [
+          {
+            department_id: 0,
+          },
+        ],
+      };
+
+      request(app)
+        .post('/faculty')
+        .send(payload)
+        .expect(409, done);
     });
   });
 
@@ -87,7 +223,7 @@ describe('Request routing for /faculty', () => {
       };
 
       request(app)
-        .put('/faculty')
+        .put('/api/faculty')
         .send(payload)
         .expect(200, done);
     });
@@ -102,7 +238,7 @@ describe('Request routing for /faculty', () => {
       };
 
       request(app)
-        .put('/faculty')
+        .put('/api/faculty')
         .send(payload)
         .expect(404, done);
     });
@@ -112,7 +248,7 @@ describe('Request routing for /faculty', () => {
     describe('getAllFaculty', () => {
       it('GET returns 200 when records exist in the database', done => {
         request(app)
-          .get('/faculty')
+          .get('/api/faculty')
           .expect(200)
           .then(response => {
             assert.equal(response.body.length, data.faculty.length);
@@ -124,7 +260,7 @@ describe('Request routing for /faculty', () => {
         await knex.migrate.rollback();
         await knex.migrate.latest().then(() => {
           request(app)
-            .get('/faculty')
+            .get('/api/faculty')
             .expect(404);
         });
       });
@@ -133,13 +269,13 @@ describe('Request routing for /faculty', () => {
     describe('getFaculty', () => {
       it('GET returns 200 and faculty record by email', done => {
         request(app)
-          .get('/faculty/wolsborn@pdx.edu')
+          .get('/api/faculty/wolsborn@pdx.edu')
           .expect(200, done);
       });
 
       it('GET returns 404 when record does not exist for specified email', done => {
         request(app)
-          .get('/faculty/bobross@happytrees.com')
+          .get('/api/faculty/bobross@happytrees.com')
           .expect(404, done);
       });
     });
@@ -147,13 +283,13 @@ describe('Request routing for /faculty', () => {
     describe('getFacultyInfo', () => {
       it('GET returns 200 and faculty info record by email', done => {
         request(app)
-          .get('/faculty/info/wolsborn@pdx.edu')
+          .get('/api/faculty/info/wolsborn@pdx.edu')
           .expect(200, done);
       });
 
       it('GET returns 404 when record does not exist for specified email', done => {
         request(app)
-          .get('/faculty/info/bobross@happytrees.com')
+          .get('/api/faculty/info/bobross@happytrees.com')
           .expect(404, done);
       });
     });
