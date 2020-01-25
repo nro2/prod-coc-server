@@ -6,7 +6,7 @@ comm_sen_combo_list.committee_id
 ,comm_sen_combo_list.senate_division
 ,comm_sen_combo_list.sd_slot_minimum
 ,COALESCE(committee_senate_faculty_count.slots_filled,0) AS sd_slot_filled
-,comm_sen_combo_list.sd_slot_minimum - COALESCE(committee_senate_faculty_count.slots_filled,0) AS sd_slots_remaining
+,COALESCE(comm_sen_combo_list.sd_slot_minimum,0) - COALESCE(committee_senate_faculty_count.slots_filled,0) AS sd_slots_remaining
 ,comm_sen_combo_list.c_total_slots 
 ,sum(COALESCE(committee_senate_faculty_count.slots_filled,0)) 
 OVER (PARTITION BY comm_sen_combo_list.committee_id) AS c_total_slots_filled
@@ -65,6 +65,11 @@ BEGIN
 	SELECT slot_stats.sd_slots_remaining from slot_stats where slot_stats.committee_id = NEW.committee_id AND slot_stats.senate_division = current_faculty_senate_division into current_faculty_senate_slots_remaining;
 	SELECT sum(slot_stats.sd_slots_remaining) from slot_stats where slot_stats.committee_id = NEW.committee_id AND slot_stats.senate_division NOT IN (current_faculty_senate_division) into senate_slots_remaining;
 
+RAISE NOTICE '%',committee_slots_left;
+RAISE NOTICE '%',current_faculty_senate_slots_remaining;
+RAISE NOTICE '%',senate_slots_remaining;
+RAISE NOTICE '%',current_faculty_senate_division;
+
 	IF committee_slots_left >= 0 THEN 
 		IF current_faculty_senate_slots_remaining >= 0 THEN 
 			RETURN NEW;
@@ -72,7 +77,7 @@ BEGIN
 			IF senate_slots_remaining <= 0 THEN
 				RETURN NEW;
 			ELSE
-				IF senate_slots_remaining <= committee_slots_left THEN
+				IF COALESCE(senate_slots_remaining,0) <= committee_slots_left THEN
 					RETURN NEW;
 				ELSE
 					RAISE EXCEPTION 'Adding this faculty violates committee slot requirements.'

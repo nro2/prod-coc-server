@@ -10,4 +10,10 @@ module.exports = [
   { committee_id: 8, senate_division_short_name: 'CQ', slot_requirements: 4 },
   { committee_id: 9, senate_division_short_name: 'AO', slot_requirements: 4 },
   { committee_id: 10, senate_division_short_name: 'BP', slot_requirements: 3 },
+  { committee_id: 11, senate_division_short_name: 'AO', slot_requirements: 1 },
+  { committee_id: 12, senate_division_short_name: 'AO', slot_requirements: 1 },
+  { committee_id: 13, senate_division_short_name: 'AO', slot_requirements: 1 },
+  { committee_id: 13, senate_division_short_name: 'BP', slot_requirements: 1 },
+  { committee_id: 14, senate_division_short_name: 'AO', slot_requirements: 1 },
+  { committee_id: 14, senate_division_short_name: 'BP', slot_requirements: 1 },
 ];

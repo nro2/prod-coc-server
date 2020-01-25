@@ -29,4 +29,28 @@ module.exports = [
     total_slots: 12,
   },
   { name: 'Student Committee', description: 'We care about you', total_slots: 10 },
+  {
+    name: 'Test 1 committee slot restrictions',
+    description:
+      'Checks committee slots remaining >=0  and current faculty committee slots remaining >=0',
+    total_slots: 1,
+  },
+  {
+    name: 'Test 2 committee slot restrictions',
+    description:
+      'Checks committee slots remaining >=0  and current faculty committee slots remaining <0, senate slots <= 0',
+    total_slots: 2,
+  },
+  {
+    name: 'Test 3 committee slot restrictions',
+    description:
+      'Checks committee slots remaining >=0  and current faculty committee slots remaining <0, senate slots > 0 and senate slots <= comm slots remaining',
+    total_slots: 3,
+  },
+  {
+    name: 'Test 4 committee slot restrictions',
+    description:
+      'Checks committee slots remaining >=0  and current faculty committee slots remaining <0, senate slots > 0 and senate slots > comm slots remaining',
+    total_slots: 2,
+  },
 ];
