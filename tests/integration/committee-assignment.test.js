@@ -73,7 +73,7 @@ describe('Request routing for /api/committee-assignment', () => {
         });
     });
 
-    describe.only('Database trigger tests', () => {
+    describe('Database trigger tests', () => {
       it('POST returns 201 when insertion succeeds, slots available, current faculty senate slots available', done => {
         const payload = {
           email: 'wolsborn@pdx.edu',
