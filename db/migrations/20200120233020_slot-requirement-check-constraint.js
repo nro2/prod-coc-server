@@ -33,6 +33,8 @@ FROM (
 	from committee as c
 	INNER JOIN committee_assignment as ca ON c.committee_id = ca.committee_id
 	INNER JOIN faculty as f on f.email = ca.email
+	LEFT OUTER JOIN committee_slots as cs on cs.committee_id = ca.committee_id and cs.senate_division_short_name = f.senate_division_short_name
+	WHERE cs.committee_id is null
 ) AS comm_sen_combo_list
 LEFT OUTER JOIN (
 	SELECT

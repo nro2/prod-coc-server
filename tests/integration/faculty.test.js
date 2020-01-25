@@ -4,7 +4,7 @@ const request = require('supertest');
 const assert = require('assert');
 const data = require('../../db/seeds/development/data');
 
-describe('Request routing for /api/faculty', () => {
+describe.only('Request routing for /api/faculty', () => {
   let app;
 
   beforeEach(async () => {
@@ -54,9 +54,9 @@ describe('Request routing for /api/faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
-        .expect('Location', 'http://localhost:8080/faculty/test-email')
+        .expect('Location', 'http://localhost:8080/api/faculty/test-email')
         .expect(201, done);
     });
 
@@ -64,7 +64,7 @@ describe('Request routing for /api/faculty', () => {
       const payload = {};
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(400, done);
     });
@@ -78,7 +78,7 @@ describe('Request routing for /api/faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(400, done);
     });
@@ -92,7 +92,7 @@ describe('Request routing for /api/faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(400, done);
     });
@@ -106,7 +106,7 @@ describe('Request routing for /api/faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(400, done);
     });
@@ -120,7 +120,7 @@ describe('Request routing for /api/faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(400, done);
     });
@@ -134,7 +134,7 @@ describe('Request routing for /api/faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(400, done);
     });
@@ -150,7 +150,7 @@ describe('Request routing for /api/faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(400, done);
     });
@@ -206,7 +206,7 @@ describe('Request routing for /api/faculty', () => {
       };
 
       request(app)
-        .post('/faculty')
+        .post('/api/faculty')
         .send(payload)
         .expect(409, done);
     });
