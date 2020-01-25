@@ -28,8 +28,8 @@ async function seedTables(knex) {
   await knex('survey_data').insert(surveyData);
   await knex('committee').insert(committee);
   await knex('survey_choice').insert(surveyChoice);
-  await knex('committee_assignment').insert(committeeAssignment);
   await knex('committee_slots').insert(committeeSlots);
+  await knex('committee_assignment').insert(committeeAssignment);
 }
 
 exports.seed = async knex => {
