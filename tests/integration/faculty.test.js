@@ -4,7 +4,7 @@ const request = require('supertest');
 const assert = require('assert');
 const data = require('../../db/seeds/development/data');
 
-describe.only('Request routing for /api/faculty', () => {
+describe('Request routing for /api/faculty', () => {
   let app;
 
   beforeEach(async () => {
