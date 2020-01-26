@@ -65,11 +65,6 @@ BEGIN
 	SELECT slot_stats.sd_slots_remaining from slot_stats where slot_stats.committee_id = NEW.committee_id AND slot_stats.senate_division = current_faculty_senate_division into current_faculty_senate_slots_remaining;
 	SELECT sum(slot_stats.sd_slots_remaining) from slot_stats where slot_stats.committee_id = NEW.committee_id AND slot_stats.senate_division NOT IN (current_faculty_senate_division) into senate_slots_remaining;
 
-RAISE NOTICE '%',committee_slots_left;
-RAISE NOTICE '%',current_faculty_senate_slots_remaining;
-RAISE NOTICE '%',senate_slots_remaining;
-RAISE NOTICE '%',current_faculty_senate_division;
-
 	IF committee_slots_left >= 0 THEN 
 		IF current_faculty_senate_slots_remaining >= 0 THEN 
 			RETURN NEW;
@@ -81,13 +76,19 @@ RAISE NOTICE '%',current_faculty_senate_division;
 					RETURN NEW;
 				ELSE
 					RAISE EXCEPTION 'Adding this faculty violates committee slot requirements.'
-      				USING HINT = 'There are slots open, but unmet senate requirements';
+					USING DETAIL = 'committee_slots_left: ' || committee_slots_left || ', current_faculty_senate_slots_remaining: ' || current_faculty_senate_slots_remaining || ', senate_slots_remaining: ' || senate_slots_remaining || ', current_faculty_senate_division: ' || current_faculty_senate_division,
+      				HINT = 'There are slots open, but unmet senate requirements',
+					ERRCODE = 'CSV01';
+           
 				END IF;
 			END IF;
 		END IF;
 	ELSE
 		RAISE EXCEPTION 'Adding this faculty violates committee slot requirements.'
-      	USING HINT = 'There are not any slots remaining';
+		USING DETAIL = 'committee_slots_left: ' || committee_slots_left || ', current_faculty_senate_slots_remaining: ' || current_faculty_senate_slots_remaining || ', senate_slots_remaining: ' || senate_slots_remaining || ', current_faculty_senate_division: ' || current_faculty_senate_division,
+      	HINT = 'There are no slots remaining for this committee',
+		ERRCODE = 'CSV02';
+  
 	END IF;
 
 END 

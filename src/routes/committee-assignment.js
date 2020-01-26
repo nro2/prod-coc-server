@@ -8,6 +8,8 @@ const {
   updateCommitteeAssignment,
   FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
+  COMMITTEE_SLOT_VIOLATION_UNMET_REQUIREMENTS,
+  COMMITTEE_SLOT_VIOLATION_NO_SLOTS_REMAINING,
 } = require('../database');
 
 router.get('/committee/:id', async (req, res) => {
@@ -87,14 +89,17 @@ router.post('/', async (req, res) => {
       }
 
       if (
-        err.message === 'Adding this faculty violates committee slot requirements.'
+        [
+          COMMITTEE_SLOT_VIOLATION_UNMET_REQUIREMENTS,
+          COMMITTEE_SLOT_VIOLATION_NO_SLOTS_REMAINING,
+        ].includes(err.code)
       ) {
         console.error(err.message);
-        return res
-          .status(409)
-          .send({
-            error: 'Adding this faculty violates committee slot requirements.',
-          });
+        return res.status(409).send({
+          error: err.message,
+          detail: err.detail,
+          hint: err.hint,
+        });
       }
 
       console.error(`Error adding committee assignment: ${err}`);
