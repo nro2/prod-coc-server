@@ -8,6 +8,8 @@ const {
   updateCommitteeAssignment,
   FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
+  COMMITTEE_SLOT_VIOLATION_UNMET_REQUIREMENTS,
+  COMMITTEE_SLOT_VIOLATION_NO_SLOTS_REMAINING,
 } = require('../database');
 
 router.get('/committee/:id', async (req, res) => {
@@ -84,6 +86,20 @@ router.post('/', async (req, res) => {
           `Attempted to add an existing committee association with invalid keys: ${err}`
         );
         return res.status(409).send();
+      }
+
+      if (
+        [
+          COMMITTEE_SLOT_VIOLATION_UNMET_REQUIREMENTS,
+          COMMITTEE_SLOT_VIOLATION_NO_SLOTS_REMAINING,
+        ].includes(err.code)
+      ) {
+        console.error(err.message);
+        return res.status(409).send({
+          error: err.message,
+          detail: err.detail,
+          hint: err.hint,
+        });
       }
 
       console.error(`Error adding committee assignment: ${err}`);
