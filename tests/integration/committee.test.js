@@ -89,7 +89,7 @@ describe('Request routing for /api/committee', () => {
       .expect(404, done);
   });
 
-  describe('getCommitteeInfo', () => {
+  /*describe('getCommitteeInfo', () => {
     it('GET returns 200 and committee info record by id', done => {
       request(app)
         .get('/api/committee/info/1')
@@ -101,5 +101,5 @@ describe('Request routing for /api/committee', () => {
         .get('/api/committee/info/99')
         .expect(404, done);
     });
-  });
+  });*/
 });

@@ -837,6 +837,12 @@ describe('Database queries', () => {
               senateDivsion: 'stub-test-senate-division',
             },
           ],
+          totalSlotsFilled: [
+            {
+              senateDivision: 'AO',
+              slotFilled: '20',
+            },
+          ],
         },
       };
       stubs.oneOrNone.resolves({
@@ -858,6 +864,12 @@ describe('Database queries', () => {
               startDate: '2019-1-15',
               endDate: '2020-10-15',
               senateDivsion: 'stub-test-senate-division',
+            },
+          ],
+          totalSlotsFilled: [
+            {
+              senateDivision: 'AO',
+              slotFilled: '20',
             },
           ],
         },
