@@ -119,6 +119,34 @@ describe('Database queries', () => {
     });
   });
 
+  describe('deleteCommitteeAssignment', () => {
+    it('returns one row affected when query is successful', async () => {
+      const id = 42;
+      const email = 'test-email';
+      const expected = {
+        rowCount: 1,
+      };
+      stubs.result.resolves(expected);
+
+      const result = await underTest.deleteCommitteeAssignment(id, email);
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('returns no rows affected there are no query results', async () => {
+      const id = 42;
+      const email = 'test-email';
+      const expected = {
+        rowCount: 0,
+      };
+      await stubs.result.resolves(expected);
+
+      const result = await underTest.deleteCommitteeAssignment(id, email);
+
+      assert.deepEqual(result, expected);
+    });
+  });
+
   describe('getCommittees', () => {
     it('returns data when query is successful', async () => {
       const expected = [
