@@ -5,6 +5,7 @@ const mock = require('./mock');
 
 const underTestFilename = '../../../src/routes/committee-assignment.js';
 
+const routerDelete = sinon.stub();
 const routerGet = sinon.stub();
 const routerPost = sinon.stub();
 const routerPut = sinon.stub();
@@ -13,6 +14,7 @@ const routerActions = {};
 const stubs = {
   express: {
     Router: () => ({
+      delete: routerDelete,
       get: routerGet,
       post: routerPost,
       put: routerPut,
@@ -20,6 +22,7 @@ const stubs = {
   },
   '../database': {
     addCommitteeAssignment: sinon.stub(),
+    deleteCommitteeAssignment: sinon.stub(),
     getCommitteeAssignmentByCommittee: sinon.stub(),
     getCommitteeAssignmentByFaculty: sinon.stub(),
     updateCommitteeAssignment: sinon.stub(),
@@ -408,6 +411,86 @@ describe('Request routing for /committee-assignment/faculty', () => {
 
     return routerActions.getCommitteeAssignmentByFaculty(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
+    });
+  });
+});
+
+describe('Request routing for /committee-assignment/:id/:email', () => {
+  let underTest; // eslint-disable-line
+  let req;
+  let res;
+
+  before(() => {
+    underTest = proxyquire(underTestFilename, stubs);
+    routerActions.deleteCommitteeAssignment = routerDelete.firstCall.args[1];
+  });
+
+  beforeEach(() => {
+    req = mock.request();
+    res = mock.response();
+  });
+
+  afterEach(() => {
+    routerDelete.resetHistory();
+
+    stubs['../database'].deleteCommitteeAssignment.resetHistory();
+  });
+
+  it('DELETE returns 200 when committee assignment is deleted from the database', () => {
+    req.params = {
+      id: 42,
+      email: 'test-email',
+    };
+    const expected = {
+      command: 'DELETE',
+      rowCount: 1,
+    };
+    stubs['../database'].deleteCommitteeAssignment.resolves(expected);
+
+    return routerActions.deleteCommitteeAssignment(req, res).then(() => {
+      assert(res.send.called);
+      assert.equal(res.status.firstCall.args[0], 200);
+    });
+  });
+
+  it('DELETE returns 400 when missing id in request parameters', () => {
+    req.params = {
+      email: 'test-email',
+    };
+
+    return routerActions.deleteCommitteeAssignment(req, res).then(() => {
+      assert(res.send.called);
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+    });
+  });
+
+  it('DELETE returns 400 when missing email in request parameters', () => {
+    req.params = {
+      id: 42,
+    };
+
+    return routerActions.deleteCommitteeAssignment(req, res).then(() => {
+      assert(res.send.called);
+      assert.equal(res.status.firstCall.args[0], 400);
+      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+    });
+  });
+
+  it('DELETE returns 404 when committee assignment is not found in the database', () => {
+    req.params = {
+      id: 42,
+      email: 'test-email',
+    };
+    const expected = {
+      command: 'DELETE',
+      rowCount: 0,
+    };
+    stubs['../database'].deleteCommitteeAssignment.resolves(expected);
+
+    return routerActions.deleteCommitteeAssignment(req, res).then(() => {
+      assert(res.send.called);
+      assert.equal(res.status.firstCall.args[0], 404);
     });
   });
 });

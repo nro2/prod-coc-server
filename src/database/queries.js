@@ -124,6 +124,22 @@ async function addFaculty(
 }
 
 /**
+ * Deletes a committee assignment by their id and email.
+ *
+ * @param id          Unique id of the committee assignment
+ * @param email       Email of the faculty member
+ * @returns {Promise} Query response on success, error on failure
+ */
+async function deleteCommitteeAssignment(id, email) {
+  const connection = loadDatabaseConnection();
+
+  return connection.result(
+    'DELETE FROM committee_assignment WHERE committee_id = $1 AND email = $2',
+    [id, email]
+  );
+}
+
+/**
  * Updates a faculty member in the database.
  *
  * @param fullName            Name of the faculty member
@@ -582,32 +598,33 @@ module.exports = {
   addCommittee,
   addCommitteeAssignment,
   addCommitteeSlots,
+  addDepartmentAssociation,
   addFaculty,
-  updateFaculty,
-  getAllFaculty,
-  getFaculty,
-  getFacultyInfo,
   addSurveyChoice,
   addSurveyData,
-  addDepartmentAssociation,
+  deleteCommitteeAssignment,
+  getAllFaculty,
+  getCommittee,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
-  getCommitteeSlotsBySenate,
-  getCommitteeSlotsByCommittee,
-  getCommittees,
-  getCommittee,
-  getDepartment,
-  getDepartments,
   getCommitteeInfo,
+  getCommitteeSlotsByCommittee,
+  getCommitteeSlotsBySenate,
+  getCommittees,
+  getDepartment,
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
-  getSenateDivisions,
+  getDepartments,
+  getFaculty,
+  getFacultyInfo,
   getSenateDivision,
+  getSenateDivisions,
   getSurveyChoice,
   getSurveyData,
   updateCommittee,
   updateCommitteeAssignment,
   updateCommitteeSlots,
   updateDepartmentAssociations,
+  updateFaculty,
   updateSurveyData,
 };
