@@ -453,30 +453,6 @@ describe('Request routing for /committee-assignment/:id/:email', () => {
     });
   });
 
-  it('DELETE returns 400 when missing id in request parameters', () => {
-    req.params = {
-      email: 'test-email',
-    };
-
-    return routerActions.deleteCommitteeAssignment(req, res).then(() => {
-      assert(res.send.called);
-      assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
-    });
-  });
-
-  it('DELETE returns 400 when missing email in request parameters', () => {
-    req.params = {
-      id: 42,
-    };
-
-    return routerActions.deleteCommitteeAssignment(req, res).then(() => {
-      assert(res.send.called);
-      assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
-    });
-  });
-
   it('DELETE returns 404 when committee assignment is not found in the database', () => {
     req.params = {
       id: 42,

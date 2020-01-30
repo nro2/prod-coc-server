@@ -14,9 +14,6 @@ const {
 } = require('../database');
 
 router.delete('/:id/:email', async (req, res) => {
-  if (!req.params.id || !req.params.email) {
-    return res.status(400).send({ message: '400 Bad Request' });
-  }
   return await deleteCommitteeAssignment(req.params.id, req.params.email)
     .then(result => {
       if (result.rowCount !== 1) {
