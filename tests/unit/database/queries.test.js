@@ -841,6 +841,7 @@ describe('Database queries', () => {
             {
               senateDivision: 'AO',
               slotFilled: '20',
+              slotMinimum: '-',
             },
           ],
         },
@@ -870,6 +871,7 @@ describe('Database queries', () => {
             {
               senateDivision: 'AO',
               slotFilled: '20',
+              slotMinimum: '-',
             },
           ],
         },

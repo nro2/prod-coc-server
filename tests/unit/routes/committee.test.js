@@ -288,6 +288,7 @@ describe('Request routing for /committee', () => {
           {
             senateDivision: 'AO',
             slotFilled: '20',
+            slotMinimum: '-',
           },
         ],
       };
