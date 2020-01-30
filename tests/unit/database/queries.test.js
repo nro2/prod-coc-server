@@ -839,13 +839,6 @@ describe('Database queries', () => {
               senateDivsion: 'stub-test-senate-division',
             },
           ],
-          /*totalSlotsFilled: [
-            {
-              senateDivision: 'AO',
-              slotFilled: '20',
-              slotMinimum: '-',
-            },
-          ],*/
         },
       };
       stubs.oneOrNone.resolves({
@@ -871,13 +864,6 @@ describe('Database queries', () => {
               senateDivsion: 'stub-test-senate-division',
             },
           ],
-          /*totalSlotsFilled: [
-            {
-              senateDivision: 'AO',
-              slotFilled: '20',
-              slotMinimum: '-',
-            },
-          ],*/
         },
       });
       const result = await underTest.getCommitteeInfo(id);

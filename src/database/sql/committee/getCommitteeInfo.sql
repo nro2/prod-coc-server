@@ -10,7 +10,6 @@ SELECT json_build_object(
   ,'committeeSlots',(
 		SELECT json_agg(
 			json_build_object(
-				/*'senateDivision', senate_division*/
 				'senateShortname', cs.senate_division_short_name
 				,'slotFilled', sd_slot_filled
 				,'slotMinimum'

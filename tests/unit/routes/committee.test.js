@@ -289,14 +289,6 @@ describe('Request routing for /committee', () => {
             senateDivsion: 'AO',
           },
         ],
-        /*totalSlotsFilled: [
-          {
-            senateShortname: 'stub-test-senate-short-name',
-            slotMinimum: '0',
-            slotFilled: '20',
-            slotsRemaining: '0'
-          },
-        ],*/
       };
       req.params.id = '1';
       stubs['../database'].getCommitteeInfo.resolves(committee);
