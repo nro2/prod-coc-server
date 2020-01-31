@@ -3,6 +3,7 @@ const router = express.Router();
 const { SERVER_URL } = require('../config');
 const {
   addCommitteeAssignment,
+  deleteCommitteeAssignment,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   updateCommitteeAssignment,
@@ -11,6 +12,26 @@ const {
   COMMITTEE_SLOT_VIOLATION_UNMET_REQUIREMENTS,
   COMMITTEE_SLOT_VIOLATION_NO_SLOTS_REMAINING,
 } = require('../database');
+
+router.delete('/:id/:email', async (req, res) => {
+  return await deleteCommitteeAssignment(req.params.id, req.params.email)
+    .then(result => {
+      if (result.rowCount !== 1) {
+        console.info(
+          `No committee assignment found for id ${req.params.id} and email ${req.params.email}`
+        );
+        return res.status(404).send();
+      }
+      console.info('Successfully retrieved committee assignment from database');
+      return res.status(200).send();
+    })
+    .catch(err => {
+      console.error(`Error retrieving committee assignment info: ${err}`);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete database transaction' });
+    });
+});
 
 router.get('/committee/:id', async (req, res) => {
   if (!req.params.id) {

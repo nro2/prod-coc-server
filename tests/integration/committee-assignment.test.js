@@ -21,6 +21,24 @@ describe('Request routing for /api/committee-assignment', () => {
   });
 
   describe('/api/committee-assignment', () => {
+    it('DELETE returns 200 when deletion succeeds', done => {
+      const id = 7;
+      const email = 'betty@oregon.gov';
+
+      request(app)
+        .delete(`/api/committee-assignment/${id}/${email}`)
+        .expect(200, done);
+    });
+
+    it('DELETE returns 404 when record does not exist', done => {
+      const id = 1000;
+      const email = 'idont@exist.anywhere';
+
+      request(app)
+        .delete(`/api/committee-assignment/${id}/${email}`)
+        .expect(404, done);
+    });
+
     it('POST returns 201 when insertion succeeds', done => {
       const payload = {
         email: 'wolsborn@pdx.edu',

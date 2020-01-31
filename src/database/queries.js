@@ -18,23 +18,6 @@ async function addCommittee(name, description, slots) {
 }
 
 /**
- * Adds committee slots to the database.
- *
- * @param committeeId         Committee id to add slots to
- * @param senateDivision      The senate division
- * @param slotRequirements    The number of slots this committee has
- * @returns {Promise}         Query response on success, error on failure
- */
-async function addCommitteeSlots(committeeId, senateDivision, slotRequirements) {
-  const connection = loadDatabaseConnection();
-
-  return connection.one(
-    'INSERT INTO committee_slots(committee_id, senate_division_short_name, slot_requirements) VALUES($1, $2, $3) RETURNING committee_id as "committeeId"',
-    [committeeId, senateDivision, slotRequirements]
-  );
-}
-
-/**
  * Adds a committee assignment to the database.
  *
  * @param email               Email of committee member
@@ -49,6 +32,23 @@ async function addCommitteeAssignment(email, committeeId, startDate, endDate) {
   return connection.one(
     'INSERT INTO committee_assignment(email, committee_id, start_date, end_date) VALUES($1, $2, $3, $4) RETURNING email',
     [email, committeeId, startDate, endDate]
+  );
+}
+
+/**
+ * Adds committee slots to the database.
+ *
+ * @param committeeId         Committee id to add slots to
+ * @param senateDivision      The senate division
+ * @param slotRequirements    The number of slots this committee has
+ * @returns {Promise}         Query response on success, error on failure
+ */
+async function addCommitteeSlots(committeeId, senateDivision, slotRequirements) {
+  const connection = loadDatabaseConnection();
+
+  return connection.one(
+    'INSERT INTO committee_slots(committee_id, senate_division_short_name, slot_requirements) VALUES($1, $2, $3) RETURNING committee_id as "committeeId"',
+    [committeeId, senateDivision, slotRequirements]
   );
 }
 
@@ -124,66 +124,6 @@ async function addFaculty(
 }
 
 /**
- * Updates a faculty member in the database.
- *
- * @param fullName            Name of the faculty member
- * @param email               Email of the faculty member
- * @param jobTitle            Job title of the faculty member
- * @param phoneNum            Phone number of faculty member
- * @param senateDivision      Senate division the faculty member belongs to
- * @returns {Promise}         Resolves object with rowCount or rejects
- */
-async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
-  const connection = loadDatabaseConnection();
-
-  return connection.tx(() => {
-    return connection.result(
-      'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
-      [fullName, jobTitle, phoneNum, senateDivision, email]
-    );
-  });
-}
-
-/**
- * Gets all faculty members.
- * @returns {Promise} Query response on success, error on failure
- */
-async function getAllFaculty() {
-  const connection = loadDatabaseConnection();
-  return connection.any('SELECT full_name, email FROM Faculty');
-}
-
-/**
- * Gets a specific faculty record by email.
- *
- * @param email          Email of the faculty member
- * @returns {Promise}    Query response object on success, error on failure
- */
-async function getFaculty(email) {
-  const connection = loadDatabaseConnection();
-
-  return connection.oneOrNone(
-    'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty WHERE email=$1',
-    [email]
-  );
-}
-
-/**
- * Gets a faculty member and all associated information to be displayed on the front end faculty component.
- * Tables involved in this query are:
- *    faculty,department__associations,department,survey_data,survey_choice,committee,committee_assignment
- *
- * @param email          Email of the faculty member
- * @returns {Promise}    Query response on success, error on failure
- */
-async function getFacultyInfo(email) {
-  const connection = loadDatabaseConnection();
-  const query = loadQueryFile(__dirname + '/sql/faculty/getFacultyInfo.sql');
-
-  return connection.oneOrNone(query, [email]);
-}
-
-/**
  * Adds a survey choice to the database.
  *
  * @param choiceId      Choice id
@@ -220,14 +160,43 @@ async function addSurveyData(surveyDate, email, interested, expertise) {
 }
 
 /**
- * Gets department records.
+ * Deletes a committee assignment by their id and email.
  *
- * @returns {Promise} Query response object on success, error on failure
+ * @param id          Unique id of the committee assignment
+ * @param email       Email of the faculty member
+ * @returns {Promise} Query response on success, error on failure
  */
-async function getDepartments() {
+async function deleteCommitteeAssignment(id, email) {
   const connection = loadDatabaseConnection();
 
-  return connection.any('SELECT department_id, name, description FROM department');
+  return connection.result(
+    'DELETE FROM committee_assignment WHERE committee_id = $1 AND email = $2',
+    [id, email]
+  );
+}
+
+/**
+ * Gets all faculty members.
+ * @returns {Promise} Query response on success, error on failure
+ */
+async function getAllFaculty() {
+  const connection = loadDatabaseConnection();
+  return connection.any('SELECT full_name, email FROM Faculty');
+}
+
+/**
+ * Gets committee record by its id.
+ *
+ * @param id     Committee id
+ * @returns {Promise} Query response object on success, error on failure
+ */
+async function getCommittee(id) {
+  const connection = loadDatabaseConnection();
+
+  return connection.one(
+    'SELECT committee_id, name, description, total_slots FROM committee WHERE committee_id=$1',
+    [id]
+  );
 }
 
 /**
@@ -258,6 +227,20 @@ async function getCommitteeAssignmentByFaculty(email) {
     'SELECT email, committee_id, start_date, end_date FROM committee_assignment WHERE email=$1',
     [email]
   );
+}
+
+/**
+ * Gets a committee and all associated information to be displayed on the front end committee component.
+ * Tables involved in this query are:
+ *    faculty,department__associations,committee,committee_assignment
+ *
+ * @param id          Id of the committee
+ * @returns {Promise}    Query response on success, error on failure
+ */
+async function getCommitteeInfo(id) {
+  const connection = loadDatabaseConnection();
+  const query = loadQueryFile(__dirname + '/sql/committee/getCommitteeInfo.sql');
+  return connection.oneOrNone(query, [id]);
 }
 
 /**
@@ -315,20 +298,6 @@ async function getDepartment(id) {
     [id]
   );
 }
-/**
- * Gets committee record by its id.
- *
- * @param id     Committee id
- * @returns {Promise} Query response object on success, error on failure
- */
-async function getCommittee(id) {
-  const connection = loadDatabaseConnection();
-
-  return connection.one(
-    'SELECT committee_id, name, description, total_slots FROM committee WHERE committee_id=$1',
-    [id]
-  );
-}
 
 /**
  * Gets department association records by department id.
@@ -345,6 +314,63 @@ async function getDepartmentAssociationsByDepartment(id) {
   );
 
   return groupDepartmentFacultyById(result);
+}
+
+/**
+ *
+ * @param email         Email of the faculty member
+ * @returns {Promise}   Query response object on success, error on failure
+ */
+async function getDepartmentAssociationsByFaculty(email) {
+  const connection = loadDatabaseConnection();
+
+  const result = await connection.any(
+    'SELECT email, department_id FROM department_associations WHERE email=$1',
+    [email]
+  );
+
+  return groupDepartmentIdByFaculty(result);
+}
+
+/**
+ * Gets department records.
+ *
+ * @returns {Promise} Query response object on success, error on failure
+ */
+async function getDepartments() {
+  const connection = loadDatabaseConnection();
+
+  return connection.any('SELECT department_id, name, description FROM department');
+}
+
+/**
+ * Gets a specific faculty record by email.
+ *
+ * @param email          Email of the faculty member
+ * @returns {Promise}    Query response object on success, error on failure
+ */
+async function getFaculty(email) {
+  const connection = loadDatabaseConnection();
+
+  return connection.oneOrNone(
+    'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM faculty WHERE email=$1',
+    [email]
+  );
+}
+
+/**
+ * Gets a faculty member and all associated information to be displayed on the front end faculty component.
+ * Tables involved in this query are:
+ *    faculty,department__associations,department,survey_data,survey_choice,committee,committee_assignment
+ *
+ * @param email          Email of the faculty member
+ * @returns {Promise}    Query response on success, error on failure
+ */
+async function getFacultyInfo(email) {
+  const connection = loadDatabaseConnection();
+  const query = loadQueryFile(__dirname + '/sql/faculty/getFacultyInfo.sql');
+
+  return connection.oneOrNone(query, [email]);
 }
 
 /**
@@ -368,22 +394,6 @@ function groupDepartmentFacultyById(arr) {
 }
 
 /**
- *
- * @param email         Email of the faculty member
- * @returns {Promise}   Query response object on success, error on failure
- */
-async function getDepartmentAssociationsByFaculty(email) {
-  const connection = loadDatabaseConnection();
-
-  const result = await connection.any(
-    'SELECT email, department_id FROM department_associations WHERE email=$1',
-    [email]
-  );
-
-  return groupDepartmentIdByFaculty(result);
-}
-
-/**
  * Group array of department associations results by email, creating a key-value
  * pair where the value is a list of department IDs.
  *
@@ -404,19 +414,6 @@ function groupDepartmentIdByFaculty(arr) {
 }
 
 /**
- * Gets all the senate divisions.
- *
- * @returns {Promise}   Query response object on success, error on failure
- */
-async function getSenateDivisions() {
-  const connection = loadDatabaseConnection();
-
-  return connection.any(
-    'SELECT senate_division_short_name, name FROM senate_division'
-  );
-}
-
-/**
  * Gets a senate division record by its short name.
  *
  * @param shortName   Short name of the senate division
@@ -428,6 +425,19 @@ async function getSenateDivision(shortName) {
   return connection.one(
     'SELECT senate_division_short_name, name FROM senate_division WHERE senate_division_short_name=$1',
     [shortName]
+  );
+}
+
+/**
+ * Gets all the senate divisions.
+ *
+ * @returns {Promise}   Query response object on success, error on failure
+ */
+async function getSenateDivisions() {
+  const connection = loadDatabaseConnection();
+
+  return connection.any(
+    'SELECT senate_division_short_name, name FROM senate_division'
   );
 }
 
@@ -454,20 +464,6 @@ function getSurveyData(year, email) {
     'SELECT survey_date, email, is_interested, expertise FROM survey_data WHERE EXTRACT(year FROM "survey_date")=$1 AND email=$2',
     [year, email]
   );
-}
-
-/**
- * Gets a committee and all associated information to be displayed on the front end committee component.
- * Tables involved in this query are:
- *    faculty,department__associations,committee,committee_assignment
- *
- * @param id          Id of the committee
- * @returns {Promise}    Query response on success, error on failure
- */
-async function getCommitteeInfo(id) {
-  const connection = loadDatabaseConnection();
-  const query = loadQueryFile(__dirname + '/sql/committee/getCommitteeInfo.sql');
-  return connection.oneOrNone(query, [id]);
 }
 
 /**
@@ -558,6 +554,27 @@ async function updateDepartmentAssociations(
 }
 
 /**
+ * Updates a faculty member in the database.
+ *
+ * @param fullName            Name of the faculty member
+ * @param email               Email of the faculty member
+ * @param jobTitle            Job title of the faculty member
+ * @param phoneNum            Phone number of faculty member
+ * @param senateDivision      Senate division the faculty member belongs to
+ * @returns {Promise}         Resolves object with rowCount or rejects
+ */
+async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
+  const connection = loadDatabaseConnection();
+
+  return connection.tx(() => {
+    return connection.result(
+      'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+      [fullName, jobTitle, phoneNum, senateDivision, email]
+    );
+  });
+}
+
+/**
  * Updates survey data in the database
  *
  * @param surveyDate    Date of Survey
@@ -582,32 +599,33 @@ module.exports = {
   addCommittee,
   addCommitteeAssignment,
   addCommitteeSlots,
+  addDepartmentAssociation,
   addFaculty,
-  updateFaculty,
-  getAllFaculty,
-  getFaculty,
-  getFacultyInfo,
   addSurveyChoice,
   addSurveyData,
-  addDepartmentAssociation,
+  deleteCommitteeAssignment,
+  getAllFaculty,
+  getCommittee,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
-  getCommitteeSlotsBySenate,
-  getCommitteeSlotsByCommittee,
-  getCommittees,
-  getCommittee,
-  getDepartment,
-  getDepartments,
   getCommitteeInfo,
+  getCommitteeSlotsByCommittee,
+  getCommitteeSlotsBySenate,
+  getCommittees,
+  getDepartment,
   getDepartmentAssociationsByDepartment,
   getDepartmentAssociationsByFaculty,
-  getSenateDivisions,
+  getDepartments,
+  getFaculty,
+  getFacultyInfo,
   getSenateDivision,
+  getSenateDivisions,
   getSurveyChoice,
   getSurveyData,
   updateCommittee,
   updateCommitteeAssignment,
   updateCommitteeSlots,
   updateDepartmentAssociations,
+  updateFaculty,
   updateSurveyData,
 };

@@ -48,7 +48,9 @@ docker network
 To exist these containers after finishing press CTRL-C to send an interrupt
 signal.
 
-## Creating database migrations
+## Database migrations
+
+### Creating migrations
 
 1. Make sure the latest packages are installed by running `npm install`
 2. To create a new migration run `npm run migrate <name-of-migration>`
@@ -58,6 +60,20 @@ signal.
    you are targeting in the [db/knexfile.js](./db/knexfile.js) file.
 
 Documentation: [Knex Migrations](http://knexjs.org/#Migrations)
+
+### Running migrations
+
+1. To run a migration, first ensure that your database is in a neutral state:
+
+   ```bash
+   npm run migrate:reset development
+   ```
+
+2. Then run the migration and seed the database:
+
+   ```bash
+   npm run database
+   ```
 
 ## How to install Docker on Linux
 
@@ -119,3 +135,13 @@ According to [this thread](https://github.com/knex/knex/issues/3512) on GitHub
 issues, the problem should be solved by updating to the latest `npm`.
 
 To update to latest, run `npm install -g npm`.
+
+**Help! I'm seeing errors while migrating or seeding the database**
+
+Maybe the database is in a state where it doesn't allow for a migration to be
+executed or the data to be seeded.
+
+- To bring the database instance back to a predictable state, run
+  `npm run migrate:reset development`.
+- Then execute the command that created the migration or seeding error
+- If this approach doesn't work, try `docker system prune`
