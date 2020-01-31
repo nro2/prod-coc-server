@@ -11,9 +11,21 @@ SELECT json_build_object(
 		SELECT json_agg(
 			json_build_object(
 				'senateShortname', cs.senate_division_short_name
-				,'slotRequiements', cs.slot_requirements
+				,'slotFilled', sd_slot_filled
+				,'slotMinimum'
+				,CASE
+				WHEN ss.sd_slot_minimum IS NULL THEN 0
+				ELSE ss.sd_slot_minimum
+				END
+				,'slotsRemaining'
+				,CASE
+				WHEN ss.sd_slot_minimum IS NULL THEN 0
+				ELSE ss.sd_slot_minimum - sd_slot_filled
+				END
 			)
-		) FROM committee_slots cs
+		)FROM  committee_slots cs LEFT OUTER JOIN slot_stats ss
+		on cs.committee_id  = ss.committee_id AND cs.senate_division_short_name
+		= ss.senate_division
 		WHERE c.committee_id = cs.committee_id
 	)
   ,'committeeAssignment',(
@@ -28,4 +40,5 @@ SELECT json_build_object(
 		) FROM committee_assignment ca NATURAL JOIN faculty f
 		WHERE f.email = ca.email AND ca.committee_id = c.committee_id
 	)
+
 )FROM committee c WHERE c.committee_id = $1

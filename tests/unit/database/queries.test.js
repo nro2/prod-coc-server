@@ -825,7 +825,9 @@ describe('Database queries', () => {
           committeeSlots: [
             {
               senateShortname: 'stub-test-senate-short-name',
-              slotRequiements: '10',
+              slotMinimum: '0',
+              slotFilled: '20',
+              slotsRemaining: '0',
             },
           ],
           committeeAssignment: [
@@ -848,7 +850,9 @@ describe('Database queries', () => {
           committeeSlots: [
             {
               senateShortname: 'stub-test-senate-short-name',
-              slotRequiements: '10',
+              slotMinimum: '0',
+              slotFilled: '20',
+              slotsRemaining: '0',
             },
           ],
           committeeAssignment: [

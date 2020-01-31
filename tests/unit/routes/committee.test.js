@@ -273,7 +273,12 @@ describe('Request routing for /committee', () => {
         description: 'Test description',
         totalSlots: '10',
         committeeSlots: [
-          { senateShortname: 'Test senate short name ', slotRequiements: '2' },
+          {
+            senateShortname: 'Test senate short name ',
+            slotMinimum: '0',
+            slotFilled: '20',
+            slotsRemaining: '0',
+          },
         ],
         committeeAssignment: [
           {
@@ -285,7 +290,6 @@ describe('Request routing for /committee', () => {
           },
         ],
       };
-
       req.params.id = '1';
       stubs['../database'].getCommitteeInfo.resolves(committee);
 
