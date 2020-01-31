@@ -10,7 +10,6 @@ exports.up = knex => {
       table.string('name').notNullable();
     })
     .createTable('faculty', table => {
-      table.specificType('faculty_id', 'serial').notNullable();
       table.string('full_name').notNullable();
       table.string('email').primary();
       table.string('phone_num');

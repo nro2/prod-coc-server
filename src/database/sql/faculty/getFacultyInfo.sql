@@ -2,8 +2,7 @@
 	Gets a faculty record and all associated records and returns as structured JSON
 */
 SELECT json_build_object(
-	'faculty_id', f.faculty_id
-	,'full_name', f.full_name
+	'full_name', f.full_name
 	,'email', f.email
 	,'phone_num', f.phone_num
 	,'job_title', f.job_title
