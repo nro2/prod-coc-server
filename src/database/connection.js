@@ -16,7 +16,6 @@ const config = {
 };
 
 let connection;
-let query;
 
 function loadDatabaseConnection() {
   if (!connection) {
@@ -26,17 +25,20 @@ function loadDatabaseConnection() {
   return connection;
 }
 
-function loadQueryFile(filePath) {
-  if (!query) {
-    query = new pgp.QueryFile(filePath, {
-      minify: true,
-    });
-  }
+const QueryFile = pgp.QueryFile;
+const path = require('path');
 
-  return query;
+function sql(file) {
+  const fullPath = path.join(__dirname, file);
+  return new QueryFile(fullPath, { minify: true });
 }
 
 module.exports = {
   loadDatabaseConnection,
-  loadQueryFile,
+  committee: {
+    info: sql('sql/committee/getCommitteeInfo.sql'),
+  },
+  faculty: {
+    info: sql('sql/faculty/getFacultyInfo.sql'),
+  },
 };

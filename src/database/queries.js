@@ -1,4 +1,4 @@
-const { loadDatabaseConnection, loadQueryFile } = require('./connection');
+const { loadDatabaseConnection, committee, faculty } = require('./connection');
 
 /**
  * Adds a committee to the database.
@@ -239,8 +239,14 @@ async function getCommitteeAssignmentByFaculty(email) {
  */
 async function getCommitteeInfo(id) {
   const connection = loadDatabaseConnection();
-  const query = loadQueryFile(__dirname + '/sql/committee/getCommitteeInfo.sql');
-  return connection.oneOrNone(query, [id]);
+  const query = committee.info;
+  return connection.oneOrNone(query, [id], committeeInfo => {
+    if (committeeInfo) {
+      return committeeInfo.json_build_object;
+    } else {
+      return null;
+    }
+  });
 }
 
 /**
@@ -368,9 +374,14 @@ async function getFaculty(email) {
  */
 async function getFacultyInfo(email) {
   const connection = loadDatabaseConnection();
-  const query = loadQueryFile(__dirname + '/sql/faculty/getFacultyInfo.sql');
-
-  return connection.oneOrNone(query, [email]);
+  const query = faculty.info;
+  return connection.oneOrNone(query, [email], facultyInfo => {
+    if (facultyInfo) {
+      return facultyInfo.json_build_object;
+    } else {
+      return null;
+    }
+  });
 }
 
 /**

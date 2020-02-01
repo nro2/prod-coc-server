@@ -4,7 +4,7 @@
 
 SELECT json_build_object(
   'name', c.name
-  ,'Id', c.committee_id
+  ,'id', c.committee_id
   ,'description', c.description
   ,'totalSlots',c.total_slots
   ,'committeeSlots',(
@@ -35,7 +35,7 @@ SELECT json_build_object(
 				,'facultyEmail', f.email
 				,'startDate', ca.start_date
 				,'endDate', ca.end_date
-				,'senateDivsion', f.senate_division_short_name
+				,'senateDivision', f.senate_division_short_name
 			)
 		) FROM committee_assignment ca NATURAL JOIN faculty f
 		WHERE f.email = ca.email AND ca.committee_id = c.committee_id

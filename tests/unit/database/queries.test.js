@@ -56,6 +56,7 @@ describe('Database queries', () => {
     stubs.many.resetHistory();
     stubs.none.resetHistory();
     stubs.one.resetHistory();
+    stubs.pgp.resetHistory();
     stubs.oneOrNone.resetHistory();
     stubs.result.resetHistory();
     stubs.tx.resetHistory();
@@ -432,23 +433,86 @@ describe('Database queries', () => {
     describe('getFacultyInfo', () => {
       it('returns faculty member when query is successful', async () => {
         const email = 'test-full-email';
+
         const expected = {
-          email: 'stub-full-email',
-          full_name: 'stub-full-name',
-          phone_num: 'stub-phone-num',
-          job_title: 'stub-job-title',
-          senate_division_short_name: 'stub-senate-short-name',
+          full_name: 'stub-test-name',
+          email: 'test-full-email',
+          phone_num: 'stub-test-phone',
+          job_title: 'stub-test-title',
+          senate_division_short_name: 'stub-test-senate',
+          departments: [
+            {
+              department_id: 1,
+              name: 'stub-test-dept-name',
+              description: 'stub-test-dept-desc',
+            },
+          ],
+          committees: [
+            {
+              committee_id: 8,
+              start_date: '2019-01-01',
+              end_date: '2020-01-01',
+              name: 'stub-test-committee-name',
+              description: 'stub-test-committee-desc',
+              total_slots: 10,
+            },
+          ],
+          surveys: {
+            survey_date: '2019-01-01',
+            is_interested: true,
+            expertise: 'stub-test-survey-expertise',
+            choices: [
+              {
+                choice_id: 1,
+                committee_id: 1,
+                name: 'stub-test-choice-name',
+                description: 'stub-test-choice-desc',
+                total_slots: 10,
+              },
+            ],
+          },
         };
 
         stubs.oneOrNone.resolves({
-          email: 'stub-full-email',
-          full_name: 'stub-full-name',
-          phone_num: 'stub-phone-num',
-          job_title: 'stub-job-title',
-          senate_division_short_name: 'stub-senate-short-name',
+          full_name: 'stub-test-name',
+          email: 'test-full-email',
+          phone_num: 'stub-test-phone',
+          job_title: 'stub-test-title',
+          senate_division_short_name: 'stub-test-senate',
+          departments: [
+            {
+              department_id: 1,
+              name: 'stub-test-dept-name',
+              description: 'stub-test-dept-desc',
+            },
+          ],
+          committees: [
+            {
+              committee_id: 8,
+              start_date: '2019-01-01',
+              end_date: '2020-01-01',
+              name: 'stub-test-committee-name',
+              description: 'stub-test-committee-desc',
+              total_slots: 10,
+            },
+          ],
+          surveys: {
+            survey_date: '2019-01-01',
+            is_interested: true,
+            expertise: 'stub-test-survey-expertise',
+            choices: [
+              {
+                choice_id: 1,
+                committee_id: 1,
+                name: 'stub-test-choice-name',
+                description: 'stub-test-choice-desc',
+                total_slots: 10,
+              },
+            ],
+          },
         });
 
-        const result = await underTest.getFaculty(email);
+        const result = await underTest.getFacultyInfo(email);
 
         assert.deepEqual(result, expected);
       });
@@ -457,7 +521,7 @@ describe('Database queries', () => {
         const email = 'test-full-email';
         await stubs.oneOrNone.resolves([]);
 
-        const result = await underTest.getFaculty(email);
+        const result = await underTest.getFacultyInfo(email);
 
         assert.deepEqual(result, []);
       });
@@ -845,60 +909,58 @@ describe('Database queries', () => {
     it('returns committee when query is successful', async () => {
       const id = 900;
       const expected = {
-        json_build_object: {
-          name: 'stub-committee-name',
-          id: '900',
-          description: 'stub-committee-description',
-          totalSlots: '10',
-          committeeSlots: [
-            {
-              senateShortname: 'stub-test-senate-short-name',
-              slotMinimum: '0',
-              slotFilled: '20',
-              slotsRemaining: '0',
-            },
-          ],
-          committeeAssignment: [
-            {
-              facultyName: 'stub-faculty-name',
-              facultyEmail: 'stub-faculty-email',
-              startDate: '2019-1-15',
-              endDate: '2020-10-15',
-              senateDivsion: 'stub-test-senate-division',
-            },
-          ],
-        },
+        name: 'stub-committee-name',
+        id: 900,
+        description: 'stub-committee-description',
+        totalSlots: 10,
+        committeeSlots: [
+          {
+            senateShortname: 'stub-test-senate-short-name',
+            slotMinimum: 0,
+            slotFilled: 20,
+            slotsRemaining: 0,
+          },
+        ],
+        committeeAssignment: [
+          {
+            facultyName: 'stub-faculty-name',
+            facultyEmail: 'stub-faculty-email',
+            startDate: '2019-1-15',
+            endDate: '2020-10-15',
+            senateDivsion: 'stub-test-senate-division',
+          },
+        ],
       };
+
       stubs.oneOrNone.resolves({
-        json_build_object: {
-          name: 'stub-committee-name',
-          id: '900',
-          description: 'stub-committee-description',
-          totalSlots: '10',
-          committeeSlots: [
-            {
-              senateShortname: 'stub-test-senate-short-name',
-              slotMinimum: '0',
-              slotFilled: '20',
-              slotsRemaining: '0',
-            },
-          ],
-          committeeAssignment: [
-            {
-              facultyName: 'stub-faculty-name',
-              facultyEmail: 'stub-faculty-email',
-              startDate: '2019-1-15',
-              endDate: '2020-10-15',
-              senateDivsion: 'stub-test-senate-division',
-            },
-          ],
-        },
+        name: 'stub-committee-name',
+        id: 900,
+        description: 'stub-committee-description',
+        totalSlots: 10,
+        committeeSlots: [
+          {
+            senateShortname: 'stub-test-senate-short-name',
+            slotMinimum: 0,
+            slotFilled: 20,
+            slotsRemaining: 0,
+          },
+        ],
+        committeeAssignment: [
+          {
+            facultyName: 'stub-faculty-name',
+            facultyEmail: 'stub-faculty-email',
+            startDate: '2019-1-15',
+            endDate: '2020-10-15',
+            senateDivsion: 'stub-test-senate-division',
+          },
+        ],
       });
       const result = await underTest.getCommitteeInfo(id);
       assert.deepEqual(result, expected);
     });
+
     it('returns empty array when there are no query results', async () => {
-      const id = '900';
+      const id = 900;
       stubs.oneOrNone.resolves([]);
       const result = await underTest.getCommitteeInfo(id);
       assert.deepEqual(result, []);
