@@ -42,7 +42,7 @@ describe('Request routing for /api/committee-assignment', () => {
     it('POST returns 201 when insertion succeeds', done => {
       const payload = {
         email: 'wolsborn@pdx.edu',
-        committeeId: 1,
+        committeeId: 2,
         startDate: '2030-01-01',
         endDate: '2050-01-01',
       };
@@ -74,7 +74,7 @@ describe('Request routing for /api/committee-assignment', () => {
     it('POST returns 409 when the record already exists', done => {
       const payload = {
         email: 'wolsborn@pdx.edu',
-        committeeId: 1,
+        committeeId: 2,
         startDate: '2030-01-01',
         endDate: '2050-01-01',
       };
