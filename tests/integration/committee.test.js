@@ -45,7 +45,7 @@ describe('Request routing for /api/committee', () => {
     request(app)
       .post('/api/committee')
       .send(payload)
-      .expect('Location', 'http://localhost:8080/api/committee/15')
+      .expect('Location', 'http://localhost:8080/api/committee/20')
       .expect(201, '', done);
   });
 

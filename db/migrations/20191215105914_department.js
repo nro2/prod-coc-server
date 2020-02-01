@@ -30,7 +30,7 @@ exports.up = knex => {
     .createTable('committee', table => {
       table.increments('committee_id').primary();
       table.string('name').notNullable();
-      table.string('description');
+      table.text('description');
       table.integer('total_slots');
     })
     .createTable('survey_choice', table => {
