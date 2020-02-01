@@ -17,21 +17,21 @@ module.exports = [
     full_name: 'Grace Hopper',
     email: 'ghopper@gmail.com',
     job_title: 'Badass',
-    senate_division_short_name: 'BP',
+    senate_division_short_name: 'CLAS-AL',
     phone_num: '111-111-1111',
   },
   {
     full_name: 'Issac Newton',
     email: 'newtons@gmail.com',
     job_title: 'Professor',
-    senate_division_short_name: 'CQ',
+    senate_division_short_name: 'SB',
     phone_num: '111-111-1111',
   },
   {
     full_name: 'Name Namerson',
     email: 'name@pdx.edu',
     job_title: 'AJob',
-    senate_division_short_name: 'BP',
+    senate_division_short_name: 'CLAS-AL',
     phone_num: '111-111-1111',
   },
   {
@@ -45,7 +45,7 @@ module.exports = [
     full_name: 'Betty Brandon',
     email: 'betty@oregon.gov',
     job_title: 'Professor',
-    senate_division_short_name: 'BP',
+    senate_division_short_name: 'CLAS-AL',
     phone_num: '111-111-1111',
   },
 ];

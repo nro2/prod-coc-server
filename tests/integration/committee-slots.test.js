@@ -45,7 +45,7 @@ describe('Request routing for /api/committee-slots', () => {
   it('POST returns 201 when insertion succeeds', done => {
     const payload = {
       committeeId: 1,
-      senateDivision: 'CQ',
+      senateDivision: 'SB',
       slotRequirements: 3,
     };
 
@@ -59,7 +59,7 @@ describe('Request routing for /api/committee-slots', () => {
   it('POST returns 409 when the payload committee id violates foreign key constraint', done => {
     const payload = {
       committeeId: 1000,
-      senateDivision: 'CQ',
+      senateDivision: 'SB',
       slotRequirements: 3,
     };
 
@@ -85,7 +85,7 @@ describe('Request routing for /api/committee-slots', () => {
   it('POST returns 409 when the record already exists', done => {
     const payload = {
       committeeId: 1,
-      senateDivision: 'CQ',
+      senateDivision: 'SB',
       slotRequirements: 3,
     };
 
