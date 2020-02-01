@@ -42,7 +42,7 @@ describe('Request routing for /api/committee-assignment', () => {
     it('POST returns 201 when insertion succeeds', done => {
       const payload = {
         email: 'wolsborn@pdx.edu',
-        committeeId: 1,
+        committeeId: 2,
         startDate: '2030-01-01',
         endDate: '2050-01-01',
       };
@@ -74,7 +74,7 @@ describe('Request routing for /api/committee-assignment', () => {
     it('POST returns 409 when the record already exists', done => {
       const payload = {
         email: 'wolsborn@pdx.edu',
-        committeeId: 1,
+        committeeId: 2,
         startDate: '2030-01-01',
         endDate: '2050-01-01',
       };
@@ -95,7 +95,7 @@ describe('Request routing for /api/committee-assignment', () => {
       it('POST returns 201 when insertion succeeds, slots available, current faculty senate slots available', done => {
         const payload = {
           email: 'wolsborn@pdx.edu',
-          committeeId: 11,
+          committeeId: 16,
           startDate: '2020-01-01',
           endDate: '2030-01-01',
         };
@@ -113,14 +113,14 @@ describe('Request routing for /api/committee-assignment', () => {
       it('POST returns 201 slots available, current faculty senate slots NOT available, senate reqs met', done => {
         const payload = {
           email: 'wolsborn@pdx.edu',
-          committeeId: 12,
+          committeeId: 17,
           startDate: '2020-01-01',
           endDate: '2030-01-01',
         };
 
         const payload2 = {
           email: 'ghopper@gmail.com',
-          committeeId: 12,
+          committeeId: 17,
           startDate: '2020-01-01',
           endDate: '2030-01-01',
         };
@@ -148,14 +148,14 @@ describe('Request routing for /api/committee-assignment', () => {
       it('POST returns 201 slots available, current faculty senate slots NOT available, senate reqs not met, but slots left over', done => {
         const payload = {
           email: 'wolsborn@pdx.edu',
-          committeeId: 13,
+          committeeId: 18,
           startDate: '2020-01-01',
           endDate: '2030-01-01',
         };
 
         const payload2 = {
           email: 'newtons@gmail.com',
-          committeeId: 13,
+          committeeId: 18,
           startDate: '2020-01-01',
           endDate: '2030-01-01',
         };
@@ -183,14 +183,14 @@ describe('Request routing for /api/committee-assignment', () => {
       it('POST returns 409 when slots are available but senate requirements are unmet', done => {
         const payload = {
           email: 'wolsborn@pdx.edu',
-          committeeId: 14,
+          committeeId: 19,
           startDate: '2020-01-01',
           endDate: '2030-01-01',
         };
 
         const payload2 = {
           email: 'newtons@gmail.com',
-          committeeId: 14,
+          committeeId: 19,
           startDate: '2020-01-01',
           endDate: '2030-01-01',
         };
@@ -214,14 +214,14 @@ describe('Request routing for /api/committee-assignment', () => {
       it('POST returns 409 when slots are not available', done => {
         const payload = {
           email: 'wolsborn@pdx.edu',
-          committeeId: 11,
+          committeeId: 16,
           startDate: '2020-01-01',
           endDate: '2030-01-01',
         };
 
         const payload2 = {
           email: 'ghopper@gmail.com',
-          committeeId: 11,
+          committeeId: 16,
           startDate: '2020-01-01',
           endDate: '2030-01-01',
         };

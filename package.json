@@ -10,7 +10,7 @@
     "test": "npm run test:unit",
     "test:unit": "mocha --exit --recursive tests/unit",
     "test:integration": "mocha --exit --recursive tests/integration",
-    "migrate": "knex migrate:make",
+    "migrate": "knex --knexfile=./db/knexfile.js migrate:make",
     "migrate:up": "knex --knexfile=./db/knexfile.js migrate:latest --env",
     "migrate:down": "knex --knexfile=./db/knexfile.js migrate:down --env",
     "migrate:reset": "knex --knexfile=./db/knexfile.js migrate:rollback --all --env",

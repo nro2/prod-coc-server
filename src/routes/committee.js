@@ -96,6 +96,7 @@ router.get('/info/:id', async (req, res) => {
   if (!req.params.id) {
     return res.status(400).send({ message: '400 Bad Request' });
   }
+
   return await getCommitteeInfo(req.params.id)
     .then(data => {
       if (!data) {

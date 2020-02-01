@@ -2,8 +2,7 @@
 	Gets a faculty record and all associated records and returns as structured JSON
 */
 SELECT json_build_object(
-	'faculty_id', f.faculty_id
-	,'full_name', f.full_name
+	'full_name', f.full_name
 	,'email', f.email
 	,'phone_num', f.phone_num
 	,'job_title', f.job_title
@@ -33,9 +32,9 @@ SELECT json_build_object(
 	)
 	,'surveys', (
 		SELECT json_build_object(
-				'survey_date', sd.survey_date
-				,'is_interested', sd.is_interested
-				,'expertise', sd.expertise
+				'survey_date', mrs.survey_date
+				,'is_interested', mrs.is_interested
+				,'expertise', mrs.expertise
 				,'choices', (
 					SELECT json_agg(
 						json_build_object(
@@ -45,11 +44,9 @@ SELECT json_build_object(
 							,'description', scc.description
 							,'total_slots', scc.total_slots
 						)
-					) FROM survey_choice sc NATURAL JOIN committee scc WHERE sd.survey_date = sc.survey_date AND sc.email = sd.email
+					) FROM survey_choice sc NATURAL JOIN committee scc WHERE mrs.survey_date = sc.survey_date AND sc.email = mrs.email
 				)
-		) FROM survey_data sd INNER JOIN (
-			SELECT max(survey_date) as RecentDate, email FROM survey_data GROUP BY email
-		) MostRecentSurvey on sd.survey_date = MostRecentSurvey.RecentDate AND sd.email = MostRecentSurvey.email
-		WHERE f.email = sd.email
+		) FROM most_recent_survey mrs
+		WHERE f.email = mrs.email
 	)
 ) FROM faculty f WHERE f.email = $1

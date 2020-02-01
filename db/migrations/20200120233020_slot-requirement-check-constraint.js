@@ -57,7 +57,7 @@ DECLARE
   committee_slots_left int;
   current_faculty_senate_slots_remaining int;
   senate_slots_remaining int;
-  current_faculty_senate_division nchar(2);
+  current_faculty_senate_division varchar(255);
   
 BEGIN 
 	SELECT senate_division_short_name FROM faculty where email = NEW.email into current_faculty_senate_division;
