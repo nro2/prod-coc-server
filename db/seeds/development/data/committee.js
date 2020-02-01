@@ -45,7 +45,7 @@ module.exports = [
     total_slots: 21,
   },
   {
-    name: 'Intercollegiae Athletics Board',
+    name: 'Intercollegiate Athletics Board',
     description: `The Board shall:
 1) Serve as the institutional advisory body to the President and Faculty Senate in the development of and adherence to policies and budgets governing the University's program in men�s and women�s intercollegiate athletics.
 2) Report to the Faculty Senate at least once each year.`,
