@@ -377,8 +377,11 @@ describe('Database queries', () => {
     describe('getAllFaculty', () => {
       it('returns data when query is successful', async () => {
         const expected = {
-          full_name: 'test-full-name',
           email: 'test-email',
+          full_name: 'test-full-name',
+          phone_num: 'test-phone-num',
+          job_title: 'test-job-title',
+          senate_division_short_name: 'test-sdsn',
         };
 
         stubs.any.resolves(expected);
