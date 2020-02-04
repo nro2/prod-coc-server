@@ -181,7 +181,9 @@ async function deleteCommitteeAssignment(id, email) {
  */
 async function getAllFaculty() {
   const connection = loadDatabaseConnection();
-  return connection.any('SELECT full_name, email FROM Faculty');
+  return connection.any(
+    'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM Faculty'
+  );
 }
 
 /**
