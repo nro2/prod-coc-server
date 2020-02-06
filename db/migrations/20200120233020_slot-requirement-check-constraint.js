@@ -20,7 +20,7 @@ FROM (
 	,cs.slot_requirements AS sd_slot_minimum
 	,c.total_slots AS c_total_slots
 	FROM committee AS c
-	LEFT OUTER JOIN committee_slots as cs ON cs.committee_id = c.committee_id
+	INNER JOIN committee_slots as cs ON cs.committee_id = c.committee_id
 
 	UNION ALL
 
@@ -35,6 +35,7 @@ FROM (
 	INNER JOIN faculty as f on f.email = ca.email
 	LEFT OUTER JOIN committee_slots as cs on cs.committee_id = ca.committee_id and cs.senate_division_short_name = f.senate_division_short_name
 	WHERE cs.committee_id is null
+	GROUP BY c.committee_id,f.senate_division_short_name
 ) AS comm_sen_combo_list
 LEFT OUTER JOIN (
 	SELECT
