@@ -103,10 +103,16 @@ router.post('/', async (req, res) => {
     })
     .catch(err => {
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
+        const hint =
+          'You are trying to add a committee assignment that already exists.';
         console.error(
           `Attempted to add an existing committee association with invalid keys: ${err}`
         );
-        return res.status(409).send();
+        return res.status(409).send({
+          error: err.message,
+          detail: err.detail,
+          hint: hint,
+        });
       }
 
       if (

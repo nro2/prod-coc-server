@@ -289,7 +289,7 @@ async function getCommitteeSlotsBySenate(senateDivision) {
 async function getCommittees() {
   const connection = loadDatabaseConnection();
 
-  return connection.any('SELECT name, committee_id FROM committee');
+  return connection.any('SELECT name, committee_id FROM committee ORDER BY name');
 }
 
 /**
