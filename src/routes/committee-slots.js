@@ -72,10 +72,11 @@ router.put('/:id/:name', async (req, res) => {
 
   return await updateCommitteeSlots(id, name, slotRequirements)
     .then(result => {
-      if (!result.rowCount) {
+      if (!result.length) {
         console.info(
           `Unable to update committee slots record, committee id ${id} or senate division ${name} do not exist`
         );
+        console.log(result);
         return res.status(404).send();
       }
 
