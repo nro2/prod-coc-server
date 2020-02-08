@@ -536,7 +536,7 @@ async function updateCommitteeSlots(committeeId, senateDivision, slotRequirement
   const connection = loadDatabaseConnection();
 
   let slotDifference = await connection.one(
-    'SELECT total_slots  + ($3-(SELECT slot_requirements FROM committee_slots WHERE committee_id=$1 AND senate_division_short_name=$2)) AS difference FROM committee WHERE committee_id=$1',
+    'SELECT $2-slot_requirements AS difference FROM committee_slots where committee_id=$1 AND senate_division_short_name=$3',
     [committeeId, slotRequirements, senateDivision]
   );
 
@@ -547,7 +547,7 @@ async function updateCommitteeSlots(committeeId, senateDivision, slotRequirement
         [slotRequirements, committeeId, senateDivision]
       ),
       t.result(
-        'UPDATE committee SET total_slots =((SELECT total_slots FROM committee WHERE committee_id = $1)+$2) WHERE committee_id=$1',
+        'UPDATE committee SET total_slots =(total_slots+$2) WHERE committee_id=$1',
         [committeeId, slotDifference.difference]
       ),
     ]);
