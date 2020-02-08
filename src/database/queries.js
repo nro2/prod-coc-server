@@ -535,7 +535,7 @@ async function updateCommitteeAssignment(email, committeeId, startDate, endDate)
 async function updateCommitteeSlots(committeeId, senateDivision, slotRequirements) {
   const connection = loadDatabaseConnection();
 
-  let slotDifference = await connection
+  const slotDifference = await connection
     .one(
       'SELECT $2-slot_requirements AS difference FROM committee_slots where committee_id=$1 AND senate_division_short_name=$3',
       [committeeId, slotRequirements, senateDivision]
