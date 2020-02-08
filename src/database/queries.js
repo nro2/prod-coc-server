@@ -535,12 +535,28 @@ async function updateCommitteeAssignment(email, committeeId, startDate, endDate)
 async function updateCommitteeSlots(committeeId, senateDivision, slotRequirements) {
   const connection = loadDatabaseConnection();
 
-  return connection.tx(() => {
-    return connection.result(
+  let slotDifference = await connection.one(
+    'SELECT total_slots  + ($3-(SELECT slot_requirements FROM committee_slots WHERE committee_id=$1 AND senate_division_short_name=$2)) AS difference FROM committee WHERE committee_id=$1',
+    [committeeId, slotRequirements, senateDivision]
+  );
+
+  return connection.tx(t => {
+    return t.batch([
+      t.result(
+        'UPDATE committee_slots SET slot_requirements = $1 WHERE committee_id = $2 and senate_division_short_name = $3',
+        [slotRequirements, committeeId, senateDivision]
+      ),
+      t.result(
+        'UPDATE committee SET total_slots =((SELECT total_slots FROM committee WHERE committee_id = $1)+$2) WHERE committee_id=$1',
+        [committeeId, slotDifference.difference]
+      ),
+    ]);
+  });
+  /*return connection.result(
       'UPDATE committee_slots SET slot_requirements = $1 WHERE committee_id = $2 and senate_division_short_name = $3',
       [slotRequirements, committeeId, senateDivision]
-    );
-  });
+    );*/
+  //});
 }
 
 /**
