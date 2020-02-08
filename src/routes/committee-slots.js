@@ -63,7 +63,7 @@ router.get('/committee/:id', async (req, res) => {
 });
 
 router.put('/:id/:name', async (req, res) => {
-  if (!req.body || !req.body.slotRequirements) {
+  if (!req.body || !req.body.slotRequirements || req.body.slotRequirements < 0) {
     return res.status(400).send({ message: '400 Bad Request' });
   }
 
