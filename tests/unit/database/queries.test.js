@@ -60,6 +60,7 @@ describe('Database queries', () => {
     stubs.oneOrNone.resetHistory();
     stubs.result.resetHistory();
     stubs.tx.resetHistory();
+    stubs.tx.resetBehavior();
     sinon.restore();
   });
 
@@ -742,8 +743,9 @@ describe('Database queries', () => {
       const expected = [{ rowCount: 1 }];
 
       stubs.one.resolves(1);
-      stubs.tx.yields();
-      stubs.result.resolves(expected);
+      stubs.tx.resolves(expected);
+      //stubs.tx.yields({batch: sinon.stub(), result: () => {}});
+      //stubs.result.resolves(expected);
 
       const result = await underTest.updateCommitteeSlots(
         id,
