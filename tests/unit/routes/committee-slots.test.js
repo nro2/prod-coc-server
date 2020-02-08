@@ -57,7 +57,7 @@ describe('Request routing for /committee-slots', () => {
       name: 'test-senate-division',
     };
     req.body.slotRequirements = 3;
-    stubs['../database'].updateCommitteeSlots.resolves({ rowCount: 1 });
+    stubs['../database'].updateCommitteeSlots.resolves([{ rowCount: 1 }]);
 
     return routerActions.putCommitteeSlots(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 200);
@@ -84,7 +84,7 @@ describe('Request routing for /committee-slots', () => {
       name: 'test-missing-senate-division',
     };
     req.body.slotRequirements = 3;
-    stubs['../database'].updateCommitteeSlots.resolves({ rowCount: 0 });
+    stubs['../database'].updateCommitteeSlots.resolves([{ rowCount: 0 }]);
 
     return routerActions.putCommitteeSlots(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
