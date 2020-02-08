@@ -744,8 +744,6 @@ describe('Database queries', () => {
 
       stubs.one.resolves(1);
       stubs.tx.resolves(expected);
-      //stubs.tx.yields({batch: sinon.stub(), result: () => {}});
-      //stubs.result.resolves(expected);
 
       const result = await underTest.updateCommitteeSlots(
         id,
