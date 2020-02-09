@@ -3,6 +3,7 @@ const {
   committee,
   allCommittee,
   faculty,
+  reports,
 } = require('./connection');
 
 /**
@@ -181,6 +182,26 @@ async function deleteCommitteeAssignment(id, email) {
 }
 
 /**
+ * Gets all committees and all associated information to be displayed on the front end committees reports.
+ * Tables involved in this query are:
+ *    faculty,department__associations,committee
+ *
+ * @returns {Promise}    Query response on success, error on failure
+ */
+async function getAllCommitteeInfo() {
+  const connection = loadDatabaseConnection();
+  const query = allCommittee.info;
+  return connection.any(query, committeeInfo => {
+    console.log(committeeInfo);
+    if (committeeInfo) {
+      return committeeInfo;
+    } else {
+      return null;
+    }
+  });
+}
+
+/**
  * Gets all faculty members.
  * @returns {Promise} Query response on success, error on failure
  */
@@ -250,26 +271,6 @@ async function getCommitteeInfo(id) {
   return connection.oneOrNone(query, [id], committeeInfo => {
     if (committeeInfo) {
       return committeeInfo.json_build_object;
-    } else {
-      return null;
-    }
-  });
-}
-
-/**
- * Gets all committees and all associated information to be displayed on the front end committees reports.
- * Tables involved in this query are:
- *    faculty,department__associations,committee
- *
- * @returns {Promise}    Query response on success, error on failure
- */
-async function getAllCommitteeInfo() {
-  const connection = loadDatabaseConnection();
-  const query = allCommittee.info;
-  return connection.any(query, committeeInfo => {
-    console.log(committeeInfo);
-    if (committeeInfo) {
-      return committeeInfo;
     } else {
       return null;
     }
@@ -480,6 +481,23 @@ async function getSenateDivisions() {
 }
 
 /**
+ * Gets senate division stats.
+ *
+ * @returns {Promise}   Query response object on success, error on failure
+ */
+async function getSenateDivisionStats() {
+  const connection = loadDatabaseConnection();
+  const query = reports.divisionStats;
+  return connection.oneOrNone(query, divisionStats => {
+    if (divisionStats) {
+      return divisionStats.json_build_object;
+    } else {
+      return null;
+    }
+  });
+}
+
+/**
  * Gets a list of survey choices by their date and email.
  *
  * @param date        Date of the survey choice
@@ -642,12 +660,12 @@ module.exports = {
   addSurveyChoice,
   addSurveyData,
   deleteCommitteeAssignment,
+  getAllCommitteeInfo,
   getAllFaculty,
   getCommittee,
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   getCommitteeInfo,
-  getAllCommitteeInfo,
   getCommitteeSlotsByCommittee,
   getCommitteeSlotsBySenate,
   getCommittees,
@@ -659,6 +677,7 @@ module.exports = {
   getFacultyInfo,
   getSenateDivision,
   getSenateDivisions,
+  getSenateDivisionStats,
   getSurveyChoice,
   getSurveyData,
   updateCommittee,
