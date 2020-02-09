@@ -130,6 +130,16 @@ router.post('/', async (req, res) => {
         });
       }
 
+      if ([CHECK_VIOLATION].includes(err.code)) {
+        const hint = 'Start date must come before end date.';
+        console.error(err.message);
+        return res.status(409).send({
+          error: err.message,
+          detail: err.detail,
+          hint: hint,
+        });
+      }
+
       console.error(`Error adding committee assignment: ${err}`);
       return res
         .status(500)
