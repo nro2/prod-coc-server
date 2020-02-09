@@ -11,6 +11,7 @@ const {
   UNIQUENESS_VIOLATION,
   COMMITTEE_SLOT_VIOLATION_UNMET_REQUIREMENTS,
   COMMITTEE_SLOT_VIOLATION_NO_SLOTS_REMAINING,
+  CHECK_VIOLATION,
 } = require('../database');
 
 router.delete('/:id/:email', async (req, res) => {
@@ -164,6 +165,17 @@ router.put('/', async (req, res) => {
       return res.status(200).send();
     })
     .catch(err => {
+      console.log(err);
+      if ([CHECK_VIOLATION].includes(err.code)) {
+        const hint = 'Start date must come before end date.';
+        console.error(err.message);
+        return res.status(409).send({
+          error: err.message,
+          detail: err.detail,
+          hint: hint,
+        });
+      }
+
       console.error(`Error updating committee assignment in database: ${err}`);
       return res
         .status(500)
