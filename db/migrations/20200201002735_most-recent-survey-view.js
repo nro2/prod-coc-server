@@ -1,5 +1,5 @@
 exports.up = function(knex) {
-  let mostRecentSurvey = `
+  const mostRecentSurvey = `
 CREATE OR REPLACE view most_recent_survey AS
 SELECT
 survey_data.survey_date
@@ -21,7 +21,7 @@ AND survey_data.email = MostRecentSurvey.email`;
 };
 
 exports.down = function(knex) {
-  let mostRecentSurvey = `DROP VIEW IF EXISTS most_recent_survey`;
+  const mostRecentSurvey = `DROP VIEW IF EXISTS most_recent_survey`;
 
   return knex.schema.raw(mostRecentSurvey);
 };
