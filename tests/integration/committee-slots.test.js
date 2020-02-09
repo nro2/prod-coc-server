@@ -26,7 +26,7 @@ describe('Request routing for /api/committee-slots', () => {
       slotRequirements: 3,
     };
 
-    let res = await request(app)
+    let initialTotalSlots = await request(app)
       .get('/api/committee/1')
       .expect(200);
 
@@ -35,11 +35,14 @@ describe('Request routing for /api/committee-slots', () => {
       .send(payload)
       .expect(200);
 
-    let secondres = await request(app)
+    let expectedTotalSlots = await request(app)
       .get('/api/committee/1')
       .expect(200);
 
-    assert.deepEqual(res.body.total_slots + 2, secondres.body.total_slots);
+    assert.deepEqual(
+      initialTotalSlots.body.total_slots + 2,
+      expectedTotalSlots.body.total_slots
+    );
   });
 
   it('PUT returns 404 when target record to update does not exist', done => {
