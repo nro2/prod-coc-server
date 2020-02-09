@@ -1,6 +1,7 @@
 const decache = require('decache');
 const knex = require('../../db/knex');
 const request = require('supertest');
+const assert = require('assert');
 
 describe('Request routing for /api/committee-slots', () => {
   let app;
@@ -20,15 +21,28 @@ describe('Request routing for /api/committee-slots', () => {
     });
   });
 
-  it('PUT returns 200 when update succeeds', done => {
+  it('PUT returns 200 when update succeeds', async () => {
     const payload = {
       slotRequirements: 3,
     };
 
-    request(app)
+    const initialTotalSlots = await request(app)
+      .get('/api/committee/1')
+      .expect(200);
+
+    await request(app)
       .put('/api/committee-slots/1/AO')
       .send(payload)
-      .expect(200, done);
+      .expect(200);
+
+    const expectedTotalSlots = await request(app)
+      .get('/api/committee/1')
+      .expect(200);
+
+    assert.deepEqual(
+      initialTotalSlots.body.total_slots + 2,
+      expectedTotalSlots.body.total_slots
+    );
   });
 
   it('PUT returns 404 when target record to update does not exist', done => {

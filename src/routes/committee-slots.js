@@ -63,7 +63,7 @@ router.get('/committee/:id', async (req, res) => {
 });
 
 router.put('/:id/:name', async (req, res) => {
-  if (!req.body || !req.body.slotRequirements) {
+  if (!req.body || !req.body.slotRequirements || req.body.slotRequirements < 0) {
     return res.status(400).send({ message: '400 Bad Request' });
   }
 
@@ -72,10 +72,11 @@ router.put('/:id/:name', async (req, res) => {
 
   return await updateCommitteeSlots(id, name, slotRequirements)
     .then(result => {
-      if (!result.rowCount) {
+      if (result[0].rowCount === 0) {
         console.info(
           `Unable to update committee slots record, committee id ${id} or senate division ${name} do not exist`
         );
+        console.log(result);
         return res.status(404).send();
       }
 

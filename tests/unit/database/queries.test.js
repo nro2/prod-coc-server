@@ -60,6 +60,7 @@ describe('Database queries', () => {
     stubs.oneOrNone.resetHistory();
     stubs.result.resetHistory();
     stubs.tx.resetHistory();
+    stubs.tx.resetBehavior();
     sinon.restore();
   });
 
@@ -739,10 +740,10 @@ describe('Database queries', () => {
       const id = 1;
       const name = 'test-senate-division';
       const slotRequirements = 3;
-      const expected = { rowCount: 1 };
+      const expected = [{ rowCount: 1 }];
 
-      stubs.tx.yields();
-      stubs.result.resolves(expected);
+      stubs.one.resolves(1);
+      stubs.tx.resolves(expected);
 
       const result = await underTest.updateCommitteeSlots(
         id,
