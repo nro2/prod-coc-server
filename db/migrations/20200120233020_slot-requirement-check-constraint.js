@@ -1,5 +1,5 @@
 exports.up = function(knex) {
-  let slotStats = `
+  const slotStats = `
 CREATE OR REPLACE view slot_stats AS
 SELECT
 comm_sen_combo_list.committee_id
@@ -51,7 +51,7 @@ AND committee_senate_faculty_count.senate_division = comm_sen_combo_list.senate_
 
 order by committee_id`;
 
-  let checkCommitteeSlotsTrigger = `
+  const checkCommitteeSlotsTrigger = `
 CREATE OR REPLACE FUNCTION check_committee_assignment_constraints() RETURNS trigger AS 
 $$
 DECLARE
@@ -103,8 +103,8 @@ AFTER INSERT ON committee_assignment
 };
 
 exports.down = function(knex) {
-  let slotStats = `DROP VIEW IF EXISTS slot_stats`;
-  let checkCommitteeSlotsTrigger = `DROP FUNCTION IF EXISTS check_committee_assignment_constraints CASCADE;`;
+  const slotStats = `DROP VIEW IF EXISTS slot_stats`;
+  const checkCommitteeSlotsTrigger = `DROP FUNCTION IF EXISTS check_committee_assignment_constraints CASCADE;`;
 
   return knex.schema.raw(slotStats).raw(checkCommitteeSlotsTrigger);
 };

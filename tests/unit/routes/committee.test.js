@@ -212,6 +212,20 @@ describe('Request routing for /committee', () => {
     });
   });
 
+  it('PUT returns 409 when trying to update total_slots below minimums', () => {
+    req.body = {
+      committeeId: 1,
+      name: 'test-committee-name',
+      description: 'test-committee-description',
+      totalSlots: 1,
+    };
+    stubs['../database'].updateCommittee.rejects({ code: 'CSV03' });
+
+    return routerActions.putCommittee(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 409);
+    });
+  });
+
   it('PUT returns 500 when unable to update faculty in the database', () => {
     req.body = {
       committeeId: 42,

@@ -6,6 +6,7 @@ const {
   updateCommittee,
   getCommittee,
   getCommitteeInfo,
+  TOTAL_COMMITTEE_SLOT_VIOLATION,
 } = require('../database');
 
 router.post('/', async (req, res) => {
@@ -63,6 +64,15 @@ router.put('/', async (req, res) => {
       return res.status(200).send();
     })
     .catch(err => {
+      if ([TOTAL_COMMITTEE_SLOT_VIOLATION].includes(err.code)) {
+        console.error(err.message);
+        return res.status(409).send({
+          error: err.message,
+          detail: err.detail,
+          hint: err.hint,
+        });
+      }
+
       console.error(`Error updating committee in database: ${err}`);
       return res
         .status(500)
