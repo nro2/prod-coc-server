@@ -26,7 +26,7 @@ describe('Request routing for /api/committee-slots', () => {
       slotRequirements: 3,
     };
 
-    let initialTotalSlots = await request(app)
+    const initialTotalSlots = await request(app)
       .get('/api/committee/1')
       .expect(200);
 
@@ -35,7 +35,7 @@ describe('Request routing for /api/committee-slots', () => {
       .send(payload)
       .expect(200);
 
-    let expectedTotalSlots = await request(app)
+    const expectedTotalSlots = await request(app)
       .get('/api/committee/1')
       .expect(200);
 
