@@ -1,4 +1,9 @@
-const { loadDatabaseConnection, committee, faculty } = require('./connection');
+const {
+  loadDatabaseConnection,
+  committee,
+  allCommittee,
+  faculty,
+} = require('./connection');
 
 /**
  * Adds a committee to the database.
@@ -245,6 +250,26 @@ async function getCommitteeInfo(id) {
   return connection.oneOrNone(query, [id], committeeInfo => {
     if (committeeInfo) {
       return committeeInfo.json_build_object;
+    } else {
+      return null;
+    }
+  });
+}
+
+/**
+ * Gets all committees and all associated information to be displayed on the front end committees reports.
+ * Tables involved in this query are:
+ *    faculty,department__associations,committee
+ *
+ * @returns {Promise}    Query response on success, error on failure
+ */
+async function getAllCommitteeInfo() {
+  const connection = loadDatabaseConnection();
+  const query = allCommittee.info;
+  return connection.any(query, committeeInfo => {
+    console.log(committeeInfo);
+    if (committeeInfo) {
+      return committeeInfo;
     } else {
       return null;
     }
@@ -622,6 +647,7 @@ module.exports = {
   getCommitteeAssignmentByCommittee,
   getCommitteeAssignmentByFaculty,
   getCommitteeInfo,
+  getAllCommitteeInfo,
   getCommitteeSlotsByCommittee,
   getCommitteeSlotsBySenate,
   getCommittees,

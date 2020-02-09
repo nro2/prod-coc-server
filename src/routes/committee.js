@@ -6,6 +6,7 @@ const {
   updateCommittee,
   getCommittee,
   getCommitteeInfo,
+  getAllCommitteeInfo,
   TOTAL_COMMITTEE_SLOT_VIOLATION,
 } = require('../database');
 
@@ -80,6 +81,35 @@ router.put('/', async (req, res) => {
     });
 });
 
+router.get('/info', async (req, res) => {
+  return await getAllCommitteeInfo()
+    .then(data => {
+      if (!data) {
+        console.info(`No committees found`);
+        return res.status(404).send();
+      }
+
+      data = data.reduce(function(acc, item) {
+        return acc.concat(
+          Object.keys(item).map(function(key) {
+            return item[key];
+          })
+        );
+      }, []);
+
+      console.info('Successfully retrieved all committee info from database');
+      return res.status(200).send(data);
+    })
+    .catch(err => {
+      console.error(`Error retrieving committee info: ${err}`);
+      console.log(err.message);
+      console.log(err.detail);
+      return res
+        .status(500)
+        .send({ error: 'Unable to complete1 database transaction' });
+    });
+});
+
 router.get('/:id', async (req, res) => {
   if (!req.params.id) {
     return res.status(400).send({ message: '400 Bad Request' });
@@ -98,7 +128,7 @@ router.get('/:id', async (req, res) => {
       console.error(`Error retrieving committee: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ error: 'Unable to complete2 database transaction' });
     });
 });
 
