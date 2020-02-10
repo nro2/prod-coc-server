@@ -21,6 +21,7 @@ const stubs = {
   '../database': {
     addCommittee: sinon.stub(),
     updateCommittee: sinon.stub(),
+    getAllCommitteeInfo: sinon.stub(),
     getCommittee: sinon.stub(),
     getCommitteeInfo: sinon.stub(),
   },

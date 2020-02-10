@@ -1,7 +1,6 @@
 const {
   loadDatabaseConnection,
   committee,
-  allCommittee,
   faculty,
   reports,
 } = require('./connection');
@@ -179,26 +178,6 @@ async function deleteCommitteeAssignment(id, email) {
     'DELETE FROM committee_assignment WHERE committee_id = $1 AND email = $2',
     [id, email]
   );
-}
-
-/**
- * Gets all committees and all associated information to be displayed on the front end committees reports.
- * Tables involved in this query are:
- *    faculty,department__associations,committee
- *
- * @returns {Promise}    Query response on success, error on failure
- */
-async function getAllCommitteeInfo() {
-  const connection = loadDatabaseConnection();
-  const query = allCommittee.info;
-  return connection.any(query, committeeInfo => {
-    console.log(committeeInfo);
-    if (committeeInfo) {
-      return committeeInfo;
-    } else {
-      return null;
-    }
-  });
 }
 
 /**
@@ -660,7 +639,6 @@ module.exports = {
   addSurveyChoice,
   addSurveyData,
   deleteCommitteeAssignment,
-  getAllCommitteeInfo,
   getAllFaculty,
   getCommittee,
   getCommitteeAssignmentByCommittee,
