@@ -1,4 +1,9 @@
-const { loadDatabaseConnection, committee, faculty } = require('./connection');
+const {
+  loadDatabaseConnection,
+  committee,
+  faculty,
+  reports,
+} = require('./connection');
 
 /**
  * Adds a committee to the database.
@@ -455,6 +460,23 @@ async function getSenateDivisions() {
 }
 
 /**
+ * Gets senate division stats.
+ *
+ * @returns {Promise}   Query response object on success, error on failure
+ */
+async function getSenateDivisionStats() {
+  const connection = loadDatabaseConnection();
+  const query = reports.divisionStats;
+  return connection.oneOrNone(query, divisionStats => {
+    if (divisionStats) {
+      return divisionStats.json_build_object;
+    } else {
+      return null;
+    }
+  });
+}
+
+/**
  * Gets a list of survey choices by their date and email.
  *
  * @param date        Date of the survey choice
@@ -648,6 +670,7 @@ module.exports = {
   getFacultyInfo,
   getSenateDivision,
   getSenateDivisions,
+  getSenateDivisionStats,
   getSurveyChoice,
   getSurveyData,
   updateCommittee,

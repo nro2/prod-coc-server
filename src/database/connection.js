@@ -41,4 +41,7 @@ module.exports = {
   faculty: {
     info: sql('sql/faculty/getFacultyInfo.sql'),
   },
+  reports: {
+    divisionStats: sql('sql/reports/senateDivisionStats.sql'),
+  },
 };

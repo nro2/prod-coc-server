@@ -54,7 +54,7 @@ describe('Request routing for /api/committee', () => {
       committeeId: 1,
       name: 'Linux Committee',
       description: 'tux-everywhere',
-      totalSlots: 3,
+      totalSlots: 20,
     };
 
     request(app)
@@ -75,6 +75,20 @@ describe('Request routing for /api/committee', () => {
       .put('/api/committee')
       .send(payload)
       .expect(404, done);
+  });
+
+  it('PUT returns 409 when trying to reduce total slots below minimums', done => {
+    const payload = {
+      committeeId: 1,
+      name: 'Committee on Committees',
+      description: 'tux-everywhere',
+      totalSlots: 1,
+    };
+
+    request(app)
+      .put('/api/committee')
+      .send(payload)
+      .expect(409, done);
   });
 
   it('GET returns 200 when record exists', done => {

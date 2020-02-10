@@ -147,6 +147,20 @@ describe('Request routing for /committee-assignment', () => {
     });
   });
 
+  it('POST returns 409 when start date > end date', () => {
+    req.body = {
+      email: 'test-existing-email',
+      committeeId: 42,
+      startDate: '2051-01-01',
+      endDate: '2050-01-01',
+    };
+    stubs['../database'].addCommitteeAssignment.rejects({ code: '23514' });
+
+    return routerActions.postCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 409);
+    });
+  });
+
   it('POST returns 500 when unable to get committee assignment from database', () => {
     req.body = {
       email: 'test-email',
@@ -249,6 +263,20 @@ describe('Request routing for /committee-assignment', () => {
 
     return routerActions.putCommitteeAssignment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 404);
+    });
+  });
+
+  it('PUT returns 409 when start date > end date', () => {
+    req.body = {
+      email: 'test-existing-email',
+      committeeId: 42,
+      startDate: '2051-01-01',
+      endDate: '2050-01-01',
+    };
+    stubs['../database'].updateCommitteeAssignment.rejects({ code: '23514' });
+
+    return routerActions.putCommitteeAssignment(req, res).then(() => {
+      assert.equal(res.status.firstCall.args[0], 409);
     });
   });
 

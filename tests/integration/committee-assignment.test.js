@@ -91,6 +91,47 @@ describe('Request routing for /api/committee-assignment', () => {
         });
     });
 
+    it('POST returns error when end date < star date', done => {
+      const payload = {
+        email: 'wolsborn@pdx.edu',
+        committeeId: 2,
+        startDate: '2051-01-01',
+        endDate: '2050-01-01',
+      };
+
+      request(app)
+        .post('/api/committee-assignment/')
+        .send(payload)
+        .expect(409, done);
+    });
+
+    it('PUT returns error when end date < star date', done => {
+      const payload = {
+        email: 'wolsborn@pdx.edu',
+        committeeId: 2,
+        startDate: '2049-01-01',
+        endDate: '2050-01-01',
+      };
+
+      const payload2 = {
+        email: 'wolsborn@pdx.edu',
+        committeeId: 2,
+        startDate: '2051-01-01',
+        endDate: '2050-01-01',
+      };
+
+      request(app)
+        .post('/api/committee-assignment/')
+        .send(payload)
+        .expect(201)
+        .then(() => {
+          request(app)
+            .put('/api/committee-assignment')
+            .send(payload2)
+            .expect(409, done);
+        });
+    });
+
     describe('Database trigger tests', () => {
       it('POST returns 201 when insertion succeeds, slots available, current faculty senate slots available', done => {
         const payload = {
