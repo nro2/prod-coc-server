@@ -38,9 +38,6 @@ module.exports = {
   committee: {
     info: sql('sql/committee/getCommitteeInfo.sql'),
   },
-  allCommittee: {
-    info: sql('sql/committee/getAllCommitteeInfo.sql'),
-  },
   faculty: {
     info: sql('sql/faculty/getFacultyInfo.sql'),
   },
