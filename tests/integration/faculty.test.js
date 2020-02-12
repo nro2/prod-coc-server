@@ -97,34 +97,6 @@ describe('Request routing for /api/faculty', () => {
         .expect(400, done);
     });
 
-    it('POST returns 400 when jobTitle empty', done => {
-      const payload = {
-        fullName: 'test-full-name',
-        email: 'test-email',
-        phoneNum: '555-55-5555',
-        senateDivision: 'AO',
-      };
-
-      request(app)
-        .post('/api/faculty')
-        .send(payload)
-        .expect(400, done);
-    });
-
-    it('POST returns 400 when phoneNum empty', done => {
-      const payload = {
-        fullName: 'test-full-name',
-        email: 'test-email',
-        jobTitle: 'test-job-title',
-        senateDivision: 'AO',
-      };
-
-      request(app)
-        .post('/api/faculty')
-        .send(payload)
-        .expect(400, done);
-    });
-
     it('POST returns 400 when senateDivision empty', done => {
       const payload = {
         fullName: 'test-full-name',
