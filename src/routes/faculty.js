@@ -16,8 +16,6 @@ router.post('/', async (req, res) => {
     !req.body ||
     !req.body.fullName ||
     !req.body.email ||
-    !req.body.jobTitle ||
-    !req.body.phoneNum ||
     !req.body.senateDivision
   ) {
     return res.status(400).send({ message: '400 Bad Request' });

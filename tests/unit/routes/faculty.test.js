@@ -95,22 +95,6 @@ describe('Request routing for /faculty', () => {
       });
     });
 
-    it('POST returns 400 when missing phoneNum in request body', () => {
-      req.body = {
-        fullName: 'test-full-name',
-        email: 'test-email',
-        jobTitle: 'test-job-title',
-        senateDivision: 'test-senate-division',
-      };
-
-      return routerActions.postFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 400);
-        assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
-        });
-      });
-    });
-
     it('POST returns 400 when missing fullName in request body', () => {
       req.body = {
         email: 'test-email',
@@ -131,22 +115,6 @@ describe('Request routing for /faculty', () => {
       req.body = {
         fullName: 'test-full-name',
         jobTitle: 'test-job-title',
-        phoneNum: 'test-phone-num',
-        senateDivision: 'test-senate-division',
-      };
-
-      return routerActions.postFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 400);
-        assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
-        });
-      });
-    });
-
-    it('POST returns 400 when missing jobTitle in request body', () => {
-      req.body = {
-        fullName: 'test-full-name',
-        email: 'test-email',
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
