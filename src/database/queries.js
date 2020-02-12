@@ -181,6 +181,22 @@ async function deleteCommitteeAssignment(id, email) {
 }
 
 /**
+ * Deletes a senate division slot requirement from a committee committee_id and senate_division_short_name.
+ *
+ * @param committee_id                Unique id of the committee
+ * @param senate_division_short_name  Short name of senate division
+ * @returns {Promise}  Query response on success, error on failure
+ */
+async function deleteSlotRequirement(committee_id, senate_division_short_name) {
+  const connection = loadDatabaseConnection();
+
+  return connection.result(
+    'DELETE FROM committee_slots WHERE committee_id = $1 AND senate_division_short_name = $2',
+    [committee_id, senate_division_short_name]
+  );
+}
+
+/**
  * Gets all faculty members.
  * @returns {Promise} Query response on success, error on failure
  */
@@ -654,6 +670,7 @@ module.exports = {
   addSurveyChoice,
   addSurveyData,
   deleteCommitteeAssignment,
+  deleteSlotRequirement,
   getAllFaculty,
   getCommittee,
   getCommitteeAssignmentByCommittee,

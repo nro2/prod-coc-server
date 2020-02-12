@@ -142,4 +142,22 @@ describe('Request routing for /api/committee-slots', () => {
         .expect(404, done);
     });
   });
+
+  it('DELETE returns 200 when deletion succeeds', done => {
+    const committee_id = 1;
+    const senate_division_short_name = 'CLAS-AL';
+
+    request(app)
+      .delete(`/api/committee-slots/${committee_id}/${senate_division_short_name}`)
+      .expect(200, done);
+  });
+
+  it('DELETE returns 404 when record does not exist', done => {
+    const committee_id = 1000;
+    const senate_division_short_name = 'Not a real ID';
+
+    request(app)
+      .delete(`/api/committee-slots/${committee_id}/${senate_division_short_name}`)
+      .expect(404, done);
+  });
 });
