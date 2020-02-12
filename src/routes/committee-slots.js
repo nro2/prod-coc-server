@@ -132,15 +132,12 @@ router.post('/', async (req, res) => {
     });
 });
 
-router.delete('/:committee_id/:senate_division_short_name', async (req, res) => {
-  return await deleteSlotRequirement(
-    req.params.committee_id,
-    req.params.senate_division_short_name
-  )
+router.delete('/:id/:name', async (req, res) => {
+  return await deleteSlotRequirement(req.params.id, req.params.name)
     .then(result => {
       if (result.rowCount !== 1) {
         console.info(
-          `No slot requirement found for committee id ${req.params.committee_id} and senate division short name ${req.params.senate_division_short_name}`
+          `No slot requirement found for committee id ${req.params.id} and senate division short name ${req.params.name}`
         );
         return res.status(404).send();
       }
