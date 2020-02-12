@@ -149,6 +149,40 @@ describe('Database queries', () => {
     });
   });
 
+  describe('deleteSlotRequirement', () => {
+    it('returns one row affected when query is successful', async () => {
+      const committee_id = 1;
+      const senate_division_short_name = 'test-sdsn';
+      const expected = {
+        rowCount: 1,
+      };
+      stubs.result.resolves(expected);
+
+      const result = await underTest.deleteSlotRequirement(
+        committee_id,
+        senate_division_short_name
+      );
+
+      assert.deepEqual(result, expected);
+    });
+
+    it('returns no rows affected there are no query results', async () => {
+      const committee_id = 1;
+      const senate_division_short_name = 'test-sdsn';
+      const expected = {
+        rowCount: 0,
+      };
+      await stubs.result.resolves(expected);
+
+      const result = await underTest.deleteSlotRequirement(
+        committee_id,
+        senate_division_short_name
+      );
+
+      assert.deepEqual(result, expected);
+    });
+  });
+
   describe('getCommittees', () => {
     it('returns data when query is successful', async () => {
       const expected = [

@@ -5,6 +5,7 @@ const mock = require('./mock');
 
 const underTestFilename = '../../../src/routes/committee-slots.js';
 
+const routerDelete = sinon.stub();
 const routerGet = sinon.stub();
 const routerPut = sinon.stub();
 const routerPost = sinon.stub();
@@ -13,6 +14,7 @@ const routerActions = {};
 const stubs = {
   express: {
     Router: () => ({
+      delete: routerDelete,
       get: routerGet,
       put: routerPut,
       post: routerPost,
@@ -23,6 +25,7 @@ const stubs = {
     getCommitteeSlotsBySenate: sinon.stub(),
     getCommitteeSlotsByCommittee: sinon.stub(),
     updateCommitteeSlots: sinon.stub(),
+    deleteSlotRequirement: sinon.stub(),
   },
 };
 describe('Request routing for /committee-slots', () => {
@@ -294,6 +297,61 @@ describe('Request routing for /committee-slots', () => {
 
       return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
+      });
+    });
+  });
+  describe('Request routing for /committee-slots/:committee_id/:senate_division_short_name', () => {
+    let underTest; // eslint-disable-line
+    let req;
+    let res;
+
+    before(() => {
+      underTest = proxyquire(underTestFilename, stubs);
+      routerActions.deleteSlotRequirement = routerDelete.firstCall.args[1];
+    });
+
+    beforeEach(() => {
+      req = mock.request();
+      res = mock.response();
+    });
+
+    afterEach(() => {
+      routerDelete.resetHistory();
+
+      stubs['../database'].deleteSlotRequirement.resetHistory();
+    });
+
+    it('DELETE returns 200 when slot requirement is deleted from the database', () => {
+      req.params = {
+        committee_id: 1,
+        senate_division_short_name: 'test-sdsn',
+      };
+      const expected = {
+        command: 'DELETE',
+        rowCount: 1,
+      };
+      stubs['../database'].deleteSlotRequirement.resolves(expected);
+
+      return routerActions.deleteSlotRequirement(req, res).then(() => {
+        assert(res.send.called);
+        assert.equal(res.status.firstCall.args[0], 200);
+      });
+    });
+
+    it('DELETE returns 404 when slot requirement is not found in the database', () => {
+      req.params = {
+        committee_id: 1,
+        senate_division_short_name: 'test-sdsn',
+      };
+      const expected = {
+        command: 'DELETE',
+        rowCount: 0,
+      };
+      stubs['../database'].deleteSlotRequirement.resolves(expected);
+
+      return routerActions.deleteSlotRequirement(req, res).then(() => {
+        assert(res.send.called);
+        assert.equal(res.status.firstCall.args[0], 404);
       });
     });
   });
