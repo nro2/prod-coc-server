@@ -21,6 +21,7 @@
         "destructuring": "any",
         "ignoreReadBeforeAssign": false
       }
-    ]
+    ],
+    "no-var": "error"
   }
 }
