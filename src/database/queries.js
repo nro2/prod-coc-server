@@ -52,7 +52,7 @@ async function addCommitteeSlots(committeeId, senateDivision, slotRequirements) 
   const connection = loadDatabaseConnection();
 
   return connection.tx(t => {
-    return t.one([
+    return t.batch([
       t.one(
         'INSERT INTO committee_slots(committee_id, senate_division_short_name, slot_requirements) VALUES($1, $2, $3) RETURNING committee_id as "committeeId"',
         [committeeId, senateDivision, slotRequirements]
