@@ -45,6 +45,8 @@ describe('Request routing for /committee', () => {
       {
         name: 'test-committee-name',
         committee_id: 'test-committee-id',
+        description: 'test-description',
+        total_slots: 10,
       },
     ];
     stubs['../database'].getCommittees.resolves(committees);
