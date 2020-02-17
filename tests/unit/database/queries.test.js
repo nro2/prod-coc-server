@@ -198,6 +198,8 @@ describe('Database queries', () => {
         {
           name: 'test-committee-name',
           committee_id: 1,
+          description: 'test-description',
+          total_slots: 1,
         },
       ];
       stubs.any.resolves(expected);
