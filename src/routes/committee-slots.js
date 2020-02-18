@@ -109,12 +109,17 @@ router.post('/', async (req, res) => {
   return addCommitteeSlots(committeeId, senateDivision, slotRequirements)
     .then(result => {
       console.info('Successfully added committee slots to database');
-      const { committeeId } = result[0];
+
+      let e = {};
+
+      if (Array.isArray(result) && result.length) {
+        e = { return: result[0].committeeId };
+      } else {
+        e = { return: result.committeeId };
+      }
+
       return res
-        .set(
-          'Location',
-          `${SERVER_URL}/api/committee-slots/committee/${committeeId}`
-        )
+        .set('Location', `${SERVER_URL}/api/committee-slots/committee/${e.return}`)
         .status(201)
         .send();
     })
