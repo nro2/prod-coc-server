@@ -138,6 +138,12 @@ router.put('/', async (req, res) => {
     departmentAssociations
   )
     .then(result => {
+      if (!result.rowCount) {
+        console.info(
+          `Unable to update faculty record, email ${email} does not exist`
+        );
+        return res.status(404).send();
+      }
       console.info('Updated faculty member to database');
 
       let e = {};
@@ -173,7 +179,7 @@ router.put('/', async (req, res) => {
         console.error(
           `Attempted to update faculty with invalid keys:\n ${message} \n ${detail}`
         );
-        return res.status(409).send({ msg: message, error: detail });
+        return res.status(404).send({ msg: message, error: detail });
       }
 
       console.error(`Error adding faculty member to database:\n ${err}`);
