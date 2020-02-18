@@ -108,25 +108,79 @@ router.put('/', async (req, res) => {
     return res.status(400).send({ message: '400 Bad Request' });
   }
 
-  const { fullName, email, jobTitle, phoneNum, senateDivision } = req.body;
+  const {
+    fullName,
+    email,
+    jobTitle,
+    phoneNum,
+    senateDivision,
+    departmentAssociations,
+  } = req.body;
 
-  return await updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision)
+  if (Array.isArray(departmentAssociations) && departmentAssociations.length) {
+    departmentAssociations.forEach(d => {
+      if (Object.entries(d).length === 0 && d.constructor === Object) {
+        return res.status(400).send({
+          message: '400 Bad Request',
+          error:
+            'JSON includes deaprtmentAssocitions object, but department_id is undefined/missing',
+        });
+      }
+    });
+  }
+
+  return await updateFaculty(
+    fullName,
+    email,
+    jobTitle,
+    phoneNum,
+    senateDivision,
+    departmentAssociations
+  )
     .then(result => {
-      if (!result.rowCount) {
-        console.info(
-          `Unable to update faculty record, email ${email} does not exist`
-        );
-        return res.status(404).send();
+      console.info('Updated faculty member to database');
+
+      let e = {};
+
+      if (Array.isArray(result) && result.length) {
+        e = { return: result[0].email };
+      } else {
+        e = { return: result.email };
       }
 
       console.info(`Updated faculty member with email ${email}`);
-      return res.status(200).send();
+      return res
+        .set('Location', `${SERVER_URL}/api/faculty/${e.return}`)
+        .status(200)
+        .send();
     })
     .catch(err => {
-      console.error(`Error updating faculty member in database: ${err}`);
-      return res
-        .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+      let code;
+      let message;
+      let detail;
+
+      if (!err.stat) {
+        code = err.code;
+        message = err.message;
+        detail = err.detail;
+      } else {
+        code = err.first.code;
+        message = err.first.message;
+        detail = err.first.detail;
+      }
+
+      if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(code)) {
+        console.error(
+          `Attempted to update faculty with invalid keys:\n ${message} \n ${detail}`
+        );
+        return res.status(409).send({ msg: message, error: detail });
+      }
+
+      console.error(`Error adding faculty member to database:\n ${err}`);
+      return res.status(500).send({
+        msg: 'Unable to complete database transaction',
+        error: err.message,
+      });
     });
 });
 
