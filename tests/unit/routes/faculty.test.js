@@ -329,7 +329,7 @@ describe('Request routing for /faculty', () => {
       });
     });
 
-    it('PUT returns 404 when faculty record did not exist to update', () => {
+    it('PUT returns 409 when faculty record did not exist to update', () => {
       req.body = {
         fullName: 'test-full-name',
         email: 'test-email',
@@ -337,7 +337,7 @@ describe('Request routing for /faculty', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
-      stubs['../database'].updateFaculty.resolves({ rowCount: 0 });
+      stubs['../database'].updateFaculty.rejects({ code: '23505' });
 
       return routerActions.putFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
@@ -357,7 +357,8 @@ describe('Request routing for /faculty', () => {
       return routerActions.putFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          error: 'Unable to complete database transaction',
+          msg: 'Unable to complete database transaction',
+          error: 'test-database-error',
         });
       });
     });
