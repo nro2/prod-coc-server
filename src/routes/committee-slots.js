@@ -109,7 +109,7 @@ router.post('/', async (req, res) => {
   return addCommitteeSlots(committeeId, senateDivision, slotRequirements)
     .then(result => {
       console.info('Successfully added committee slots to database');
-      const { committeeId } = result;
+      const { committeeId } = result[0];
       return res
         .set(
           'Location',
@@ -119,9 +119,20 @@ router.post('/', async (req, res) => {
         .send();
     })
     .catch(err => {
-      if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
+      let code;
+      let message;
+
+      if (!err.stat) {
+        code = err.code;
+        message = err.message;
+      } else {
+        code = err.first.code;
+        message = err.first.message;
+      }
+
+      if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(code)) {
         console.error(
-          `Attempted to add existing committee slots with invalid keys: ${err}`
+          `Attempted to add existing committee slots with invalid keys: ${message}`
         );
         return res.status(409).send();
       }
