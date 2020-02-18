@@ -48,6 +48,27 @@ docker network
 To exist these containers after finishing press CTRL-C to send an interrupt
 signal.
 
+## Building Front-End
+
+In order to serve the front-end application from the back-end server, the
+front-end assets must be built and copied to the back-end.
+
+### Building Front-End Assets
+
+1. Navigate to the
+   [coc-client](https://bitbucket.org/CapstoneFall19/prod-coc-client/)
+   application
+2. Clone the repository
+3. Build the static assets:
+
+```
+npm run build
+```
+
+4. Copy the `build/` directory created by this command into the coc-server
+5. On the server, run `npm start` and visit http://localhost:8080/; the
+   front-end page should be visible
+
 ## Database migrations
 
 ### Creating migrations
