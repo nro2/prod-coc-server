@@ -110,3 +110,6 @@ dist
 .idea/
 .vscode/
 .vs/
+
+# React assets
+build/
