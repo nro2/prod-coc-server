@@ -637,17 +637,50 @@ async function updateDepartmentAssociations(
  * @param jobTitle            Job title of the faculty member
  * @param phoneNum            Phone number of faculty member
  * @param senateDivision      Senate division the faculty member belongs to
+ * @param departmentAssociations  Array of department ids to associate the faculty member to
  * @returns {Promise}         Resolves object with rowCount or rejects
  */
-async function updateFaculty(fullName, email, jobTitle, phoneNum, senateDivision) {
+async function updateFaculty(
+  fullName,
+  email,
+  jobTitle,
+  phoneNum,
+  senateDivision,
+  departmentAssociations
+) {
   const connection = loadDatabaseConnection();
+  const pgp = connection.$config.pgp;
 
-  return connection.tx(() => {
-    return connection.result(
-      'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
-      [fullName, jobTitle, phoneNum, senateDivision, email]
-    );
-  });
+  if (Array.isArray(departmentAssociations) && departmentAssociations.length) {
+    const departmentAssociationsWithEmail = departmentAssociations.map(e => {
+      return e.value === undefined ? { ...e, email: email } : e;
+    });
+    return connection.tx(t => {
+      return t.batch([
+        connection.result(
+          'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+          [fullName, jobTitle, phoneNum, senateDivision, email]
+        ),
+        connection.result('DELETE FROM department_associations WHERE email = $1', [
+          email,
+        ]),
+        connection.any(
+          pgp.helpers.insert(
+            departmentAssociationsWithEmail,
+            ['email', 'department_id'],
+            'department_associations'
+          )
+        ),
+      ]);
+    });
+  } else {
+    return connection.tx(() => {
+      return connection.result(
+        'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+        [fullName, jobTitle, phoneNum, senateDivision, email]
+      );
+    });
+  }
 }
 
 /**
