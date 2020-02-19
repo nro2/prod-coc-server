@@ -377,9 +377,9 @@ describe('Database queries', () => {
         const jobTitle = 'test-job-title';
         const phoneNum = '555-55-5555';
         const senateDivision = 'test-senate-division';
-        const expected = { rowCount: 1 };
+        const expected = [{ rowCount: 1 }];
 
-        stubs.tx.yields();
+        stubs.tx.resolves(expected);
         stubs.result.resolves(expected);
 
         const result = await underTest.updateFaculty(

@@ -242,7 +242,7 @@ describe('Request routing for /faculty', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
-      stubs['../database'].updateFaculty.resolves({ rowCount: 1 });
+      stubs['../database'].updateFaculty.resolves([{ rowCount: 1 }]);
 
       return routerActions.putFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 200);
