@@ -185,7 +185,31 @@ describe('Request routing for /api/faculty', () => {
   });
 
   describe('PUT Integration Tests', () => {
-    it('PUT returns 200 when update succeeds', done => {
+    it('PUT returns 200 when update succeeds with departments', async () => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'wolsborn@pdx.edu',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+        departmentAssociations: [{ department_id: 2 }, { department_id: 4 }],
+      };
+
+      const expected = [2, 4];
+
+      await request(app)
+        .put('/api/faculty')
+        .send(payload)
+        .expect(200);
+
+      const departments = await request(app)
+        .get('/api/department-associations/faculty/wolsborn@pdx.edu')
+        .expect(200);
+
+      assert.deepEqual(departments.body.department_ids, expected);
+    });
+
+    it('PUT returns 200 when updates succeeds with no departments', done => {
       const payload = {
         fullName: 'test-full-name',
         email: 'wolsborn@pdx.edu',
@@ -201,6 +225,22 @@ describe('Request routing for /api/faculty', () => {
     });
 
     it('PUT returns 404 when target record to update does not exist', done => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'test-email-does-not-exist',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+        departmentAssociations: [{ department_id: 4 }],
+      };
+
+      request(app)
+        .put('/api/faculty')
+        .send(payload)
+        .expect(404, done);
+    });
+
+    it('PUT returns 404 when target record to update does not exist and no dept ids', done => {
       const payload = {
         fullName: 'test-full-name',
         email: 'test-email-does-not-exist',
