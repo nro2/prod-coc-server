@@ -139,7 +139,6 @@ router.put('/', async (req, res) => {
   )
     .then(result => {
       if (!result[0].rowCount) {
-        console.log(result);
         console.info(
           `Unable to update faculty record, email ${email} does not exist`
         );
