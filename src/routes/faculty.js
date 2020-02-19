@@ -138,7 +138,8 @@ router.put('/', async (req, res) => {
     departmentAssociations
   )
     .then(result => {
-      if (!result.rowCount) {
+      if (!result[0].rowCount) {
+        console.log(result);
         console.info(
           `Unable to update faculty record, email ${email} does not exist`
         );

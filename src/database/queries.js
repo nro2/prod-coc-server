@@ -668,11 +668,13 @@ async function updateFaculty(
       ]);
     });
   } else {
-    return connection.tx(() => {
-      return connection.result(
-        'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
-        [fullName, jobTitle, phoneNum, senateDivision, email]
-      );
+    return connection.tx(t => {
+      return t.batch([
+        connection.result(
+          'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+          [fullName, jobTitle, phoneNum, senateDivision, email]
+        ),
+      ]);
     });
   }
 }
