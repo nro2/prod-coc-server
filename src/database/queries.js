@@ -652,21 +652,32 @@ async function updateFaculty(
       email,
     ]);
 
-    return connection.tx(t => {
-      return t.batch([
-        connection.result(
-          'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
-          [fullName, jobTitle, phoneNum, senateDivision, email]
-        ),
-        connection.any(
-          pgp.helpers.insert(
-            departmentAssociationsWithEmail,
-            ['email', 'department_id'],
-            'department_associations'
-          )
-        ),
-      ]);
-    });
+    if (departmentAssociations.length) {
+      return connection.tx(t => {
+        return t.batch([
+          connection.result(
+            'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+            [fullName, jobTitle, phoneNum, senateDivision, email]
+          ),
+          connection.any(
+            pgp.helpers.insert(
+              departmentAssociationsWithEmail,
+              ['email', 'department_id'],
+              'department_associations'
+            )
+          ),
+        ]);
+      });
+    } else {
+      return connection.tx(t => {
+        return t.batch([
+          connection.result(
+            'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+            [fullName, jobTitle, phoneNum, senateDivision, email]
+          ),
+        ]);
+      });
+    }
   } else {
     return connection.tx(t => {
       return t.batch([
