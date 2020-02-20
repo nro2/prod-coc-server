@@ -643,7 +643,7 @@ async function updateFaculty(
   const connection = loadDatabaseConnection();
   const pgp = connection.$config.pgp;
 
-  if (Array.isArray(departmentAssociations) && departmentAssociations.length) {
+  if (Array.isArray(departmentAssociations)) {
     const departmentAssociationsWithEmail = departmentAssociations.map(e => {
       return e.value === undefined ? { ...e, email: email } : e;
     });

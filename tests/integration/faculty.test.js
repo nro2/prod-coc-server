@@ -209,6 +209,31 @@ describe('Request routing for /api/faculty', () => {
       assert.deepEqual(departments.body.department_ids, expected);
     });
 
+    it('PUT returns 200 when update succeeds when deleting all departments', async () => {
+      const payload = {
+        fullName: 'test-full-name',
+        email: 'wolsborn@pdx.edu',
+        jobTitle: 'test-job-title',
+        phoneNum: '555-55-5555',
+        senateDivision: 'AO',
+        departmentAssociations: [],
+      };
+
+      //Empty object since departments route should 404 since there are no departments being returned
+      const expected = {};
+
+      await request(app)
+        .put('/api/faculty')
+        .send(payload)
+        .expect(200);
+
+      const departments = await request(app)
+        .get('/api/department-associations/faculty/wolsborn@pdx.edu')
+        .expect(404);
+
+      assert.deepEqual(departments.body, expected);
+    });
+
     it('PUT returns 200 when updates succeeds with no departments', done => {
       const payload = {
         fullName: 'test-full-name',
