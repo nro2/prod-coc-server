@@ -56,18 +56,31 @@ describe('Request routing for /api/committee-slots', () => {
       .expect(404, done);
   });
 
-  it('POST returns 201 when insertion succeeds', done => {
+  it('POST returns 201 when insertion succeeds', async () => {
     const payload = {
       committeeId: 2,
       senateDivision: 'SB',
       slotRequirements: 3,
     };
 
-    request(app)
+    const initialTotalSlots = await request(app)
+      .get('/api/committee/2')
+      .expect(200);
+
+    await request(app)
       .post('/api/committee-slots')
       .send(payload)
       .expect('Location', 'http://localhost:8080/api/committee-slots/committee/2')
-      .expect(201, done);
+      .expect(201);
+
+    const expectedTotalSlots = await request(app)
+      .get('/api/committee/2')
+      .expect(200);
+
+    assert.deepEqual(
+      initialTotalSlots.body.total_slots + 3,
+      expectedTotalSlots.body.total_slots
+    );
   });
 
   it('POST returns 409 when the payload committee id violates foreign key constraint', done => {
