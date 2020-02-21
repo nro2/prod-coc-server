@@ -14,6 +14,7 @@ SELECT json_build_object(
 				,'name', d.name
 				,'description', d.description
 			)
+		    ORDER BY d.name ASC
 		) FROM department_associations da NATURAL JOIN Department d
 		WHERE f.email = da.email
 	)
@@ -27,6 +28,7 @@ SELECT json_build_object(
 				,'description', c.description
 				,'total_slots', c.total_slots
 			)
+		    ORDER BY c.name ASC
 		) FROM committee_assignment ca NATURAL JOIN committee c
 		WHERE f.email = ca.email
 	)

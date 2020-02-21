@@ -51,10 +51,18 @@ async function addCommitteeAssignment(email, committeeId, startDate, endDate) {
 async function addCommitteeSlots(committeeId, senateDivision, slotRequirements) {
   const connection = loadDatabaseConnection();
 
-  return connection.one(
-    'INSERT INTO committee_slots(committee_id, senate_division_short_name, slot_requirements) VALUES($1, $2, $3) RETURNING committee_id as "committeeId"',
-    [committeeId, senateDivision, slotRequirements]
-  );
+  return connection.tx(t => {
+    return t.batch([
+      t.one(
+        'INSERT INTO committee_slots(committee_id, senate_division_short_name, slot_requirements) VALUES($1, $2, $3) RETURNING committee_id as "committeeId"',
+        [committeeId, senateDivision, slotRequirements]
+      ),
+      t.result(
+        'UPDATE committee SET total_slots = (total_slots +$2) WHERE committee_id=$1',
+        [committeeId, slotRequirements]
+      ),
+    ]);
+  });
 }
 
 /**
@@ -203,7 +211,7 @@ async function deleteSlotRequirement(committee_id, senate_division_short_name) {
 async function getAllFaculty() {
   const connection = loadDatabaseConnection();
   return connection.any(
-    'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM Faculty'
+    'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM Faculty ORDER BY full_name ASC'
   );
 }
 
@@ -473,7 +481,7 @@ async function getSenateDivisions() {
   const connection = loadDatabaseConnection();
 
   return connection.any(
-    'SELECT senate_division_short_name, name FROM senate_division'
+    'SELECT senate_division_short_name, name FROM senate_division ORDER BY senate_division_short_name ASC'
   );
 }
 

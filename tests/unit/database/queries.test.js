@@ -107,17 +107,22 @@ describe('Database queries', () => {
   });
 
   describe('addCommitteeSlots', () => {
-    it('returns committeeId when query is successful', async () => {
-      const committeeId = 42;
-      stubs.one.resolves(committeeId);
+    it('returns object when query is successful', async () => {
+      const committeeId = 1;
+      const name = 'test-senate-division';
+      const slotRequirements = 3;
+      const expected = [{ rowCount: 1 }];
+
+      stubs.one.resolves(1);
+      stubs.tx.resolves(expected);
 
       const result = await underTest.addCommitteeSlots(
-        1,
-        'test-senate-division',
-        3
+        committeeId,
+        name,
+        slotRequirements
       );
 
-      assert.equal(result, committeeId);
+      assert.deepEqual(result, expected);
     });
   });
 
