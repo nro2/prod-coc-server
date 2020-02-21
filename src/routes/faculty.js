@@ -144,17 +144,10 @@ router.put('/', async (req, res) => {
       }
       console.info('Updated faculty member to database');
 
-      let e = {};
-
-      if (Array.isArray(result) && result.length) {
-        e = { return: result[0].email };
-      } else {
-        e = { return: result.email };
-      }
-
+      console.log(result);
       console.info(`Updated faculty member with email ${email}`);
       return res
-        .set('Location', `${SERVER_URL}/api/faculty/${e.return}`)
+        .set('Location', `${SERVER_URL}/api/faculty/${email}`)
         .status(200)
         .send();
     })
