@@ -651,34 +651,43 @@ async function updateFaculty(
   const connection = loadDatabaseConnection();
   const pgp = connection.$config.pgp;
 
-  if (Array.isArray(departmentAssociations) && departmentAssociations.length) {
+  if (Array.isArray(departmentAssociations)) {
     const departmentAssociationsWithEmail = departmentAssociations.map(e => {
       return e.value === undefined ? { ...e, email: email } : e;
     });
 
-    connection.result('DELETE FROM department_associations WHERE email = $1', [
-      email,
-    ]);
-
-    return connection.tx(t => {
-      return t.batch([
-        connection.result(
-          'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
-          [fullName, jobTitle, phoneNum, senateDivision, email]
-        ),
-        connection.any(
-          pgp.helpers.insert(
-            departmentAssociationsWithEmail,
-            ['email', 'department_id'],
-            'department_associations'
-          )
-        ),
-      ]);
-    });
+    if (departmentAssociations.length) {
+      return connection.tx(t => {
+        return t.batch([
+          t.result(
+            'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+            [fullName, jobTitle, phoneNum, senateDivision, email]
+          ),
+          t.result('DELETE FROM department_associations WHERE email = $1', [email]),
+          t.any(
+            pgp.helpers.insert(
+              departmentAssociationsWithEmail,
+              ['email', 'department_id'],
+              'department_associations'
+            )
+          ),
+        ]);
+      });
+    } else {
+      return connection.tx(t => {
+        return t.batch([
+          t.result(
+            'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
+            [fullName, jobTitle, phoneNum, senateDivision, email]
+          ),
+          t.result('DELETE FROM department_associations WHERE email = $1', [email]),
+        ]);
+      });
+    }
   } else {
     return connection.tx(t => {
       return t.batch([
-        connection.result(
+        t.result(
           'UPDATE faculty SET full_name = $1, job_title = $2, phone_num = $3, senate_division_short_name = $4 WHERE email = $5',
           [fullName, jobTitle, phoneNum, senateDivision, email]
         ),
