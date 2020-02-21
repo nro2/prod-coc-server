@@ -22,6 +22,7 @@ SELECT json_build_object(
 					ELSE sd_slots_remaining
 					END	
 			)
+	        ORDER BY senate_division ASC
 		)FROM slot_Stats ss
 	  WHERE c.committee_id = ss.committee_id
   )
@@ -34,6 +35,7 @@ SELECT json_build_object(
 				,'endDate', ca.end_date
 				,'senateDivision', f.senate_division_short_name
 			)
+	        ORDER BY f.full_name ASC
 		) FROM committee_assignment ca NATURAL JOIN faculty f
 		WHERE f.email = ca.email AND ca.committee_id = c.committee_id
 	)

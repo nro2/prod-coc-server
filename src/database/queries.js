@@ -481,7 +481,7 @@ async function getSenateDivisions() {
   const connection = loadDatabaseConnection();
 
   return connection.any(
-    'SELECT senate_division_short_name, name FROM senate_division'
+    'SELECT senate_division_short_name, name FROM senate_division ORDER BY senate_division_short_name ASC'
   );
 }
 
