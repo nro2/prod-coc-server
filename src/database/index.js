@@ -12,5 +12,8 @@ module.exports = {
     400: 'Bad Request',
     200: 'Success',
     201: 'Success',
+    500: 'Internal Server Error',
+    404: 'Resource Not Found',
+    409: 'Conflict',
   },
 };
