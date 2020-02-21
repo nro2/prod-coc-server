@@ -83,9 +83,10 @@ router.put('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  if (!req.params.id) {
+  if (!Number.isInteger(req.params.id)) {
     return res.status(400).send({ message: messageResponses[400] });
   }
+  console.log(req.params.id);
   return await getCommittee(req.params.id)
     .then(data => {
       console.info('Successfully retrieved committee from database');
@@ -105,10 +106,6 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get('/info/:id', async (req, res) => {
-  if (!req.params.id) {
-    return res.status(400).send({ message: messageResponses[400] });
-  }
-
   return await getCommitteeInfo(req.params.id)
     .then(data => {
       if (!data) {
