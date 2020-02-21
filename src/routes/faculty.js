@@ -144,7 +144,6 @@ router.put('/', async (req, res) => {
       }
       console.info('Updated faculty member to database');
 
-      console.log(result);
       console.info(`Updated faculty member with email ${email}`);
       return res
         .set('Location', `${SERVER_URL}/api/faculty/${email}`)
