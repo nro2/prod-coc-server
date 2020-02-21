@@ -46,7 +46,6 @@ SELECT json_build_object(
 							,'description', scc.description
 							,'total_slots', scc.total_slots
 						)
-		                ORDER BY scc.name ASC
 					) FROM survey_choice sc NATURAL JOIN committee scc WHERE mrs.survey_date = sc.survey_date AND sc.email = mrs.email
 				)
 		) FROM most_recent_survey mrs

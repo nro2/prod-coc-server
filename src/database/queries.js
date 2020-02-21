@@ -211,7 +211,7 @@ async function deleteSlotRequirement(committee_id, senate_division_short_name) {
 async function getAllFaculty() {
   const connection = loadDatabaseConnection();
   return connection.any(
-    'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM Faculty'
+    'SELECT email,full_name,phone_num,job_title,senate_division_short_name FROM Faculty ORDER BY full_name ASC'
   );
 }
 
