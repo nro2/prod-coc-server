@@ -76,7 +76,7 @@ describe('Request routing for /committee-slots', () => {
     return routerActions.putCommitteeSlots(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -107,7 +107,8 @@ describe('Request routing for /committee-slots', () => {
     return routerActions.putCommitteeSlots(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-database-error',
       });
     });
   });
@@ -135,7 +136,7 @@ describe('Request routing for /committee-slots', () => {
 
     return routerActions.postCommitteeSlots(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+      assert.deepEqual(res.send.firstCall.args[0], { message: 'Bad Request' });
     });
   });
 
@@ -147,7 +148,7 @@ describe('Request routing for /committee-slots', () => {
 
     return routerActions.postCommitteeSlots(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+      assert.deepEqual(res.send.firstCall.args[0], { message: 'Bad Request' });
     });
   });
 
@@ -159,7 +160,7 @@ describe('Request routing for /committee-slots', () => {
 
     return routerActions.postCommitteeSlots(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+      assert.deepEqual(res.send.firstCall.args[0], { message: 'Bad Request' });
     });
   });
 
@@ -200,7 +201,8 @@ describe('Request routing for /committee-slots', () => {
     return routerActions.postCommitteeSlots(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-error',
       });
     });
   });
@@ -229,14 +231,6 @@ describe('Request routing for /committee-slots', () => {
 
       return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
-      });
-    });
-
-    it('GET returns 400 when senate short name is missing from route parameters', () => {
-      stubs['../database'].getCommitteeSlotsBySenate.resolves([]);
-
-      return routerActions.getCommitteeSlotsBySenate(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 400);
       });
     });
 
@@ -277,14 +271,6 @@ describe('Request routing for /committee-slots', () => {
 
       return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
-      });
-    });
-
-    it('GET returns 400 when Committee id is missing from route parameters', () => {
-      stubs['../database'].getCommitteeSlotsByCommittee.resolves([]);
-
-      return routerActions.getCommitteeSlotsByCommittee(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 400);
       });
     });
 
