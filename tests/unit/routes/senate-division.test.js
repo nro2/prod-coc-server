@@ -64,28 +64,15 @@ describe('Request routing for /senate-division', () => {
   });
 
   it('GET returns 500 when there is an error getting senate divisions from database', () => {
-    stubs['../database'].getSenateDivision.rejects();
     req.params.name = 'test-senate-division-short-name';
+
+    stubs['../database'].getSenateDivision.rejects(new Error('test-error'));
 
     return routerActions.getSenateDivision(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
-      });
-    });
-  });
-
-  it('GET returns 400 when there is no name with the request', () => {
-    const senateDivision = {
-      senate_division_short_name: 'test-senate-division-short-name',
-      name: 'test-senate-division-name',
-    };
-    stubs['../database'].getSenateDivision.resolves(senateDivision);
-
-    return routerActions.getSenateDivision(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Internal Server Error',
+        error: 'test-error',
       });
     });
   });
