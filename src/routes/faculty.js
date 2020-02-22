@@ -85,7 +85,9 @@ router.post('/', async (req, res) => {
         console.error(
           `Attempted to add faculty with invalid keys:\n ${message} \n ${detail}`
         );
-        return res.status(409).send({ msg: message, error: detail, hint: hint });
+        return res
+          .status(409)
+          .send({ message: message, error: detail, hint: hint });
       }
 
       console.error(`Error adding faculty member to database:\n ${err}`);
