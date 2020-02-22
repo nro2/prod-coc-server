@@ -85,12 +85,12 @@ router.post('/', async (req, res) => {
         console.error(
           `Attempted to add faculty with invalid keys:\n ${message} \n ${detail}`
         );
-        return res.status(409).send({ msg: message, error: detail });
+        return res.status(409).send({ message: message, error: detail });
       }
 
       console.error(`Error adding faculty member to database:\n ${err}`);
       return res.status(500).send({
-        msg: 'Unable to complete database transaction',
+        message: 'Unable to complete database transaction',
         error: err.message,
       });
     });
@@ -169,12 +169,12 @@ router.put('/', async (req, res) => {
         console.error(
           `Attempted to update faculty with invalid keys:\n ${message} \n ${detail}`
         );
-        return res.status(404).send({ msg: message, error: detail });
+        return res.status(404).send({ message: message, error: detail });
       }
 
       console.error(`Error adding faculty member to database:\n ${err}`);
       return res.status(500).send({
-        msg: 'Unable to complete database transaction',
+        message: 'Unable to complete database transaction',
         error: err.message,
       });
     });
