@@ -9,6 +9,8 @@ const routerGet = sinon.stub();
 const routerPost = sinon.stub();
 const routerPut = sinon.stub();
 const routerActions = {};
+const FOREIGN_KEY_VIOLATION = '23503';
+const UNIQUENESS_VIOLATION = '23505';
 
 const stubs = {
   express: {
@@ -22,8 +24,6 @@ const stubs = {
     addSurveyData: sinon.stub(),
     updateSurveyData: sinon.stub(),
     getSurveyData: sinon.stub(),
-    FOREIGN_KEY_VIOLATION: '23503',
-    UNIQUENESS_VIOLATION: '23505',
   },
 };
 
@@ -290,7 +290,7 @@ describe('Request routing for /survey-data', () => {
       isInterested: true,
       expertise: 'TEST',
     };
-    stubs['../database'].addSurveyData.rejects({ code: '23505' });
+    stubs['../database'].addSurveyData.rejects({ code: UNIQUENESS_VIOLATION });
 
     return routerActions.postSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);
@@ -304,7 +304,7 @@ describe('Request routing for /survey-data', () => {
       isInterested: true,
       expertise: 'TEST',
     };
-    stubs['../database'].addSurveyData.rejects({ code: '23503' });
+    stubs['../database'].addSurveyData.rejects({ code: FOREIGN_KEY_VIOLATION });
 
     return routerActions.postSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 409);

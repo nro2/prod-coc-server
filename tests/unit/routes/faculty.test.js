@@ -9,6 +9,8 @@ const routerPost = sinon.stub();
 const routerPut = sinon.stub();
 const routerGet = sinon.stub();
 const routerActions = {};
+const FOREIGN_KEY_VIOLATION = '23503';
+const UNIQUENESS_VIOLATION = '23505';
 
 const stubs = {
   express: {
@@ -24,8 +26,6 @@ const stubs = {
     getAllFaculty: sinon.stub(),
     getFaculty: sinon.stub(),
     getFacultyInfo: sinon.stub(),
-    FOREIGN_KEY_VIOLATION: '23503',
-    UNIQUENESS_VIOLATION: '23505',
   },
 };
 
@@ -151,7 +151,7 @@ describe('Request routing for /faculty', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
-      stubs['../database'].addFaculty.rejects({ code: '23505' });
+      stubs['../database'].addFaculty.rejects({ code: UNIQUENESS_VIOLATION });
 
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 409);
@@ -166,7 +166,7 @@ describe('Request routing for /faculty', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division-doesnt-exist',
       };
-      stubs['../database'].addFaculty.rejects({ code: '23503' });
+      stubs['../database'].addFaculty.rejects({ code: FOREIGN_KEY_VIOLATION });
 
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 409);
@@ -186,7 +186,7 @@ describe('Request routing for /faculty', () => {
           },
         ],
       };
-      stubs['../database'].addFaculty.rejects({ code: '23503' });
+      stubs['../database'].addFaculty.rejects({ code: FOREIGN_KEY_VIOLATION });
 
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 409);
@@ -305,7 +305,7 @@ describe('Request routing for /faculty', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
-      stubs['../database'].updateFaculty.rejects({ code: '23505' });
+      stubs['../database'].updateFaculty.rejects({ code: UNIQUENESS_VIOLATION });
 
       return routerActions.putFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 409);
