@@ -206,7 +206,7 @@ describe('Request routing for /faculty', () => {
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          msg: 'Unable to complete database transaction',
+          message: 'Unable to complete database transaction',
           error: 'test-database-error',
         });
       });
@@ -226,7 +226,7 @@ describe('Request routing for /faculty', () => {
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          msg: 'Unable to complete database transaction',
+          message: 'Unable to complete database transaction',
           error: 'test-database-error',
         });
       });
@@ -325,7 +325,7 @@ describe('Request routing for /faculty', () => {
       return routerActions.putFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          msg: 'Unable to complete database transaction',
+          message: 'Unable to complete database transaction',
           error: 'test-database-error',
         });
       });
