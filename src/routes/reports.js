@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { getSenateDivisionStats } = require('../database');
+const { getSenateDivisionStats, messageResponses } = require('../database');
 
 router.get('/', async (req, res) => {
   return await getSenateDivisionStats()
     .then(data => {
       if (!data) {
         console.info(`No senate division stats found`);
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
 
       console.info(
@@ -17,11 +17,9 @@ router.get('/', async (req, res) => {
     })
     .catch(err => {
       console.error(`Error retrieving senate division stats info: ${err}`);
-      console.log(err.message);
-      console.log(err.detail);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 
