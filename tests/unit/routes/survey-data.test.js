@@ -75,7 +75,7 @@ describe('Request routing for /survey-data', () => {
     return routerActions.putSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -90,7 +90,7 @@ describe('Request routing for /survey-data', () => {
     return routerActions.putSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -105,7 +105,7 @@ describe('Request routing for /survey-data', () => {
     return routerActions.putSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -120,7 +120,7 @@ describe('Request routing for /survey-data', () => {
     return routerActions.putSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -148,12 +148,13 @@ describe('Request routing for /survey-data', () => {
       expertise: 'TEST',
     };
 
-    stubs['../database'].updateSurveyData.rejects(new Error('test-database-error'));
+    stubs['../database'].updateSurveyData.rejects(new Error('test-error'));
 
     return routerActions.putSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-error',
       });
     });
   });
@@ -201,7 +202,8 @@ describe('Request routing for /survey-data', () => {
     return routerActions.getSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-error',
       });
     });
   });
@@ -231,7 +233,7 @@ describe('Request routing for /survey-data', () => {
     return routerActions.postSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -246,7 +248,7 @@ describe('Request routing for /survey-data', () => {
     return routerActions.postSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -261,7 +263,7 @@ describe('Request routing for /survey-data', () => {
     return routerActions.postSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -276,7 +278,7 @@ describe('Request routing for /survey-data', () => {
     return routerActions.postSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -316,12 +318,13 @@ describe('Request routing for /survey-data', () => {
       isInterested: true,
       expertise: 'TEST',
     };
-    stubs['../database'].addSurveyData.rejects(new Error('test-database-error'));
+    stubs['../database'].addSurveyData.rejects(new Error('test-error'));
 
     return routerActions.postSurveyData(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-error',
       });
     });
   });

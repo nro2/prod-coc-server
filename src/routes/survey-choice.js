@@ -6,11 +6,12 @@ const {
   getSurveyChoice,
   FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
+  messageResponses,
 } = require('../database');
 
 router.get('/:date/:email', async (req, res) => {
   if (!req.params.date || !req.params.email) {
-    return res.status(400).send({ message: '400 Bad Request' });
+    return res.status(400).send({ message: messageResponses[400] });
   }
 
   const { date, email } = req.params;
@@ -25,13 +26,13 @@ router.get('/:date/:email', async (req, res) => {
         console.info(
           `No survey choice found for date ${req.params.date} and email ${req.params.email}`
         );
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
 
       console.error(`Error retrieving survey choice: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 
@@ -43,7 +44,7 @@ router.post('/', async (req, res) => {
     !req.body.email ||
     !req.body.committeeId
   ) {
-    return res.status(400).send({ message: '400 Bad Request' });
+    return res.status(400).send({ message: messageResponses[400] });
   }
 
   const { choiceId, surveyDate, email, committeeId } = req.body;
@@ -55,20 +56,23 @@ router.post('/', async (req, res) => {
       return res
         .set('Location', `${SERVER_URL}/api/survey-choice/${year}/${email}`)
         .status(201)
-        .send();
+        .send({ message: messageResponses[201] });
     })
     .catch(err => {
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
+        const hint = 'Attempted to add an existing survey choice with invalid keys';
         console.error(
           `Attempted to add an existing survey choice with invalid keys: ${err}`
         );
-        return res.status(409).send();
+        return res
+          .status(409)
+          .send({ message: err.message, error: err.detail, hint: hint });
       }
 
       console.error(`Error adding survey choice: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 
