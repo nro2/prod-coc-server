@@ -83,7 +83,7 @@ router.put('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  if (!Number.isInteger(req.params.id)) {
+  if (!Number.isInteger(parseInt(req.params.id))) {
     return res.status(400).send({ message: messageResponses[400] });
   }
   console.log(req.params.id);
