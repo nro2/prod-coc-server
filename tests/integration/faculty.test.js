@@ -255,7 +255,6 @@ describe('Request routing for /api/faculty', () => {
         jobTitle: 'test-job-title',
         phoneNum: '555-55-5555',
         senateDivision: 'AO',
-        departmentAssociations: [{ department_id: 4 }],
       };
 
       request(app)
