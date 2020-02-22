@@ -71,7 +71,8 @@ describe('Request routing for /committee', () => {
     return routerActions.getCommittees(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-error',
       });
     });
   });
