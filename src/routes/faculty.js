@@ -9,6 +9,7 @@ const {
   getFacultyInfo,
   FOREIGN_KEY_VIOLATION,
   UNIQUENESS_VIOLATION,
+  messageResponses,
 } = require('../database');
 
 router.post('/', async (req, res) => {
@@ -18,7 +19,7 @@ router.post('/', async (req, res) => {
     !req.body.email ||
     !req.body.senateDivision
   ) {
-    return res.status(400).send({ message: '400 Bad Request' });
+    return res.status(400).send({ message: messageResponses[400] });
   }
 
   const {
@@ -34,9 +35,7 @@ router.post('/', async (req, res) => {
     departmentAssociations.forEach(d => {
       if (Object.entries(d).length === 0 && d.constructor === Object) {
         return res.status(400).send({
-          message: '400 Bad Request',
-          error:
-            'JSON includes deaprtmentAssocitions object, but department_id is undefined/missing',
+          message: messageResponses[400],
         });
       }
     });
@@ -64,7 +63,7 @@ router.post('/', async (req, res) => {
       return res
         .set('Location', `${SERVER_URL}/api/faculty/${e.return}`)
         .status(201)
-        .send();
+        .send({ message: messageResponses[201] });
     })
     .catch(err => {
       let code;
@@ -82,15 +81,18 @@ router.post('/', async (req, res) => {
       }
 
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(code)) {
+        const hint = 'Attempted to add faculty with invalid keys';
         console.error(
           `Attempted to add faculty with invalid keys:\n ${message} \n ${detail}`
         );
-        return res.status(409).send({ message: message, error: detail });
+        return res
+          .status(409)
+          .send({ message: message, error: detail, hint: hint });
       }
 
       console.error(`Error adding faculty member to database:\n ${err}`);
       return res.status(500).send({
-        message: 'Unable to complete database transaction',
+        message: messageResponses[500],
         error: err.message,
       });
     });
@@ -103,7 +105,7 @@ router.put('/', async (req, res) => {
     !req.body.email ||
     !req.body.senateDivision
   ) {
-    return res.status(400).send({ message: '400 Bad Request' });
+    return res.status(400).send({ message: messageResponses[400] });
   }
 
   const {
@@ -119,7 +121,7 @@ router.put('/', async (req, res) => {
     departmentAssociations.forEach(d => {
       if (Object.entries(d).length === 0 && d.constructor === Object) {
         return res.status(400).send({
-          message: '400 Bad Request',
+          message: messageResponses[400],
           error:
             'JSON includes deaprtmentAssocitions object, but department_id is undefined/missing',
         });
@@ -140,7 +142,7 @@ router.put('/', async (req, res) => {
         console.info(
           `Unable to update faculty record, email ${email} does not exist`
         );
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
       console.info('Updated faculty member to database');
 
@@ -148,7 +150,7 @@ router.put('/', async (req, res) => {
       return res
         .set('Location', `${SERVER_URL}/api/faculty/${email}`)
         .status(200)
-        .send();
+        .send({ message: messageResponses[200] });
     })
     .catch(err => {
       let code;
@@ -166,15 +168,18 @@ router.put('/', async (req, res) => {
       }
 
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(code)) {
+        const hint = 'Attempted to update faculty with invalid keys';
         console.error(
           `Attempted to update faculty with invalid keys:\n ${message} \n ${detail}`
         );
-        return res.status(404).send({ message: message, error: detail });
+        return res
+          .status(409)
+          .send({ message: message, error: detail, hint: hint });
       }
 
       console.error(`Error adding faculty member to database:\n ${err}`);
       return res.status(500).send({
-        message: 'Unable to complete database transaction',
+        message: messageResponses[500],
         error: err.message,
       });
     });
@@ -185,7 +190,7 @@ router.get('/', async (req, res) => {
     .then(data => {
       if (data.length === 0) {
         console.info('Faculty table is empty');
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
 
       console.info('Successfully retrieved faculty list from the database');
@@ -195,19 +200,16 @@ router.get('/', async (req, res) => {
       console.error(`Error retrieving faculty: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 
 router.get('/:email', async (req, res) => {
-  if (!req.params.email) {
-    return res.status(400).send({ message: '400 Bad Request' });
-  }
   return await getFaculty(req.params.email)
     .then(data => {
       if (!data) {
         console.info(`No faculty found for email ${req.params.email}`);
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
 
       console.info('Successfully retrieved faculty from database');
@@ -217,19 +219,16 @@ router.get('/:email', async (req, res) => {
       console.error(`Error retrieving faculty: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 
 router.get('/info/:email', async (req, res) => {
-  if (!req.params.email) {
-    return res.status(400).send({ message: '400 Bad Request' });
-  }
   return await getFacultyInfo(req.params.email)
     .then(data => {
       if (!data) {
         console.info(`No faculty found for email ${req.params.email}`);
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
 
       console.info('Successfully retrieved faculty from database');
@@ -239,7 +238,7 @@ router.get('/info/:email', async (req, res) => {
       console.error(`Error retrieving faculty info: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 

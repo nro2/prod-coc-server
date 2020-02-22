@@ -75,7 +75,7 @@ describe('Request routing for /department-associations', () => {
 
     return routerActions.postDepartmentAssociation(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+      assert.deepEqual(res.send.firstCall.args[0], { message: 'Bad Request' });
     });
   });
 
@@ -86,7 +86,7 @@ describe('Request routing for /department-associations', () => {
 
     return routerActions.postDepartmentAssociation(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+      assert.deepEqual(res.send.firstCall.args[0], { message: 'Bad Request' });
     });
   });
 
@@ -119,16 +119,6 @@ describe('Request routing for /department-associations', () => {
         .getDepartmentAssociationsByDepartment(req, res)
         .then(() => {
           assert.equal(res.status.firstCall.args[0], 404);
-        });
-    });
-
-    it('GET returns 400 when department id is missing from route parameters', () => {
-      stubs['../database'].getDepartmentAssociationsByDepartment.resolves([]);
-
-      return routerActions
-        .getDepartmentAssociationsByDepartment(req, res)
-        .then(() => {
-          assert.equal(res.status.firstCall.args[0], 400);
         });
     });
 
@@ -171,14 +161,6 @@ describe('Request routing for /department-associations', () => {
 
       return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 404);
-      });
-    });
-
-    it('GET returns 400 when faculty email is missing from route parameters', () => {
-      stubs['../database'].getDepartmentAssociationsByFaculty.resolves([]);
-
-      return routerActions.getDepartmentAssociationsByFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 400);
       });
     });
 
@@ -234,7 +216,8 @@ describe('Request routing for /department-associations', () => {
       return routerActions.updateDepartmentAssociations(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          error: 'Unable to complete database transaction',
+          message: 'Internal Server Error',
+          error: 'test-database-error',
         });
       });
     });
@@ -248,7 +231,7 @@ describe('Request routing for /department-associations', () => {
       return routerActions.updateDepartmentAssociations(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
+          message: 'Bad Request',
         });
       });
     });
@@ -262,7 +245,7 @@ describe('Request routing for /department-associations', () => {
       return routerActions.updateDepartmentAssociations(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
+          message: 'Bad Request',
         });
       });
     });
@@ -276,7 +259,7 @@ describe('Request routing for /department-associations', () => {
       return routerActions.updateDepartmentAssociations(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
+          message: 'Bad Request',
         });
       });
     });

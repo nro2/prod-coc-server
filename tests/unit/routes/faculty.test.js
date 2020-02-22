@@ -106,7 +106,7 @@ describe('Request routing for /faculty', () => {
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
+          message: 'Bad Request',
         });
       });
     });
@@ -122,7 +122,7 @@ describe('Request routing for /faculty', () => {
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
+          message: 'Bad Request',
         });
       });
     });
@@ -138,7 +138,7 @@ describe('Request routing for /faculty', () => {
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
+          message: 'Bad Request',
         });
       });
     });
@@ -201,13 +201,13 @@ describe('Request routing for /faculty', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
-      stubs['../database'].addFaculty.rejects(new Error('test-database-error'));
+      stubs['../database'].addFaculty.rejects(new Error('test-error'));
 
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: 'Unable to complete database transaction',
-          error: 'test-database-error',
+          message: 'Internal Server Error',
+          error: 'test-error',
         });
       });
     });
@@ -221,13 +221,13 @@ describe('Request routing for /faculty', () => {
         senateDivision: 'test-senate-division',
         departmentAssociations: 'test-department-associations',
       };
-      stubs['../database'].addFaculty.rejects(new Error('test-database-error'));
+      stubs['../database'].addFaculty.rejects(new Error('test-error'));
 
       return routerActions.postFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: 'Unable to complete database transaction',
-          error: 'test-database-error',
+          message: 'Internal Server Error',
+          error: 'test-error',
         });
       });
     });
@@ -260,7 +260,7 @@ describe('Request routing for /faculty', () => {
       return routerActions.putFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
+          message: 'Bad Request',
         });
       });
     });
@@ -276,7 +276,7 @@ describe('Request routing for /faculty', () => {
       return routerActions.putFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
+          message: 'Bad Request',
         });
       });
     });
@@ -292,7 +292,7 @@ describe('Request routing for /faculty', () => {
       return routerActions.putFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 400);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: '400 Bad Request',
+          message: 'Bad Request',
         });
       });
     });
@@ -308,7 +308,7 @@ describe('Request routing for /faculty', () => {
       stubs['../database'].updateFaculty.rejects({ code: '23505' });
 
       return routerActions.putFaculty(req, res).then(() => {
-        assert.equal(res.status.firstCall.args[0], 404);
+        assert.equal(res.status.firstCall.args[0], 409);
       });
     });
 
@@ -320,13 +320,13 @@ describe('Request routing for /faculty', () => {
         phoneNum: 'test-phone-num',
         senateDivision: 'test-senate-division',
       };
-      stubs['../database'].updateFaculty.rejects(new Error('test-database-error'));
+      stubs['../database'].updateFaculty.rejects(new Error('test-error'));
 
       return routerActions.putFaculty(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          message: 'Unable to complete database transaction',
-          error: 'test-database-error',
+          message: 'Internal Server Error',
+          error: 'test-error',
         });
       });
     });
@@ -366,7 +366,8 @@ describe('Request routing for /faculty', () => {
         return routerActions.getAllFaculty(req, res).then(() => {
           assert.equal(res.status.firstCall.args[0], 500);
           assert.deepEqual(res.send.firstCall.args[0], {
-            error: 'Unable to complete database transaction',
+            message: 'Internal Server Error',
+            error: 'test-error',
           });
         });
       });
@@ -407,7 +408,8 @@ describe('Request routing for /faculty', () => {
         return routerActions.getFaculty(req, res).then(() => {
           assert.equal(res.status.firstCall.args[0], 500);
           assert.deepEqual(res.send.firstCall.args[0], {
-            error: 'Unable to complete database transaction',
+            message: 'Internal Server Error',
+            error: 'test-error',
           });
         });
       });
@@ -448,7 +450,8 @@ describe('Request routing for /faculty', () => {
         return routerActions.getFacultyInfo(req, res).then(() => {
           assert.equal(res.status.firstCall.args[0], 500);
           assert.deepEqual(res.send.firstCall.args[0], {
-            error: 'Unable to complete database transaction',
+            message: 'Internal Server Error',
+            error: 'test-error',
           });
         });
       });

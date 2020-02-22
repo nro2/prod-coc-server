@@ -68,12 +68,13 @@ describe('Request routing for /senate-divisions', () => {
   });
 
   it('GET returns 500 when there is an error getting senate divisions from database', () => {
-    stubs['../database'].getSenateDivisions.rejects();
+    stubs['../database'].getSenateDivisions.rejects(new Error('test-error'));
 
     return routerActions.getSenateDivisions(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-error',
       });
     });
   });

@@ -219,8 +219,7 @@ describe('Request routing for /api/faculty', () => {
         departmentAssociations: [],
       };
 
-      //Empty object since departments route should 404 since there are no departments being returned
-      const expected = {};
+      const expected = { message: 'Resource Not Found' };
 
       await request(app)
         .put('/api/faculty')
@@ -256,7 +255,6 @@ describe('Request routing for /api/faculty', () => {
         jobTitle: 'test-job-title',
         phoneNum: '555-55-5555',
         senateDivision: 'AO',
-        departmentAssociations: [{ department_id: 4 }],
       };
 
       request(app)

@@ -12,6 +12,7 @@ const {
   COMMITTEE_SLOT_VIOLATION_UNMET_REQUIREMENTS,
   COMMITTEE_SLOT_VIOLATION_NO_SLOTS_REMAINING,
   CHECK_VIOLATION,
+  messageResponses,
 } = require('../database');
 
 router.delete('/:id/:email', async (req, res) => {
@@ -21,28 +22,25 @@ router.delete('/:id/:email', async (req, res) => {
         console.info(
           `No committee assignment found for id ${req.params.id} and email ${req.params.email}`
         );
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
       console.info('Successfully retrieved committee assignment from database');
-      return res.status(200).send();
+      return res.status(200).send({ message: messageResponses[200] });
     })
     .catch(err => {
       console.error(`Error retrieving committee assignment info: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 
 router.get('/committee/:id', async (req, res) => {
-  if (!req.params.id) {
-    return res.status(400).send({ message: '400 Bad Request' });
-  }
   return await getCommitteeAssignmentByCommittee(req.params.id)
     .then(data => {
       if (data.length === 0) {
         console.info(`No committee assignments found for id ${req.params.id}`);
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
 
       console.info('Successfully retrieved committee assignments from database');
@@ -52,21 +50,18 @@ router.get('/committee/:id', async (req, res) => {
       console.error(`Error retrieving committee assignments: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 
 router.get('/faculty/:email', async (req, res) => {
-  if (!req.params.email) {
-    return res.status(400).send({ message: '400 Bad Request' });
-  }
   return await getCommitteeAssignmentByFaculty(req.params.email)
     .then(data => {
       if (data.length === 0) {
         console.info(
           `No committee assignments found for email ${req.params.email}`
         );
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
 
       console.info('Successfully retrieved committee assignments from database');
@@ -76,7 +71,7 @@ router.get('/faculty/:email', async (req, res) => {
       console.error(`Error retrieving committee assignments: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 
@@ -88,7 +83,7 @@ router.post('/', async (req, res) => {
     !req.body.startDate ||
     !req.body.endDate
   ) {
-    return res.status(400).send({ message: '400 Bad Request' });
+    return res.status(400).send({ message: messageResponses[400] });
   }
 
   const { email, committeeId, startDate, endDate } = req.body;
@@ -100,7 +95,7 @@ router.post('/', async (req, res) => {
       return res
         .set('Location', `${SERVER_URL}/api/committee-assignment/faculty/${email}`)
         .status(201)
-        .send();
+        .send({ message: messageResponses[201] });
     })
     .catch(err => {
       if ([FOREIGN_KEY_VIOLATION, UNIQUENESS_VIOLATION].includes(err.code)) {
@@ -110,8 +105,8 @@ router.post('/', async (req, res) => {
           `Attempted to add an existing committee association with invalid keys: ${err}`
         );
         return res.status(409).send({
-          error: err.message,
-          detail: err.detail,
+          message: err.message,
+          error: err.detail,
           hint: hint,
         });
       }
@@ -124,8 +119,8 @@ router.post('/', async (req, res) => {
       ) {
         console.error(err.message);
         return res.status(409).send({
-          error: err.message,
-          detail: err.detail,
+          message: err.message,
+          error: err.detail,
           hint: err.hint,
         });
       }
@@ -134,8 +129,8 @@ router.post('/', async (req, res) => {
         const hint = 'Start date must come before end date.';
         console.error(err.message);
         return res.status(409).send({
-          error: err.message,
-          detail: err.detail,
+          message: err.message,
+          error: err.detail,
           hint: hint,
         });
       }
@@ -143,7 +138,7 @@ router.post('/', async (req, res) => {
       console.error(`Error adding committee assignment: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 
@@ -155,7 +150,7 @@ router.put('/', async (req, res) => {
     !req.body.startDate ||
     !req.body.endDate
   ) {
-    return res.status(400).send({ message: '400 Bad Request' });
+    return res.status(400).send({ message: messageResponses[400] });
   }
 
   const { email, committeeId, startDate, endDate } = req.body;
@@ -166,13 +161,13 @@ router.put('/', async (req, res) => {
         console.info(
           `Unable to update committee assignment record, committee with email ${email} and committee id ${committeeId} does not exist`
         );
-        return res.status(404).send();
+        return res.status(404).send({ message: messageResponses[404] });
       }
 
       console.info(
         `Updated committee with email ${email} and committee id "${committeeId}"`
       );
-      return res.status(200).send();
+      return res.status(200).send({ message: messageResponses[200] });
     })
     .catch(err => {
       console.log(err);
@@ -180,8 +175,8 @@ router.put('/', async (req, res) => {
         const hint = 'Start date must come before end date.';
         console.error(err.message);
         return res.status(409).send({
-          error: err.message,
-          detail: err.detail,
+          message: err.message,
+          error: err.detail,
           hint: hint,
         });
       }
@@ -189,7 +184,7 @@ router.put('/', async (req, res) => {
       console.error(`Error updating committee assignment in database: ${err}`);
       return res
         .status(500)
-        .send({ error: 'Unable to complete database transaction' });
+        .send({ message: messageResponses[500], error: err.message });
     });
 });
 

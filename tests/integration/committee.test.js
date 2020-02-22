@@ -46,7 +46,7 @@ describe('Request routing for /api/committee', () => {
       .post('/api/committee')
       .send(payload)
       .expect('Location', 'http://localhost:8080/api/committee/20')
-      .expect(201, '', done);
+      .expect(201, { message: 'Success' }, done);
   });
 
   it('PUT returns 200 when update succeeds', done => {
@@ -60,7 +60,7 @@ describe('Request routing for /api/committee', () => {
     request(app)
       .put('/api/committee')
       .send(payload)
-      .expect(200, done);
+      .expect(200, { message: 'Success' }, done);
   });
 
   it('PUT returns 404 when target record to update does not exist', done => {
@@ -74,7 +74,7 @@ describe('Request routing for /api/committee', () => {
     request(app)
       .put('/api/committee')
       .send(payload)
-      .expect(404, done);
+      .expect(404, { message: 'Resource Not Found' }, done);
   });
 
   it('PUT returns 409 when trying to reduce total slots below minimums', done => {
@@ -100,7 +100,7 @@ describe('Request routing for /api/committee', () => {
   it('GET returns 404 when record does not exist', done => {
     request(app)
       .get('/api/committee/10000')
-      .expect(404, done);
+      .expect(404, { message: 'Resource Not Found' }, done);
   });
 
   describe('getCommitteeInfo', () => {
@@ -108,12 +108,6 @@ describe('Request routing for /api/committee', () => {
       request(app)
         .get('/api/committee/info/1')
         .expect(200, done);
-    });
-
-    it('GET returns 404 when record does not exist for specified id', done => {
-      request(app)
-        .get('/api/committee/info/99')
-        .expect(404, done);
     });
   });
 });

@@ -54,21 +54,6 @@ describe('Request routing for /department', () => {
     });
   });
 
-  it('GET returns 400 when id is missing', () => {
-    const expected = {
-      department_id: 1,
-      name: 'test-department',
-    };
-
-    stubs['../database'].getDepartment.resolves(expected);
-    return routerActions.getDepartment(req, res).then(() => {
-      assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
-      });
-    });
-  });
-
   it('GET Returns 404 when department is not found', () => {
     stubs['../database'].getDepartment.rejects({ result: { rowCount: 0 } });
     req.params.id = 1;
@@ -85,7 +70,8 @@ describe('Request routing for /department', () => {
     return routerActions.getDepartment(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-database-error',
       });
     });
   });
