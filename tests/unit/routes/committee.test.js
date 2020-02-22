@@ -80,7 +80,7 @@ describe('Request routing for /committee', () => {
 
     return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+      assert.deepEqual(res.send.firstCall.args[0], { message: 'Bad Request' });
     });
   });
 
@@ -92,7 +92,7 @@ describe('Request routing for /committee', () => {
 
     return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+      assert.deepEqual(res.send.firstCall.args[0], { message: 'Bad Request' });
     });
   });
 
@@ -104,7 +104,7 @@ describe('Request routing for /committee', () => {
 
     return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
-      assert.deepEqual(res.send.firstCall.args[0], { message: '400 Bad Request' });
+      assert.deepEqual(res.send.firstCall.args[0], { message: 'Bad Request' });
     });
   });
 
@@ -119,7 +119,8 @@ describe('Request routing for /committee', () => {
     return routerActions.postCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-error',
       });
     });
   });
@@ -148,7 +149,7 @@ describe('Request routing for /committee', () => {
     return routerActions.putCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -163,7 +164,7 @@ describe('Request routing for /committee', () => {
     return routerActions.putCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -178,7 +179,7 @@ describe('Request routing for /committee', () => {
     return routerActions.putCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -193,7 +194,7 @@ describe('Request routing for /committee', () => {
     return routerActions.putCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 400);
       assert.deepEqual(res.send.firstCall.args[0], {
-        message: '400 Bad Request',
+        message: 'Bad Request',
       });
     });
   });
@@ -238,7 +239,8 @@ describe('Request routing for /committee', () => {
     return routerActions.putCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-database-error',
       });
     });
   });
@@ -274,7 +276,8 @@ describe('Request routing for /committee', () => {
     return routerActions.getCommittee(req, res).then(() => {
       assert.equal(res.status.firstCall.args[0], 500);
       assert.deepEqual(res.send.firstCall.args[0], {
-        error: 'Unable to complete database transaction',
+        message: 'Internal Server Error',
+        error: 'test-database-error',
       });
     });
   });
@@ -329,7 +332,8 @@ describe('Request routing for /committee', () => {
       return routerActions.getCommitteeInfo(req, res).then(() => {
         assert.equal(res.status.firstCall.args[0], 500);
         assert.deepEqual(res.send.firstCall.args[0], {
-          error: 'Unable to complete database transaction',
+          message: 'Internal Server Error',
+          error: 'test-error',
         });
       });
     });
