@@ -110,6 +110,10 @@ dist
 .idea/
 .vscode/
 .vs/
+*.njsproj*
+bin/
+obj/
+*.sln
 
 # React assets
 build/
