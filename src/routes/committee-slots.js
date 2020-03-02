@@ -12,6 +12,30 @@ const {
   messageResponses,
 } = require('../database');
 
+/**
+ * @swagger
+ *
+ * /api/committee-slots/senate-division/{shortname}:
+ *   get:
+ *     tags:
+ *       - committees
+ *     description: Retrieves an existing committee slot by senate division short name.
+ *     summary: Retrieve committee slots
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: shortname
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: "Committee slots retrieved"
+ *       404:
+ *         description: "Committee slots not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/senate-division/:shortname', async (req, res) => {
   return await getCommitteeSlotsBySenate(req.params.shortname)
     .then(data => {
@@ -35,6 +59,33 @@ router.get('/senate-division/:shortname', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee-slots/committee/{id}:
+ *   get:
+ *     tags:
+ *       - committees
+ *     description: Retrieves an existing committee slot by committee id.
+ *     summary: Retrieve committee slots
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *         format: int64
+ *         minimum: 1
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: "Committee slots retrieved"
+ *       404:
+ *         description: "Committee slots not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/committee/:id', async (req, res) => {
   return await getCommitteeSlotsByCommittee(req.params.id)
     .then(data => {
@@ -87,6 +138,34 @@ router.put('/:id/:name', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee-slots:
+ *   post:
+ *     tags:
+ *       - committees
+ *     description: Add committee slots to the database.
+ *     summary: Add committee slots
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Committee slots object that needs to be added to the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/CommitteeSlots"
+ *     responses:
+ *       201:
+ *         description: "Resource created"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       409:
+ *         description: "Conflict"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.post('/', async (req, res) => {
   if (
     !req.body ||
@@ -148,6 +227,34 @@ router.post('/', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee-slots/{id}/{name}:
+ *   delete:
+ *     tags:
+ *       - committees
+ *     description: Deletes an existing committee slots.
+ *     summary: Delete committee slots
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: string
+ *       - name: name
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: "Committee slots deleted"
+ *       404:
+ *         description: "Committee slots not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.delete('/:id/:name', async (req, res) => {
   return await deleteSlotRequirement(req.params.id, req.params.name)
     .then(result => {

@@ -57,6 +57,25 @@ definitions:
       endDate:
         type: string
         format: date
+  CommitteeSlots:
+    type: object
+    required:
+      - committeeId
+      - senateDivision
+      - slotRequirements
+    properties:
+      committeeId:
+        type: integer
+        minimum: 1
+        example: 1
+      senateDivision:
+        type: integer
+        minimum: 1
+        example: 1
+      slotRequirements:
+        type: integer
+        minimum: 1
+        example: 1
 tags:
   - name: 'committees'
     description: 'Everything about committees'
