@@ -15,6 +15,35 @@ const {
   messageResponses,
 } = require('../database');
 
+/**
+ * @swagger
+ *
+ * /api/committee-assignment/{id}/{email}:
+ *   delete:
+ *     tags:
+ *       - committees
+ *     description: Deletes an existing committee assignment.
+ *     summary: Delete committee assignment
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *         format: int64
+ *       - name: email
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: "Committee assignment deleted"
+ *       404:
+ *         description: "Committee assignment not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.delete('/:id/:email', async (req, res) => {
   return await deleteCommitteeAssignment(req.params.id, req.params.email)
     .then(result => {
@@ -35,6 +64,31 @@ router.delete('/:id/:email', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee-assignment/committee/{id}:
+ *   get:
+ *     tags:
+ *       - committees
+ *     description: Retrieves an existing committee assignment by committee id.
+ *     summary: Retrieve committee assignment
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *         format: int64
+ *     responses:
+ *       200:
+ *         description: "Committee assignment retrieved"
+ *       404:
+ *         description: "Committee assignment not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/committee/:id', async (req, res) => {
   return await getCommitteeAssignmentByCommittee(req.params.id)
     .then(data => {
@@ -54,6 +108,30 @@ router.get('/committee/:id', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee-assignment/faculty/{email}:
+ *   get:
+ *     tags:
+ *       - committees
+ *     description: Retrieves an existing committee assignment by faculty id.
+ *     summary: Retrieve committee assignment
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: email
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: "Committee assignment retrieved"
+ *       404:
+ *         description: "Committee assignment not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/faculty/:email', async (req, res) => {
   return await getCommitteeAssignmentByFaculty(req.params.email)
     .then(data => {
@@ -75,6 +153,34 @@ router.get('/faculty/:email', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee-assignment:
+ *   post:
+ *     tags:
+ *       - committees
+ *     description: Add a committee assignment to the database.
+ *     summary: Add committee assignment
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Committee assignment object that needs to be added to the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/CommitteeAssignment"
+ *     responses:
+ *       201:
+ *         description: "Resource created"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       409:
+ *         description: "Conflict"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.post('/', async (req, res) => {
   if (
     !req.body ||
@@ -142,6 +248,34 @@ router.post('/', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee-assignment:
+ *   put:
+ *     tags:
+ *       - committees
+ *     description: Update an existing committee assignment.
+ *     summary: Update committee assignment
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Committee assignment object that needs to be updated in the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/CommitteeAssignment"
+ *     responses:
+ *       201:
+ *         description: "Resource created"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       409:
+ *         description: "Conflict"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.put('/', async (req, res) => {
   if (
     !req.body ||

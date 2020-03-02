@@ -37,6 +37,26 @@ definitions:
         format: int64
         minimum: 1
         example: 1
+  CommitteeAssignment:
+    type: object
+    required:
+      - email
+      - committeeId
+      - startDate
+      - endDate
+    properties:
+      email:
+        type: string
+      committeeId:
+        type: integer
+        minimum: 1
+        example: 1
+      startDate:
+        type: string
+        format: date
+      endDate:
+        type: string
+        format: date
 tags:
   - name: 'committees'
     description: 'Everything about committees'
