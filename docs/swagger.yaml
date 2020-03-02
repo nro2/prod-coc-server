@@ -1,0 +1,42 @@
+definitions:
+  Committee:
+    type: object
+    required:
+      - name
+      - description
+      - totalSlots
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      totalSlots:
+        type: integer
+        format: int64
+        minimum: 1
+        example: 1
+  CommitteeId:
+    type: object
+    required:
+      - committeeId
+      - name
+      - description
+      - totalSlots
+    properties:
+      committeeId:
+        type: integer
+        format: int64
+        minimum: 1
+        example: 1
+      name:
+        type: string
+      description:
+        type: string
+      totalSlots:
+        type: integer
+        format: int64
+        minimum: 1
+        example: 1
+tags:
+  - name: 'committees'
+    description: 'Everything about committees'
