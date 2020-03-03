@@ -107,6 +107,34 @@ router.get('/committee/:id', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee-slots/{id}/{name}:
+ *   put:
+ *     tags:
+ *       - committee-assignment
+ *     description: Update existing committee slots.
+ *     summary: Update committee slots
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Committee slots object that needs to be updated in the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/CommitteeSlots"
+ *     responses:
+ *       201:
+ *         description: "Resource created"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       404:
+ *         description: "Committee id or senate division not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.put('/:id/:name', async (req, res) => {
   if (!req.body || !req.body.slotRequirements || req.body.slotRequirements < 0) {
     return res.status(400).send({ message: messageResponses[400] });
