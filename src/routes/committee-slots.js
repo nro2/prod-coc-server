@@ -31,6 +31,8 @@ const {
  *     responses:
  *       200:
  *         description: "Committee slots retrieved"
+ *         schema:
+ *           $ref: "#/responses/CommitteeSlotsSenateDivision"
  *       404:
  *         description: "Committee slots not found"
  *       500:
@@ -81,6 +83,8 @@ router.get('/senate-division/:shortname', async (req, res) => {
  *     responses:
  *       200:
  *         description: "Committee slots retrieved"
+ *         schema:
+ *           $ref: "#/responses/CommitteeSlotsCommittee"
  *       404:
  *         description: "Committee slots not found"
  *       500:

@@ -16,6 +16,8 @@ const { getCommittees, messageResponses } = require('../database');
  *     responses:
  *       200:
  *         description: "Committees retrieved"
+ *         schema:
+ *           $ref: "#/responses/Committees"
  *       404:
  *         description: "Committees not found"
  *       500:

@@ -160,6 +160,8 @@ router.put('/', async (req, res) => {
  *     responses:
  *       200:
  *         description: "Committee retrieved"
+ *         schema:
+ *           $ref: "#/responses/Committee"
  *       400:
  *         description: "Invalid committee id format"
  *       404:
@@ -210,6 +212,8 @@ router.get('/:id', async (req, res) => {
  *     responses:
  *       200:
  *         description: "Committee info retrieved"
+ *         schema:
+ *           $ref: "#/responses/CommitteeInfo"
  *       400:
  *         description: "Invalid committee id format"
  *       404:

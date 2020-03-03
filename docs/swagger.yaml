@@ -76,6 +76,108 @@ definitions:
         type: integer
         minimum: 1
         example: 1
+responses:
+  Committee:
+    type: object
+    properties:
+      committee_id:
+        type: integer
+        format: int64
+        example: 1
+      name:
+        type: string
+      description:
+        type: string
+      total_slots:
+        type: integer
+        format: int64
+        example: 1
+  CommitteeAssignment:
+    type: array
+    items:
+      type: object
+      properties:
+        email:
+          type: string
+        committee_id:
+          type: integer
+          format: int64
+          example: 1
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+  CommitteeInfo:
+    type: object
+    properties:
+      name:
+        type: string
+      id:
+        type: integer
+        format: int64
+        example: 1
+      description:
+        type: string
+      totalSlots:
+        type: integer
+        format: int64
+        example: 1
+      slotsRemaining:
+        type: integer
+        format: int64
+        example: 1
+      committeeSlots:
+        type: array
+        items:
+          type: object
+          properties:
+            senateShortname:
+              type: string
+            slotFilled:
+              type: integer
+            slotMinimum:
+              type: integer
+            slotsRemaining:
+              type: integer
+  CommitteeSlotsCommittee:
+    type: array
+    items:
+      type: object
+      properties:
+        senate_division_short_name:
+          type: string
+        slot_requirements:
+          type: integer
+  CommitteeSlotsSenateDivision:
+    type: array
+    items:
+      type: object
+      properties:
+        committee_id:
+          type: integer
+          format: int64
+          example: 1
+        slot_requirements:
+          type: integer
+  Committees:
+    type: array
+    items:
+      type: object
+      properties:
+        committee_id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+        description:
+          type: string
+        total_slots:
+          type: integer
+          format: int64
+          example: 1
 tags:
   - name: 'committee'
     description: 'Everything about committee'

@@ -84,6 +84,8 @@ router.delete('/:id/:email', async (req, res) => {
  *     responses:
  *       200:
  *         description: "Committee assignment retrieved"
+ *         schema:
+ *           $ref: "#/responses/CommitteeAssignment"
  *       404:
  *         description: "Committee assignment not found"
  *       500:
@@ -127,6 +129,8 @@ router.get('/committee/:id', async (req, res) => {
  *     responses:
  *       200:
  *         description: "Committee assignment retrieved"
+ *         schema:
+ *           $ref: "#/responses/CommitteeAssignment"
  *       404:
  *         description: "Committee assignment not found"
  *       500:
