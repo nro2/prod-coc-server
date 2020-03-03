@@ -77,5 +77,11 @@ definitions:
         minimum: 1
         example: 1
 tags:
+  - name: 'committee'
+    description: 'Everything about committee'
+  - name: 'committee-assignment'
+    description: 'Everything about committee-assignments'
+  - name: 'committee-slots'
+    description: 'Everything about committee-slots'
   - name: 'committees'
     description: 'Everything about committees'

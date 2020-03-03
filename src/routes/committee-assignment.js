@@ -21,7 +21,7 @@ const {
  * /api/committee-assignment/{id}/{email}:
  *   delete:
  *     tags:
- *       - committees
+ *       - committee-assignment
  *     description: Deletes an existing committee assignment.
  *     summary: Delete committee assignment
  *     produces:
@@ -70,7 +70,7 @@ router.delete('/:id/:email', async (req, res) => {
  * /api/committee-assignment/committee/{id}:
  *   get:
  *     tags:
- *       - committees
+ *       - committee-assignment
  *     description: Retrieves an existing committee assignment by committee id.
  *     summary: Retrieve committee assignment
  *     produces:
@@ -114,7 +114,7 @@ router.get('/committee/:id', async (req, res) => {
  * /api/committee-assignment/faculty/{email}:
  *   get:
  *     tags:
- *       - committees
+ *       - committee-assignment
  *     description: Retrieves an existing committee assignment by faculty id.
  *     summary: Retrieve committee assignment
  *     produces:
@@ -159,7 +159,7 @@ router.get('/faculty/:email', async (req, res) => {
  * /api/committee-assignment:
  *   post:
  *     tags:
- *       - committees
+ *       - committee-assignment
  *     description: Add a committee assignment to the database.
  *     summary: Add committee assignment
  *     produces:
@@ -254,7 +254,7 @@ router.post('/', async (req, res) => {
  * /api/committee-assignment:
  *   put:
  *     tags:
- *       - committees
+ *       - committee-assignment
  *     description: Update an existing committee assignment.
  *     summary: Update committee assignment
  *     produces:

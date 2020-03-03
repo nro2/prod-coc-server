@@ -18,7 +18,7 @@ const {
  * /api/committee-slots/senate-division/{shortname}:
  *   get:
  *     tags:
- *       - committees
+ *       - committee-slots
  *     description: Retrieves an existing committee slot by senate division short name.
  *     summary: Retrieve committee slots
  *     produces:
@@ -65,7 +65,7 @@ router.get('/senate-division/:shortname', async (req, res) => {
  * /api/committee-slots/committee/{id}:
  *   get:
  *     tags:
- *       - committees
+ *       - committee-slots
  *     description: Retrieves an existing committee slot by committee id.
  *     summary: Retrieve committee slots
  *     produces:
@@ -144,7 +144,7 @@ router.put('/:id/:name', async (req, res) => {
  * /api/committee-slots:
  *   post:
  *     tags:
- *       - committees
+ *       - committee-slots
  *     description: Add committee slots to the database.
  *     summary: Add committee slots
  *     produces:
@@ -233,7 +233,7 @@ router.post('/', async (req, res) => {
  * /api/committee-slots/{id}/{name}:
  *   delete:
  *     tags:
- *       - committees
+ *       - committee-slots
  *     description: Deletes an existing committee slots.
  *     summary: Delete committee slots
  *     produces:

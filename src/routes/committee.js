@@ -16,7 +16,7 @@ const {
  * /api/committee:
  *   post:
  *     tags:
- *       - committees
+ *       - committee
  *     description: Add a committee to the database.
  *     summary: Add committee
  *     consumes:
@@ -73,7 +73,7 @@ router.post('/', async (req, res) => {
  * /api/committee:
  *   put:
  *     tags:
- *       - committees
+ *       - committee
  *     description: Update an existing committee.
  *     summary: Update committee
  *     consumes:
@@ -146,7 +146,7 @@ router.put('/', async (req, res) => {
  * /api/committee/{id}:
  *   get:
  *     tags:
- *       - committees
+ *       - committee
  *     description: Retrieve an existing committee.
  *     summary: Find committee by ID
  *     produces:
@@ -196,7 +196,7 @@ router.get('/:id', async (req, res) => {
  * /api/committee/info/{id}:
  *   get:
  *     tags:
- *       - committees
+ *       - committee
  *     description: Retrieve committee info by id.
  *     summary: Find committee info by ID
  *     produces:
