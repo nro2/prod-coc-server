@@ -2,6 +2,27 @@ const express = require('express');
 const router = express.Router();
 const { getCommittees, messageResponses } = require('../database');
 
+/**
+ * @swagger
+ *
+ * /api/committees:
+ *   get:
+ *     tags:
+ *       - committees
+ *     description: Retrieves existing committees.
+ *     summary: Retrieve committees
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: "Committees retrieved"
+ *         schema:
+ *           $ref: "#/responses/Committees"
+ *       404:
+ *         description: "Committees not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/', async (req, res) => {
   return getCommittees()
     .then(data => {

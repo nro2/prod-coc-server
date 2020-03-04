@@ -10,6 +10,34 @@ const {
   messageResponses,
 } = require('../database');
 
+/**
+ * @swagger
+ *
+ * /api/committee:
+ *   post:
+ *     tags:
+ *       - committee
+ *     description: Add a committee to the database.
+ *     summary: Add committee
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Committee object that needs to be added to the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/Committee"
+ *     responses:
+ *       201:
+ *         description: "Resource created"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.post('/', async (req, res) => {
   if (
     !req.body ||
@@ -39,6 +67,36 @@ router.post('/', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee:
+ *   put:
+ *     tags:
+ *       - committee
+ *     description: Update an existing committee.
+ *     summary: Update committee
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Committee object that needs to be updated in the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/CommitteeId"
+ *     responses:
+ *       200:
+ *         description: "Resource updated"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       409:
+ *         description: "Committee slots don't match expected values"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.put('/', async (req, res) => {
   if (
     !req.body ||
@@ -82,6 +140,35 @@ router.put('/', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee/{id}:
+ *   get:
+ *     tags:
+ *       - committee
+ *     description: Retrieve an existing committee.
+ *     summary: Find committee by ID
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *         format: int64
+ *     responses:
+ *       200:
+ *         description: "Committee retrieved"
+ *         schema:
+ *           $ref: "#/responses/Committee"
+ *       400:
+ *         description: "Invalid committee id format"
+ *       404:
+ *         description: "Committee not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/:id', async (req, res) => {
   if (!Number.isInteger(parseInt(req.params.id))) {
     return res.status(400).send({ message: messageResponses[400] });
@@ -105,6 +192,35 @@ router.get('/:id', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/committee/info/{id}:
+ *   get:
+ *     tags:
+ *       - committee
+ *     description: Retrieve committee info by id.
+ *     summary: Find committee info by ID
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *         format: int64
+ *     responses:
+ *       200:
+ *         description: "Committee info retrieved"
+ *         schema:
+ *           $ref: "#/responses/CommitteeInfo"
+ *       400:
+ *         description: "Invalid committee id format"
+ *       404:
+ *         description: "Committee info not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/info/:id', async (req, res) => {
   return await getCommitteeInfo(req.params.id)
     .then(data => {

@@ -1,0 +1,189 @@
+definitions:
+  Committee:
+    type: object
+    required:
+      - name
+      - description
+      - totalSlots
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      totalSlots:
+        type: integer
+        format: int64
+        minimum: 1
+        example: 1
+  CommitteeId:
+    type: object
+    required:
+      - committeeId
+      - name
+      - description
+      - totalSlots
+    properties:
+      committeeId:
+        type: integer
+        format: int64
+        minimum: 1
+        example: 1
+      name:
+        type: string
+      description:
+        type: string
+      totalSlots:
+        type: integer
+        format: int64
+        minimum: 1
+        example: 1
+  CommitteeAssignment:
+    type: object
+    required:
+      - email
+      - committeeId
+      - startDate
+      - endDate
+    properties:
+      email:
+        type: string
+      committeeId:
+        type: integer
+        minimum: 1
+        example: 1
+      startDate:
+        type: string
+        format: date
+      endDate:
+        type: string
+        format: date
+  CommitteeSlots:
+    type: object
+    required:
+      - committeeId
+      - senateDivision
+      - slotRequirements
+    properties:
+      committeeId:
+        type: integer
+        minimum: 1
+        example: 1
+      senateDivision:
+        type: integer
+        minimum: 1
+        example: 1
+      slotRequirements:
+        type: integer
+        minimum: 1
+        example: 1
+responses:
+  Committee:
+    type: object
+    properties:
+      committee_id:
+        type: integer
+        format: int64
+        example: 1
+      name:
+        type: string
+      description:
+        type: string
+      total_slots:
+        type: integer
+        format: int64
+        example: 1
+  CommitteeAssignment:
+    type: array
+    items:
+      type: object
+      properties:
+        email:
+          type: string
+        committee_id:
+          type: integer
+          format: int64
+          example: 1
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+  CommitteeInfo:
+    type: object
+    properties:
+      name:
+        type: string
+      id:
+        type: integer
+        format: int64
+        example: 1
+      description:
+        type: string
+      totalSlots:
+        type: integer
+        format: int64
+        example: 1
+      slotsRemaining:
+        type: integer
+        format: int64
+        example: 1
+      committeeSlots:
+        type: array
+        items:
+          type: object
+          properties:
+            senateShortname:
+              type: string
+            slotFilled:
+              type: integer
+            slotMinimum:
+              type: integer
+            slotsRemaining:
+              type: integer
+  CommitteeSlotsCommittee:
+    type: array
+    items:
+      type: object
+      properties:
+        senate_division_short_name:
+          type: string
+        slot_requirements:
+          type: integer
+  CommitteeSlotsSenateDivision:
+    type: array
+    items:
+      type: object
+      properties:
+        committee_id:
+          type: integer
+          format: int64
+          example: 1
+        slot_requirements:
+          type: integer
+  Committees:
+    type: array
+    items:
+      type: object
+      properties:
+        committee_id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+        description:
+          type: string
+        total_slots:
+          type: integer
+          format: int64
+          example: 1
+tags:
+  - name: 'committee'
+    description: 'Everything about committee'
+  - name: 'committee-assignment'
+    description: 'Everything about committee-assignments'
+  - name: 'committee-slots'
+    description: 'Everything about committee-slots'
+  - name: 'committees'
+    description: 'Everything about committees'
