@@ -218,6 +218,19 @@ responses:
         type: string
       description:
         type: string
+  Departments:
+    type: array
+    items:
+      type: object
+      properties:
+        department_id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+        description:
+          type: string
   DepartmentAssociations:
     type: array
     items:
@@ -229,6 +242,7 @@ responses:
           type: integer
           format: int64
           example: 1
+
 tags:
   - name: 'committee'
     description: 'Everything about committee'
@@ -242,3 +256,5 @@ tags:
     description: 'Everything about a department'
   - name: 'department-associations'
     description: 'Everything about a department-association'
+  - name: 'departments'
+    description: 'Everything about departments'
