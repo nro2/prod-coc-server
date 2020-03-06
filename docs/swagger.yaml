@@ -269,7 +269,13 @@ responses:
             slotsRemaining:
               type: integer
               example: 2
-
+  SenateDivision:
+    type: object
+    properties:
+      senate_division_short_name:
+        type: string
+      name:
+        type: string
 tags:
   - name: 'committee'
     description: 'Everything about committee'
@@ -287,3 +293,5 @@ tags:
     description: 'Everything about departments'
   - name: 'reports'
     description: 'Everything about reports'
+  - name: 'senate-division'
+    description: 'Everything about a senate division'
