@@ -76,6 +76,35 @@ definitions:
         type: integer
         minimum: 1
         example: 1
+  DepartmentAssociations:
+    type: object
+    requied:
+      - email
+      - departmentId
+    properties:
+      email:
+        type: string
+      departmentId:
+        type: integer
+        minimum: 1
+        example: 1
+  DepartmentAssociationsPut:
+    type: object
+    requied:
+      - email
+      - oldDepartmentId
+      - newDepartmentId
+    properties:
+      email:
+        type: string
+      oldDepartmentId:
+        type: integer
+        minimum: 1
+        example: 1
+      newDepartmentId:
+        type: integer
+        minimum: 1
+        example: 2
 responses:
   Committee:
     type: object
@@ -189,6 +218,17 @@ responses:
         type: string
       description:
         type: string
+  DepartmentAssociations:
+    type: array
+    items:
+      type: object
+      properties:
+        email:
+          type: string
+        department_id:
+          type: integer
+          format: int64
+          example: 1
 tags:
   - name: 'committee'
     description: 'Everything about committee'
@@ -200,3 +240,5 @@ tags:
     description: 'Everything about committees'
   - name: 'department'
     description: 'Everything about a department'
+  - name: 'department-associations'
+    description: 'Everything about a department-association'

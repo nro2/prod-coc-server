@@ -11,6 +11,34 @@ const {
   messageResponses,
 } = require('../database');
 
+/**
+ * @swagger
+ *
+ * /api/department-associations:
+ *   post:
+ *     tags:
+ *       - department-associations
+ *     description: Add a department association to the database.
+ *     summary: Add department association
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Department associations object that needs to be added to the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/DepartmentAssociations"
+ *     responses:
+ *       201:
+ *         description: "Resource created"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       409:
+ *         description: "Conflict"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.post('/', async (req, res) => {
   if (!req.body || !req.body.email || !req.body.departmentId) {
     return res.status(400).send({ message: messageResponses[400] });
@@ -49,6 +77,34 @@ router.post('/', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/department-associations/department/{id}:
+ *   get:
+ *     tags:
+ *       - department-associations
+ *     description: Retrieves all faculty members associated with a department.
+ *     summary: Retrieve department associations by department
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *         format: int64
+ *     responses:
+ *       200:
+ *         description: "Department associations retrieved"
+ *         schema:
+ *           $ref: "#/responses/DepartmentAssociations"
+ *       404:
+ *         description: "Department associations not found"
+ *       500:
+ *         description: "Internal server error"
+ */
+
 router.get('/department/:id', async (req, res) => {
   return await getDepartmentAssociationsByDepartment(req.params.id)
     .then(data => {
@@ -67,6 +123,33 @@ router.get('/department/:id', async (req, res) => {
         .send({ message: 'Internal Server Error', error: err.message });
     });
 });
+
+/**
+ * @swagger
+ *
+ * /api/department-associations/faculty/{email}:
+ *   get:
+ *     tags:
+ *       - department-associations
+ *     description: Retrieves all departments associated with a faculty member.
+ *     summary: Retrieve department associations by faculty
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: email
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: "Department associations retrieved"
+ *         schema:
+ *           $ref: "#/responses/DepartmentAssociations"
+ *       404:
+ *         description: "Department associations not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 
 router.get('/faculty/:email', async (req, res) => {
   return await getDepartmentAssociationsByFaculty(req.params.email)
@@ -88,6 +171,35 @@ router.get('/faculty/:email', async (req, res) => {
         .send({ message: 'Internal Server Error', error: err.message });
     });
 });
+
+/**
+ * @swagger
+ *
+ * /api/department-associations:
+ *   put:
+ *     tags:
+ *       - department-associations
+ *     description: Update an existing department-association.
+ *     summary: Update department-associations
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Department-association object that needs to be updated in the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/DepartmentAssociationsPut"
+ *     responses:
+ *       201:
+ *         description: "Resource created"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       409:
+ *         description: "Conflict"
+ *       500:
+ *         description: "Internal server error"
+ */
 
 router.put('/', async (req, res) => {
   if (
