@@ -105,6 +105,25 @@ definitions:
         type: integer
         minimum: 1
         example: 2
+  SurveyChoice:
+    type: object
+    requied:
+      - choiceId
+      - surveyDate
+      - email
+      - committeeId
+    properties:
+      choiceId:
+        type: integer
+        example: 1
+      surveyDate:
+        type: integer
+        example: 2020
+      email:
+        type: string
+      committeeId:
+        type: integer
+        example: 1
 responses:
   Committee:
     type: object
@@ -285,6 +304,23 @@ responses:
           type: string
         name:
           type: string
+  SurveyChoice:
+    type: array
+    items:
+      type: object
+      properties:
+        choice_id:
+          type: integer
+          example: 1
+        survey_date:
+          type: integer
+          example: 2020
+        email:
+          type: string
+        committee_id:
+          type: integer
+          example: 1
+
 tags:
   - name: 'committee'
     description: 'Everything about committee'
@@ -306,3 +342,5 @@ tags:
     description: 'Everything about a senate division'
   - name: 'senate-divisions'
     description: 'Everything about senate divisions'
+  - name: 'survey-choice'
+    description: 'Everything about survey-choice'
