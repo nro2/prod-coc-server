@@ -178,6 +178,17 @@ responses:
           type: integer
           format: int64
           example: 1
+  Department:
+    type: object
+    properties:
+      department_id:
+        type: integer
+        format: int64
+        example: 1
+      name:
+        type: string
+      description:
+        type: string
 tags:
   - name: 'committee'
     description: 'Everything about committee'
@@ -187,3 +198,5 @@ tags:
     description: 'Everything about committee-slots'
   - name: 'committees'
     description: 'Everything about committees'
+  - name: 'department'
+    description: 'Everything about a department'
