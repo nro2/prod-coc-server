@@ -12,6 +12,36 @@ const {
   messageResponses,
 } = require('../database');
 
+/**
+ * @swagger
+ *
+ * /api/faculty:
+ *   post:
+ *     tags:
+ *       - faculty
+ *     description: Add a faculty member to the database.
+ *     summary: Add faculty
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Faculty object that needs to be added to the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/Faculty"
+ *     responses:
+ *       201:
+ *         description: "Resource created"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       409:
+ *         description: "Conflict"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.post('/', async (req, res) => {
   if (
     !req.body ||
@@ -97,7 +127,36 @@ router.post('/', async (req, res) => {
       });
     });
 });
-
+/**
+ * @swagger
+ *
+ * /api/faculty:
+ *   put:
+ *     tags:
+ *       - faculty
+ *     description: Update an existing faculty member.
+ *     summary: Update faculty member by email
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Faculty object that needs to be updated in the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/Faculty"
+ *     responses:
+ *       200:
+ *         description: "Resource updated"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       409:
+ *         description: "Faculty email doesn't match expected values"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.put('/', async (req, res) => {
   if (
     !req.body ||
@@ -185,6 +244,27 @@ router.put('/', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/faculty:
+ *   get:
+ *     tags:
+ *       - faculty
+ *     description: Retrieve list of all faculty members.
+ *     summary: Get all faculty
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: "Faculty successfully retrieved"
+ *         schema:
+ *           $ref: "#/responses/FacultyList"
+ *       404:
+ *         description: "Faculty list not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/', async (req, res) => {
   return await getAllFaculty()
     .then(data => {
@@ -204,6 +284,32 @@ router.get('/', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/faculty/{email}:
+ *   get:
+ *     tags:
+ *       - faculty
+ *     description: Retrieve a faculty member from the database.
+ *     summary: Get a faculty member by email
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: email
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: "Faculty member successfully retrieved"
+ *         schema:
+ *           $ref: "#/responses/Faculty"
+ *       404:
+ *         description: "Faculty member not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/:email', async (req, res) => {
   return await getFaculty(req.params.email)
     .then(data => {
@@ -223,6 +329,32 @@ router.get('/:email', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/faculty/info/{email}:
+ *   get:
+ *     tags:
+ *       - faculty
+ *     description: Retrieve all faculty member information from the database.
+ *     summary: Get a faculty members information by email
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: email
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: "Faculty member successfully retrieved"
+ *         schema:
+ *           $ref: "#/responses/FacultyInfo"
+ *       404:
+ *         description: "Faculty member not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.get('/info/:email', async (req, res) => {
   return await getFacultyInfo(req.params.email)
     .then(data => {

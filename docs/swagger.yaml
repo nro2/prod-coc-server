@@ -117,8 +117,9 @@ definitions:
         type: integer
         example: 1
       surveyDate:
-        type: integer
-        example: 2020
+        type: string
+        format: date
+        example: 2019-01-01
       email:
         type: string
       committeeId:
@@ -133,14 +134,42 @@ definitions:
       - expertise
     properties:
       surveyDate:
-        type: integer
-        example: 2020
+        type: string
+        format: date
+        example: 2019-01-01
       email:
         type: string
       isInterested:
         type: boolean
       expertise:
         type: string
+  Faculty:
+    type: object
+    required:
+      - email
+      - fullName
+      - senateDivision
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      senateDivision:
+        type: string
+      jobTitle:
+        type: string
+      phoneNum:
+        type: integer
+        example: 5031234567
+      departmentAssociations:
+        type: array
+        items:
+          type: object
+          properties:
+            department_id:
+              type: integer
+              format: int64
+              example: 1
 responses:
   Committee:
     type: object
@@ -330,8 +359,9 @@ responses:
           type: integer
           example: 1
         survey_date:
-          type: integer
-          example: 2020
+          type: string
+          format: date
+          example: 2019-01-01
         email:
           type: string
         committee_id:
@@ -341,14 +371,126 @@ responses:
     type: object
     properties:
       surveyDate:
-        type: integer
-        example: 2020
+        type: string
+        format: date
+        example: 2019-01-01
       email:
         type: string
       isInterested:
         type: boolean
       expertise:
         type: string
+  FacultyList:
+    type: array
+    items:
+      type: object
+      properties:
+        email:
+          type: string
+        full_name:
+          type: string
+        phone_num:
+          type: integer
+          example: 5031234567
+        job_title:
+          type: string
+        senate_division_short_name:
+          type: string
+  Faculty:
+    type: object
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      phone_num:
+        type: integer
+        example: 5031234567
+      job_title:
+        type: string
+      senate_division_short_name:
+        type: string
+  FacultyInfo:
+    type: object
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      phone_num:
+        type: integer
+        example: 5031234567
+      job_title:
+        type: string
+      senate_division_short_name:
+        type: string
+      departments:
+        type: array
+        items:
+          type: object
+          properties:
+            department_id:
+              type: integer
+              format: int64
+              example: 1
+            name:
+              type: string
+            description:
+              type: string
+      committees:
+        type: array
+        items:
+          type: object
+          properties:
+            committee_id:
+              type: integer
+              format: int64
+              example: 1
+            start_date:
+              type: string
+              format: date
+              example: 2019-01-01
+            end_date:
+              type: string
+              format: date
+              example: 2019-02-02
+            name:
+              type: string
+            description:
+              type: string
+            total_slots:
+              type: integer
+              format: int64
+              example: 1
+      surveys:
+        type: object
+        properties:
+          survey_date:
+            type: string
+            format: date
+            example: 2019-01-01
+          is_interested:
+            type: boolean
+          expertise:
+            type: string
+          choices:
+            type: array
+            items:
+              type: object
+              properties:
+                choice_id:
+                  type: integer
+                  example: 1
+                committee_id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                description:
+                  type: string
+                total_slots:
+                  type: integer
+                  example: 20
 
 tags:
   - name: 'committee'
@@ -375,3 +517,5 @@ tags:
     description: 'Everything about survey-choice'
   - name: 'survey-data'
     description: 'Everything about survey-data'
+  - name: 'faculty'
+    description: 'Everything about faculty'
