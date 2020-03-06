@@ -124,6 +124,23 @@ definitions:
       committeeId:
         type: integer
         example: 1
+  SurveyData:
+    type: object
+    required:
+      - surveyDate
+      - email
+      - isInterested
+      - expertise
+    properties:
+      surveyDate:
+        type: integer
+        example: 2020
+      email:
+        type: string
+      isInterested:
+        type: boolean
+      expertise:
+        type: string
 responses:
   Committee:
     type: object
@@ -320,6 +337,18 @@ responses:
         committee_id:
           type: integer
           example: 1
+  SurveyData:
+    type: object
+    properties:
+      surveyDate:
+        type: integer
+        example: 2020
+      email:
+        type: string
+      isInterested:
+        type: boolean
+      expertise:
+        type: string
 
 tags:
   - name: 'committee'
@@ -344,3 +373,5 @@ tags:
     description: 'Everything about senate divisions'
   - name: 'survey-choice'
     description: 'Everything about survey-choice'
+  - name: 'survey-data'
+    description: 'Everything about survey-data'

@@ -10,6 +10,34 @@ const {
   messageResponses,
 } = require('../database');
 
+/**
+ * @swagger
+ *
+ * /api/survey-data:
+ *   post:
+ *     tags:
+ *       - survey-data
+ *     description: Add a survey-data to the database.
+ *     summary: Add survey data
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Survey Data object that needs to be added to the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/SurveyData"
+ *     responses:
+ *       201:
+ *         description: "Resource created"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.post('/', async (req, res) => {
   if (
     !req.body ||
@@ -50,6 +78,36 @@ router.post('/', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *
+ * /api/survey-data:
+ *   put:
+ *     tags:
+ *       - survey-data
+ *     description: Update survey-data for a faculty member in the database.
+ *     summary: Update survey data by email and date
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: "Survey Data object that needs to be updated in the database"
+ *         required: true
+ *         schema:
+ *           $ref: "#/definitions/SurveyData"
+ *     responses:
+ *       200:
+ *         description: "Resource updated"
+ *       400:
+ *         description: "Request is missing required fields"
+ *       404:
+ *         description: "Unable to update survey data"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.put('/', async (req, res) => {
   if (
     !req.body ||
@@ -84,6 +142,40 @@ router.put('/', async (req, res) => {
         .send({ message: messageResponses[500], error: err.message });
     });
 });
+
+/**
+ * @swagger
+ *
+ * /api/survey-data/{date}/{email}:
+ *   get:
+ *     tags:
+ *       - survey-data
+ *     description: Retrieve survey data for a faculty member.
+ *     summary: Find survey data by date and email
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: date
+ *         in: path
+ *         required: true
+ *         type: integer
+ *         format: int64
+ *       - name: email
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: "Survey data retrieved"
+ *         schema:
+ *           $ref: "#/responses/SurveyData"
+ *       400:
+ *         description: "Invalid date or email format"
+ *       404:
+ *         description: "Survey data not found"
+ *       500:
+ *         description: "Internal server error"
+ */
 
 router.get('/:date/:email', async (req, res) => {
   if (!req.params.date || !req.params.email) {
