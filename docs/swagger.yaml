@@ -242,6 +242,33 @@ responses:
           type: integer
           format: int64
           example: 1
+  Reports:
+    type: object
+    properties:
+      total_slots:
+        type: integer
+        format: int64
+        example: 200
+      slots_filled:
+        type: integer
+        format: int64
+        example: 150
+      senate_division:
+        type: array
+        items:
+          type: object
+          properties:
+            senate_division:
+              type: string
+            slotFilled:
+              type: integer
+              example: 10
+            slotMinimum:
+              type: integer
+              example: 12
+            slotsRemaining:
+              type: integer
+              example: 2
 
 tags:
   - name: 'committee'
@@ -258,3 +285,5 @@ tags:
     description: 'Everything about a department-association'
   - name: 'departments'
     description: 'Everything about departments'
+  - name: 'reports'
+    description: 'Everything about reports'
