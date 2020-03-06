@@ -276,6 +276,15 @@ responses:
         type: string
       name:
         type: string
+  SenateDivisions:
+    type: array
+    items:
+      type: object
+      properties:
+        senate_division_short_name:
+          type: string
+        name:
+          type: string
 tags:
   - name: 'committee'
     description: 'Everything about committee'
@@ -295,3 +304,5 @@ tags:
     description: 'Everything about reports'
   - name: 'senate-division'
     description: 'Everything about a senate division'
+  - name: 'senate-divisions'
+    description: 'Everything about senate divisions'
