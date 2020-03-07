@@ -2,23 +2,70 @@
 
 ## Overview
 
-This application is a POC (Proof of Concept) for a service that serves up an API
-backend for poc-coc.
+This application is the back-end server/API for the Committee of Committees
+application (coc).
 
-## How to Develop
+## Requirements
 
-Run the application:
+1. Node.js and npm:
+   [Install instructions](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+2. Docker: [https://docs.docker.com/install/]
+3. Coc client for building end-to-end application:
+   [coc-client](https://bitbucket.org/CapstoneFall19/prod-coc-client/)
+   application
+
+## How to install Docker on Linux
+
+1. update `sudo apt-get update`
+2. Remove old Docker software
+   `sudo apt-get remove docker docker-engine docker.io`
+3. Install docker `sudo apt install docker.io`
+4. State and automate docker at startup `sudo systemctl start docker`
+   `sudo systemctl enable docker`
+5. Install docker compose `sudo apt install docker-compose`
+6. Create a new group account `sudo groupadd docker`
+7. Modify system account `sudo usermod -aG docker $USER`
+8. Logout and/or restart
+9. Change docker compose ownership
+   `sudo chown $USER:$USER /usr/local/bin/docker-compose`
+
+## Building the application
+
+### Run the back end
 
 1. Install the required packages: `npm install`
 2. Run the application: `npm start`
 3. Check that the application is running by visiting
    [localhost:8080](http://localhost:8080)
 
-Interact with the database:
+### Run the back end with docker
 
-1. Provision database resources:
+1. Navigate to project root
+2. Provision database resources:
    `docker-compose -f docker-compose.yml up --build`
-2. Populate database with tables and data: `npm run database`
+3. Populate database with tables and data: `npm run database`
+4. To access database directly `psql -h localhost -p 54320 -U coc -d coc`
+5. When done spin down the container `docker-compose down`
+
+### Building Front-End Assets
+
+In order to serve the front-end application from the back-end server, the
+front-end assets must be built and copied to the back-end.
+
+1. Navigate to the client root directory
+2. Build the static assets: `npm run build`
+3. Copy the `build/` directory created by this command into the coc-server
+4. On the server, run `npm start` and visit http://localhost:8080/; the
+   front-end page should be visible
+
+### Run the application end to end
+
+1. In prod-coc-server root directory run: `docker-compose up -d` 1b. If you are
+   having issues running this on windows run without `-d` option
+2. In prod-coc-server root directory run: `npm start`
+3. In prod-coc-client run: `npm start`
+4. To access the database directly use the command
+   `docker exec -it coc_postgres psql -U coc`
 
 ## How to Test
 
@@ -48,27 +95,6 @@ docker network
 To exist these containers after finishing press CTRL-C to send an interrupt
 signal.
 
-## Building Front-End
-
-In order to serve the front-end application from the back-end server, the
-front-end assets must be built and copied to the back-end.
-
-### Building Front-End Assets
-
-1. Navigate to the
-   [coc-client](https://bitbucket.org/CapstoneFall19/prod-coc-client/)
-   application
-2. Clone the repository
-3. Build the static assets:
-
-```
-npm run build
-```
-
-4. Copy the `build/` directory created by this command into the coc-server
-5. On the server, run `npm start` and visit http://localhost:8080/; the
-   front-end page should be visible
-
 ## Database migrations
 
 ### Creating migrations
@@ -95,38 +121,6 @@ Documentation: [Knex Migrations](http://knexjs.org/#Migrations)
    ```bash
    npm run database
    ```
-
-## How to install Docker on Linux
-
-1. update `sudo apt-get update`
-2. Remove old Docker software
-   `sudo apt-get remove docker docker-engine docker.io`
-3. Install docker `sudo apt install docker.io`
-4. State and automate docker at startup `sudo systemctl start docker`
-   `sudo systemctl enable docker`
-5. Install docker compose `sudo apt install docker-compose`
-6. Create a new group account `sudo groupadd docker`
-7. Modify system account `sudo usermod -aG docker $USER`
-8. Logout and/or restart
-9. Change docker compose ownership
-   `sudo chown $USER:$USER /usr/local/bin/docker-compose`
-
-## How to run docker
-
-1. Navigate to project root
-2. Start up the docker image `docker-compose up -d` 2b. If you are having issues
-   running this on windows run without `-d` option
-3. To access database directly `psql -h localhost -p 54320 -U coc -d coc`
-4. When done spin down the container `docker-compose down`
-
-### How to run the application end-to-end
-
-1. run docker-compose up -d from the prod-coc-server project
-2. run node index.js from the prod-coc-server project 2b. If you are having
-   issues running this on windows run without -d option
-3. run npm start from the prod-coc-client project
-4. To access the database directly use the command
-   `docker exec -it coc_postgres psql -U coc`
 
 ## Help
 
