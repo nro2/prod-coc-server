@@ -119,7 +119,6 @@ definitions:
       surveyDate:
         type: string
         format: date
-        example: 2019-01-01
       email:
         type: string
       committeeId:
@@ -136,7 +135,6 @@ definitions:
       surveyDate:
         type: string
         format: date
-        example: 2019-01-01
       email:
         type: string
       isInterested:
@@ -296,17 +294,27 @@ responses:
           type: string
         description:
           type: string
-  DepartmentAssociations:
-    type: array
-    items:
-      type: object
-      properties:
-        email:
-          type: string
-        department_id:
+  DepartmentAssociationsEmail:
+    type: object
+    properties:
+      email:
+        type: string
+      department_ids:
+        type: array
+        items:
           type: integer
-          format: int64
           example: 1
+  DepartmentAssociationsId:
+    type: object
+    properties:
+      department_id:
+        type: integer
+        format: int64
+        example: 1
+      emails:
+        type: array
+        items:
+          type: string
   Reports:
     type: object
     properties:
@@ -361,7 +369,6 @@ responses:
         survey_date:
           type: string
           format: date
-          example: 2019-01-01
         email:
           type: string
         committee_id:
@@ -373,7 +380,6 @@ responses:
       surveyDate:
         type: string
         format: date
-        example: 2019-01-01
       email:
         type: string
       isInterested:
@@ -449,11 +455,9 @@ responses:
             start_date:
               type: string
               format: date
-              example: 2019-01-01
             end_date:
               type: string
               format: date
-              example: 2019-02-02
             name:
               type: string
             description:
@@ -468,7 +472,6 @@ responses:
           survey_date:
             type: string
             format: date
-            example: 2019-01-01
           is_interested:
             type: boolean
           expertise:

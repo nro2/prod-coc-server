@@ -98,7 +98,7 @@ router.post('/', async (req, res) => {
  *       200:
  *         description: "Department associations retrieved"
  *         schema:
- *           $ref: "#/responses/DepartmentAssociations"
+ *           $ref: "#/responses/DepartmentAssociationsId"
  *       404:
  *         description: "Department associations not found"
  *       500:
@@ -144,7 +144,7 @@ router.get('/department/:id', async (req, res) => {
  *       200:
  *         description: "Department associations retrieved"
  *         schema:
- *           $ref: "#/responses/DepartmentAssociations"
+ *           $ref: "#/responses/DepartmentAssociationsEmail"
  *       404:
  *         description: "Department associations not found"
  *       500:
