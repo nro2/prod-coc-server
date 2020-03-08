@@ -5,7 +5,7 @@ const { getDepartment, messageResponses } = require('../database');
 /**
  * @swagger
  *
- * /api/department:
+ * /api/department/{id}:
  *   get:
  *     tags:
  *       - department
