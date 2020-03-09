@@ -2,6 +2,28 @@ const express = require('express');
 const router = express.Router();
 const { getDepartments, messageResponses } = require('../database');
 
+/**
+ * @swagger
+ *
+ * /api/departments:
+ *   get:
+ *     tags:
+ *       - departments
+ *     description: Retrieves all departments.
+ *     summary: Retrieve departments
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: "Departments retrieved"
+ *         schema:
+ *           $ref: "#/responses/Departments"
+ *       404:
+ *         description: "Departments not found"
+ *       500:
+ *         description: "Internal server error"
+ */
+
 router.get('/', async (req, res) => {
   return getDepartments()
     .then(data => {

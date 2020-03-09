@@ -76,6 +76,98 @@ definitions:
         type: integer
         minimum: 1
         example: 1
+  DepartmentAssociations:
+    type: object
+    requied:
+      - email
+      - departmentId
+    properties:
+      email:
+        type: string
+      departmentId:
+        type: integer
+        minimum: 1
+        example: 1
+  DepartmentAssociationsPut:
+    type: object
+    requied:
+      - email
+      - oldDepartmentId
+      - newDepartmentId
+    properties:
+      email:
+        type: string
+      oldDepartmentId:
+        type: integer
+        minimum: 1
+        example: 1
+      newDepartmentId:
+        type: integer
+        minimum: 1
+        example: 2
+  SurveyChoice:
+    type: object
+    requied:
+      - choiceId
+      - surveyDate
+      - email
+      - committeeId
+    properties:
+      choiceId:
+        type: integer
+        example: 1
+      surveyDate:
+        type: string
+        format: date
+      email:
+        type: string
+      committeeId:
+        type: integer
+        example: 1
+  SurveyData:
+    type: object
+    required:
+      - surveyDate
+      - email
+      - isInterested
+      - expertise
+    properties:
+      surveyDate:
+        type: string
+        format: date
+      email:
+        type: string
+      isInterested:
+        type: boolean
+      expertise:
+        type: string
+  Faculty:
+    type: object
+    required:
+      - email
+      - fullName
+      - senateDivision
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      senateDivision:
+        type: string
+      jobTitle:
+        type: string
+      phoneNum:
+        type: integer
+        example: 5031234567
+      departmentAssociations:
+        type: array
+        items:
+          type: object
+          properties:
+            department_id:
+              type: integer
+              format: int64
+              example: 1
 responses:
   Committee:
     type: object
@@ -178,6 +270,231 @@ responses:
           type: integer
           format: int64
           example: 1
+  Department:
+    type: object
+    properties:
+      department_id:
+        type: integer
+        format: int64
+        example: 1
+      name:
+        type: string
+      description:
+        type: string
+  Departments:
+    type: array
+    items:
+      type: object
+      properties:
+        department_id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+        description:
+          type: string
+  DepartmentAssociationsEmail:
+    type: object
+    properties:
+      email:
+        type: string
+      department_ids:
+        type: array
+        items:
+          type: integer
+          example: 1
+  DepartmentAssociationsId:
+    type: object
+    properties:
+      department_id:
+        type: integer
+        format: int64
+        example: 1
+      emails:
+        type: array
+        items:
+          type: string
+  Reports:
+    type: object
+    properties:
+      total_slots:
+        type: integer
+        format: int64
+        example: 200
+      slots_filled:
+        type: integer
+        format: int64
+        example: 150
+      senate_division:
+        type: array
+        items:
+          type: object
+          properties:
+            senate_division:
+              type: string
+            slotFilled:
+              type: integer
+              example: 10
+            slotMinimum:
+              type: integer
+              example: 12
+            slotsRemaining:
+              type: integer
+              example: 2
+  SenateDivision:
+    type: object
+    properties:
+      senate_division_short_name:
+        type: string
+      name:
+        type: string
+  SenateDivisions:
+    type: array
+    items:
+      type: object
+      properties:
+        senate_division_short_name:
+          type: string
+        name:
+          type: string
+  SurveyChoice:
+    type: array
+    items:
+      type: object
+      properties:
+        choice_id:
+          type: integer
+          example: 1
+        survey_date:
+          type: string
+          format: date
+        email:
+          type: string
+        committee_id:
+          type: integer
+          example: 1
+  SurveyData:
+    type: object
+    properties:
+      surveyDate:
+        type: string
+        format: date
+      email:
+        type: string
+      isInterested:
+        type: boolean
+      expertise:
+        type: string
+  FacultyList:
+    type: array
+    items:
+      type: object
+      properties:
+        email:
+          type: string
+        full_name:
+          type: string
+        phone_num:
+          type: integer
+          example: 5031234567
+        job_title:
+          type: string
+        senate_division_short_name:
+          type: string
+  Faculty:
+    type: object
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      phone_num:
+        type: integer
+        example: 5031234567
+      job_title:
+        type: string
+      senate_division_short_name:
+        type: string
+  FacultyInfo:
+    type: object
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      phone_num:
+        type: integer
+        example: 5031234567
+      job_title:
+        type: string
+      senate_division_short_name:
+        type: string
+      departments:
+        type: array
+        items:
+          type: object
+          properties:
+            department_id:
+              type: integer
+              format: int64
+              example: 1
+            name:
+              type: string
+            description:
+              type: string
+      committees:
+        type: array
+        items:
+          type: object
+          properties:
+            committee_id:
+              type: integer
+              format: int64
+              example: 1
+            start_date:
+              type: string
+              format: date
+            end_date:
+              type: string
+              format: date
+            name:
+              type: string
+            description:
+              type: string
+            total_slots:
+              type: integer
+              format: int64
+              example: 1
+      surveys:
+        type: object
+        properties:
+          survey_date:
+            type: string
+            format: date
+          is_interested:
+            type: boolean
+          expertise:
+            type: string
+          choices:
+            type: array
+            items:
+              type: object
+              properties:
+                choice_id:
+                  type: integer
+                  example: 1
+                committee_id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                description:
+                  type: string
+                total_slots:
+                  type: integer
+                  example: 20
+
 tags:
   - name: 'committee'
     description: 'Everything about committee'
@@ -187,3 +504,21 @@ tags:
     description: 'Everything about committee-slots'
   - name: 'committees'
     description: 'Everything about committees'
+  - name: 'department'
+    description: 'Everything about a department'
+  - name: 'department-associations'
+    description: 'Everything about a department-association'
+  - name: 'departments'
+    description: 'Everything about departments'
+  - name: 'faculty'
+    description: 'Everything about faculty'
+  - name: 'reports'
+    description: 'Everything about reports'
+  - name: 'senate-division'
+    description: 'Everything about a senate division'
+  - name: 'senate-divisions'
+    description: 'Everything about senate divisions'
+  - name: 'survey-choice'
+    description: 'Everything about survey-choice'
+  - name: 'survey-data'
+    description: 'Everything about survey-data'

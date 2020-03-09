@@ -122,6 +122,11 @@ Documentation: [Knex Migrations](http://knexjs.org/#Migrations)
    npm run database
    ```
 
+## Documentation
+
+Documentation on the API can be found at http://localhost:8080/docs Detailed
+information on response objects and request body format can be found here.
+
 ## Help
 
 **Help! The database is displaying strange behavior**
